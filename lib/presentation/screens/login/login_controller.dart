@@ -12,8 +12,6 @@ class LoginController extends GetxController {
       Get.snackbar(
         'Error',
         'Por favor, completa todos los campos.',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
       );
       return;
