@@ -8,6 +8,7 @@ class ExitDialog {
       AlertDialog(
         title: const Text('¿Salir de la aplicación?'),
         content: const Text('¿Estás seguro que deseas salir?'),
+        backgroundColor: Colors.white,
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false), // Cancelar

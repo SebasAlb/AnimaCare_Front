@@ -2,37 +2,51 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController {
-  // Controladores de los campos
-  final email = ''.obs;
-  final password = ''.obs;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  // Función dummy para el botón Ingresar
   void login() {
-    if (email.value.isEmpty || password.value.isEmpty) {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
       Get.snackbar(
         'Error',
         'Por favor, completa todos los campos.',
         snackPosition: SnackPosition.BOTTOM,
+        colorText: Colors.black,
+        borderRadius: 12,
+        icon: const Icon(Icons.error, color: Colors.red),
+        duration: const Duration(seconds: 3),
+        isDismissible: true,
       );
+
       return;
     }
 
-    // Simula un registro exitoso
     Future.delayed(Duration.zero, () {
       Get.snackbar(
-        'Exíto',
-        'Bienvenido ${email.value}',
+        'Éxito',
+        'Bienvenido $email',
         snackPosition: SnackPosition.TOP,
+        colorText: Colors.black,
+        borderRadius: 12,
+        icon: const Icon(Icons.check_circle, color: Colors.green),
+        duration: const Duration(seconds: 3),
+        isDismissible: true,
       );
-      // Limpiar campos
-      email.value = '';
-      password.value = '';
-      Get.toNamed('/recommendations');
+      resetFields();
+      Get.offAllNamed('/recommendations');
     });
   }
 
-  // Función para ir a registrar
   void goToRegister() {
+    resetFields();
     Get.toNamed('/signup');
+  }
+
+  void resetFields() {
+    emailController.clear();
+    passwordController.clear();
   }
 }
