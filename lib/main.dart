@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      initialRoute: AppRoutes.login, // Cambiado a rutas
+      initialRoute: AppRoutes.ownerUpdate, // Cambiado a rutas
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }
