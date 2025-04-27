@@ -11,12 +11,18 @@ class LoginScreen extends StatelessWidget {
     final controller = Get.put(LoginController());
     final size = MediaQuery.of(context).size;
 
-    return WillPopScope(
-      onWillPop: () async {
-        return await ExitDialog.show();
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          bool shouldExit = await ExitDialog.show();
+          if (shouldExit) {
+            Get.back();
+          }
+        }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFA6DCEF), // Fondo azul claro
+        backgroundColor: const Color(0xFF4DD0E2), // Fondo azul claro
         body: Center(
           child: SingleChildScrollView( // Evitar overflow
             padding: const EdgeInsets.all(20),
@@ -41,7 +47,7 @@ class LoginScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF3E0B53),
+                      color: Color(0xFF301B92),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -60,7 +66,7 @@ class LoginScreen extends StatelessWidget {
                     hint: 'Ingrese su correo electrónico',
                     icon: Icons.person,
                     type: TextInputType.emailAddress,
-                    onChanged: (value) => controller.email.value = value,
+                    controller: controller.emailController,
                   ),
                   const SizedBox(height: 20),
                   _buildTextField(
@@ -68,12 +74,12 @@ class LoginScreen extends StatelessWidget {
                     hint: 'Ingrese su contraseña',
                     icon: Icons.lock,
                     obscureText: true,
-                    onChanged: (value) => controller.password.value = value,
+                    controller: controller.passwordController,
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF3E0B53),
+                      backgroundColor: const Color(0xFF301B92),
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -90,7 +96,7 @@ class LoginScreen extends StatelessWidget {
                     onPressed: controller.goToRegister,
                     child: const Text(
                       'Registrarse',
-                      style: TextStyle(color: Color(0xFF3E0B53)),
+                      style: TextStyle(color: Color(0xFF301B92)),
                     ),
                   ),
                 ],
@@ -100,8 +106,6 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
-
-
   }
 
   Widget _buildTextField({
@@ -110,7 +114,7 @@ class LoginScreen extends StatelessWidget {
     required IconData icon,
     TextInputType type = TextInputType.text,
     bool obscureText = false,
-    required Function(String) onChanged,
+    required TextEditingController controller,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,17 +123,17 @@ class LoginScreen extends StatelessWidget {
           label,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-            color: Color(0xFF3E0B53),
+            color: Color(0xFF301B92),
           ),
         ),
         const SizedBox(height: 8),
         TextField(
+          controller: controller,
           keyboardType: type,
           obscureText: obscureText,
-          onChanged: onChanged,
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: Icon(icon, color: const Color(0xFF3E0B53)),
+            prefixIcon: Icon(icon, color: const Color(0xFF301B92)),
             filled: true,
             fillColor: const Color(0xFFF0F4F8),
             border: OutlineInputBorder(

@@ -12,7 +12,7 @@ class RecommendationsScreen extends StatelessWidget {
     final controller = Get.put(RecommendationsController());
 
     return Scaffold(
-      backgroundColor: const Color(0xFFA6DCEF),
+      backgroundColor: const Color(0xFF4DD0E2),
       body: SafeArea(
         child: Column(
           children: [
@@ -73,7 +73,7 @@ class RecommendationsScreen extends StatelessWidget {
                         itemCount: controller.recommendations.length,
                         itemBuilder: (context, index) {
                           return Card(
-                            color: const Color(0xFF3E0B53),
+                            color: const Color(0xFF301B92),
                             margin: const EdgeInsets.symmetric(vertical: 8),
                             child: Padding(
                               padding: const EdgeInsets.all(12.0),
