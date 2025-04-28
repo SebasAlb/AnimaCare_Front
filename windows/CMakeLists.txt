@@ -1,10 +1,18 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
+<<<<<<< HEAD
 project(historial LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 set(BINARY_NAME "historial")
+=======
+project(animacare_front LANGUAGES CXX)
+
+# The name of the executable created for the application. Change this to change
+# the on-disk name of your application.
+set(BINARY_NAME "animacare_front")
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

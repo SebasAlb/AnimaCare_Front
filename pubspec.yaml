@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 name: historial
+=======
+name: animacare_front
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -30,14 +34,28 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+<<<<<<< HEAD
+=======
+  get: ^4.6.5
+  table_calendar: ^3.0.9 # <<--- Para la tabla del calendar
+  provider: ^6.0.5
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+<<<<<<< HEAD
+=======
+  flutter_colorpicker: ^1.0.3 # <<--- Para la selección de colores en edit_notifications_screen
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+<<<<<<< HEAD
+=======
+  flutter_launcher_icons: ^0.13.1
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -58,9 +76,14 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
+<<<<<<< HEAD
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+=======
+  assets:
+    - assets/icons/logo.png
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -87,3 +110,12 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+<<<<<<< HEAD
+=======
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/logo.png" # Ruta de tu ícono
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
