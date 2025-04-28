@@ -10,7 +10,7 @@ import 'widgets/table_calendar_format_button.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/routes/app_routes.dart';
-import 'package:animacare_front/presentation/theme/colors.dart';
+import 'package:animacare_front/presentation/theme/colors.dart'; // << Importación correcta
 
 class CalendarScreen extends StatelessWidget {
   const CalendarScreen({super.key});
@@ -166,6 +166,10 @@ class CalendarScreen extends StatelessWidget {
                       final lugar = evento['lugar'] ?? '';
                       final veterinario = evento['veterinario'] ?? '';
                       final mascota = evento['mascota'] ?? '';
+                      final anticipacion = evento['anticipacion'] ?? '';
+                      final frecuencia = evento['frecuencia'] ?? '';
+                      final recibirRecordatorio = evento['recibirRecordatorio'] ?? 'No Recibir';
+
 
                       return EventCard(
                         nombre: nombre,
@@ -176,7 +180,7 @@ class CalendarScreen extends StatelessWidget {
                         color: controller.obtenerColorEvento(nombre),
                         icono: controller.obtenerIconoEvento(nombre),
                         onTap: () {
-                          _showEventDetails(context, nombre, hora, lugar, veterinario, mascota);
+                          _showEventDetails(context, nombre, hora, lugar, veterinario, mascota, anticipacion, frecuencia, recibirRecordatorio, index, controller);
                         },
                       );
                     },
@@ -194,10 +198,9 @@ class CalendarScreen extends StatelessWidget {
             case 0:
               break;
             case 1:
-              Navigator.pushNamed(context, AppRoutes.map);
               break;
             case 2:
-              Navigator.pushNamed(context, AppRoutes.homeOwner);
+              Navigator.pushNamed(context, AppRoutes.recommendations);
               break;
             case 3:
               break;
@@ -229,7 +232,7 @@ class CalendarScreen extends StatelessWidget {
     );
   }
 
-  void _showEventDetails(BuildContext context, String nombre, String hora, String lugar, String veterinario, String mascota) {
+  void _showEventDetails(BuildContext context, String nombre, String hora, String lugar, String veterinario, String mascota, String anticipacion, String frecuencia, String recibirRecordatorio, int index, CalendarController controller) {
     final color = _determineEventColor(nombre);
 
     showModalBottomSheet(
@@ -245,10 +248,55 @@ class CalendarScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              nombre,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: AppColors.primaryWhite),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    nombre,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                      color: AppColors.primaryWhite,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    final confirmar = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('¿Eliminar evento?'),
+                        content: const Text('¿Seguro que deseas eliminar este evento?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('Cancelar'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+                          ),
+                        ],
+                      ),
+                    );
+
+                    if (confirmar == true) {
+                      controller.eliminarEvento(controller.focusedDay.value, index);
+                      controller.focusedDay.refresh(); // 🔥 Esto fuerza a refrescar el Obx y se actualiza la lista
+                      Navigator.pop(context); // Cerrar el BottomSheet
+                      Get.snackbar(
+                        'Evento eliminado',
+                        'Se eliminó correctamente.',
+                        backgroundColor: Colors.white,
+                        colorText: Colors.black,
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.delete_outline, color: Colors.white),
+                ),
+              ],
             ),
+
             const SizedBox(height: 10),
             _buildDetailRow(Icons.access_time, hora),
             const SizedBox(height: 10),
@@ -257,6 +305,16 @@ class CalendarScreen extends StatelessWidget {
             _buildDetailRow(Icons.person, veterinario),
             const SizedBox(height: 10),
             _buildDetailRow(Icons.pets, mascota),
+            const SizedBox(height: 10),
+            _buildDetailRow(Icons.notifications_active, recibirRecordatorio),
+            if (recibirRecordatorio != 'No recibir') ...[
+              const SizedBox(height: 10),
+              _buildDetailRow(Icons.alarm, anticipacion),
+              const SizedBox(height: 10),
+              _buildDetailRow(Icons.repeat, frecuencia),
+            ]
+
+
           ],
         ),
       ),
