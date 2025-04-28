@@ -41,11 +41,19 @@ static void my_application_activate(GApplication* application) {
     GtkHeaderBar* header_bar = GTK_HEADER_BAR(gtk_header_bar_new());
     gtk_widget_show(GTK_WIDGET(header_bar));
 <<<<<<< HEAD
+<<<<<<< HEAD
+    gtk_header_bar_set_title(header_bar, "mapa");
+    gtk_header_bar_set_show_close_button(header_bar, TRUE);
+    gtk_window_set_titlebar(window, GTK_WIDGET(header_bar));
+  } else {
+    gtk_window_set_title(window, "mapa");
+=======
     gtk_header_bar_set_title(header_bar, "historial");
     gtk_header_bar_set_show_close_button(header_bar, TRUE);
     gtk_window_set_titlebar(window, GTK_WIDGET(header_bar));
   } else {
     gtk_window_set_title(window, "historial");
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
     gtk_header_bar_set_title(header_bar, "animacare_front");
     gtk_header_bar_set_show_close_button(header_bar, TRUE);

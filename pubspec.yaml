@@ -1,5 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+name: mapa
+=======
 name: historial
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
 name: animacare_front
 >>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
@@ -23,7 +27,11 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
+<<<<<<< HEAD
+  sdk: ">=3.0.0 <4.0.0"
+=======
   sdk: ^3.7.2
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -35,6 +43,14 @@ dependencies:
   flutter:
     sdk: flutter
 <<<<<<< HEAD
+<<<<<<< HEAD
+  google_maps_flutter: ^2.5.0
+  location: ^5.0.3
+  http: ^1.2.1
+  geolocator: ^9.0.2
+  provider: ^6.1.2
+=======
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
   get: ^4.6.5
   table_calendar: ^3.0.9 # <<--- Para la tabla del calendar
@@ -45,6 +61,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 <<<<<<< HEAD
+<<<<<<< HEAD
+
+=======
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
   flutter_colorpicker: ^1.0.3 # <<--- Para la selección de colores en edit_notifications_screen
 >>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
@@ -53,6 +73,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 <<<<<<< HEAD
+<<<<<<< HEAD
+  flutter_lints: ^3.0.1
+=======
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
   flutter_launcher_icons: ^0.13.1
 >>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
@@ -63,6 +87,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

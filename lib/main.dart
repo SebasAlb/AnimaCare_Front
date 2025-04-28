@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-=======
+import 'screens/map_screen.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Veterinarias Cerca',
+      theme: ThemeData(
+        primarySwatch: Colors.teal,
+      ),
+      home: MapScreen(),
+    );
+  }
+}
 import 'routes/app_routes.dart';
 import 'package:get/get.dart';
->>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +28,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-<<<<<<< HEAD
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -126,7 +141,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-=======
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -140,4 +154,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
->>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86

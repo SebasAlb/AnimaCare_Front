@@ -90,6 +90,15 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
 <<<<<<< HEAD
+<<<<<<< HEAD
+            VALUE "CompanyName", "com.mapa" "\0"
+            VALUE "FileDescription", "mapa" "\0"
+            VALUE "FileVersion", VERSION_AS_STRING "\0"
+            VALUE "InternalName", "mapa" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 com.mapa. All rights reserved." "\0"
+            VALUE "OriginalFilename", "mapa.exe" "\0"
+            VALUE "ProductName", "mapa" "\0"
+=======
             VALUE "CompanyName", "com.historial" "\0"
             VALUE "FileDescription", "historial" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
@@ -97,6 +106,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) 2025 com.historial. All rights reserved." "\0"
             VALUE "OriginalFilename", "historial.exe" "\0"
             VALUE "ProductName", "historial" "\0"
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
             VALUE "CompanyName", "com.example" "\0"
             VALUE "FileDescription", "animacare_front" "\0"

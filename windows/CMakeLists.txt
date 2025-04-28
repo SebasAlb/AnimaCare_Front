@@ -1,11 +1,19 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
 <<<<<<< HEAD
+<<<<<<< HEAD
+project(mapa LANGUAGES CXX)
+
+# The name of the executable created for the application. Change this to change
+# the on-disk name of your application.
+set(BINARY_NAME "mapa")
+=======
 project(historial LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 set(BINARY_NAME "historial")
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
 project(animacare_front LANGUAGES CXX)
 

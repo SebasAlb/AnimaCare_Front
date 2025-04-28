@@ -1,7 +1,12 @@
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
+    "name": "mapa",
+    "short_name": "mapa",
+=======
     "name": "historial",
     "short_name": "historial",
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
     "name": "animacare_front",
     "short_name": "animacare_front",
