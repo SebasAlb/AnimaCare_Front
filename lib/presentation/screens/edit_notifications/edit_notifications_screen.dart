@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'edit_notifications_controller.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:animacare_front/presentation/theme/colors.dart';
 
 class EditNotificationsScreen extends StatelessWidget {
   const EditNotificationsScreen({super.key});
@@ -10,167 +11,81 @@ class EditNotificationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(EditNotificationsController());
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFA6DCEF),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header manual
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: const BoxDecoration(
-                color: Color(0xFF75C9C8),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
+    return WillPopScope(
+      onWillPop: () => _confirmarSalida(context, controller),
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context, controller), // 🔥 Ahora el header recibe controller
+              const SizedBox(height: 10),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: ListView(
+                    children: [
+                      _buildSectionLabel('Configurar Notificaciones'),
+                      _buildDropdowns(controller),
+                      const SizedBox(height: 20),
+                      _buildProbarNotificacionButton(),
+                      const SizedBox(height: 30),
+                      _buildSectionLabel('Configurar Calendario'),
+                      _buildCalendarioColors(context, controller),
+                      const SizedBox(height: 30),
+                      _buildCategoriasSection(context, controller),
+                      const SizedBox(height: 40),
+                      _buildGuardarButton(),
+                    ],
                   ),
-                  const Text(
-                    'Ajustes de Eventos',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(width: 48),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ListView(
-                  children: [
-
-                    // 🔵 Sección Notificaciones
-                    _buildSectionLabel('Configurar Notificaciones'),
-
-                    Obx(() => _buildDropdown(
-                      label: 'Anticipación del recordatorio',
-                      value: controller.anticipacion.value,
-                      items: ['1 día antes', '2 días antes', '3 días antes'],
-                      onChanged: (nuevoValor) => controller.anticipacion.value = nuevoValor!,
-                    )),
-                    const SizedBox(height: 20),
-                    
-                    Obx(() => _buildDropdown(
-                      label: 'Frecuencia de recordatorio',
-                      value: controller.frecuencia.value,
-                      items: ['Cada 6 horas', 'Cada 12 horas', 'Cada 24 horas'],
-                      onChanged: (nuevoValor) => controller.frecuencia.value = nuevoValor!,
-                    )),
-                    const SizedBox(height: 20),
-                    
-                    Obx(() => _buildDropdown(
-                      label: '¿Dónde recibir recordatorios?',
-                      value: controller.recibirRecomendaciones.value,
-                      items: ['Solo en la app', 'Solo en el celular', 'En app y celular', 'No recibir'],
-                      onChanged: (nuevoValor) => controller.recibirRecomendaciones.value = nuevoValor!,
-                    )),
-
-                    const SizedBox(height: 30),
-
-                    // 🔵 Sección Calendario
-                    _buildSectionLabel('Configurar Calendario'),
-
-                    _buildColorTile(
-                      context: context,
-                      label: 'Color de fondo del calendario',
-                      color: controller.colorCalendario.value,
-                      onTap: () {
-                        _mostrarColorPicker(context, (color) {
-                          controller.colorCalendario.value = color;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 20),
-
-                    _buildColorTile(
-                      context: context,
-                      label: 'Color de días cargados',
-                      color: controller.colorDiasCargados.value,
-                      onTap: () {
-                        _mostrarColorPicker(context, (color) {
-                          controller.colorDiasCargados.value = color;
-                        });
-                      },
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // 🔵 Sección Categorías
-                    _buildSectionLabel('Configurar Categorías'),
-
-                    ...controller.coloresCategorias.keys.map((categoria) {
-                      return Obx(() => _buildColorTile(
-                        context: context,
-                        label: 'Color para $categoria',
-                        color: controller.coloresCategorias[categoria]!,
-                        icon: _iconoPorCategoria(categoria),
-                        onTap: () {
-                          _mostrarColorPicker(context, (color) {
-                            controller.actualizarColorCategoria(categoria, color);
-                          });
-                        },
-                      ));
-                    }).toList(),
-
-                    const SizedBox(height: 40),
-
-                    // Botón Guardar Cambios
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Get.snackbar('¡Guardado!', 'Los cambios han sido aplicados.', 
-                            backgroundColor: Colors.white, colorText: Colors.black);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF3E0B53),
-                          foregroundColor: Colors.white,
-                          textStyle: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text('Guardar Cambios'),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // 🔵 Helper: Sección Etiqueta Morada
+  Widget _buildHeader(BuildContext context, EditNotificationsController controller) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: const BoxDecoration(color: AppColors.header),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.primaryWhite),
+            onPressed: () async {
+              final salir = await _confirmarSalida(context, controller);
+              if (salir) Navigator.pop(context);
+            },
+          ),
+          const Text(
+            'Ajustes de Eventos',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: AppColors.primaryWhite,
+            ),
+          ),
+          const SizedBox(width: 48),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSectionLabel(String titulo) {
     return Container(
-      width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF3E0B53),
+        color: AppColors.header,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         titulo,
         style: const TextStyle(
-          color: Colors.white,
+          color: AppColors.primaryWhite,
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),
@@ -178,7 +93,33 @@ class EditNotificationsScreen extends StatelessWidget {
     );
   }
 
-  // 🔵 Helper: Dropdown
+  Widget _buildDropdowns(EditNotificationsController controller) {
+    return Column(
+      children: [
+        Obx(() => _buildDropdown(
+          label: 'Anticipación del recordatorio',
+          value: controller.anticipacion.value,
+          items: ['1 día antes', '2 días antes', '3 días antes'],
+          onChanged: (v) => controller.anticipacion.value = v!,
+        )),
+        const SizedBox(height: 20),
+        Obx(() => _buildDropdown(
+          label: 'Frecuencia de recordatorio',
+          value: controller.frecuencia.value,
+          items: ['Cada 6 horas', 'Cada 12 horas', 'Cada 24 horas'],
+          onChanged: (v) => controller.frecuencia.value = v!,
+        )),
+        const SizedBox(height: 20),
+        Obx(() => _buildDropdown(
+          label: '¿Dónde recibir recordatorios?',
+          value: controller.recibirRecomendaciones.value,
+          items: ['Solo en la app', 'Solo en el celular', 'En app y celular', 'No recibir'],
+          onChanged: (v) => controller.recibirRecomendaciones.value = v!,
+        )),
+      ],
+    );
+  }
+
   Widget _buildDropdown({
     required String label,
     required String value,
@@ -193,14 +134,14 @@ class EditNotificationsScreen extends StatelessWidget {
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: Color(0xFF3E0B53),
+            color: AppColors.primaryWhite,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.primaryWhite,
             borderRadius: BorderRadius.circular(12),
           ),
           child: DropdownButton<String>(
@@ -220,19 +161,63 @@ class EditNotificationsScreen extends StatelessWidget {
     );
   }
 
-  // 🔵 Helper: Card de color
-  Widget _buildColorTile({
-    required BuildContext context,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-    IconData? icon,
-  }) {
+  Widget _buildProbarNotificacionButton() {
+    return Center(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.header,
+          foregroundColor: AppColors.primaryWhite,
+        ),
+        onPressed: () {
+          Get.snackbar('Notificación de prueba', 'Esta es una notificación de ejemplo.',
+            backgroundColor: AppColors.primaryWhite, colorText: Colors.black);
+        },
+        child: const Text('Probar notificación'),
+      ),
+    );
+  }
+
+  Widget _buildCalendarioColors(BuildContext context, EditNotificationsController controller) {
+    return Column(
+      children: [
+        _buildColorTile(
+          context: context,
+          label: 'Color de fondo del calendario',
+          color: controller.colorCalendario.value,
+          onTap: () {
+            _mostrarColorPicker(context, (color) => controller.colorCalendario.value = color);
+          },
+        ),
+        const SizedBox(height: 20),
+        Row(
+          children: [
+            Expanded(
+              child: _buildColorTile(
+                context: context,
+                label: 'Color de días cargados',
+                color: controller.colorDiasCargados.value,
+                onTap: () {
+                  _mostrarColorPicker(context, (color) => controller.colorDiasCargados.value = color);
+                },
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              onPressed: () {
+                Get.defaultDialog(title: 'Información', middleText: 'Días cargados son días con más de 4 eventos.');
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildColorTile({required BuildContext context, required String label, required Color color, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Card(
         child: ListTile(
-          leading: icon != null ? Icon(icon, color: color) : null,
           title: Text(label),
           trailing: CircleAvatar(backgroundColor: color, radius: 14),
         ),
@@ -240,53 +225,354 @@ class EditNotificationsScreen extends StatelessWidget {
     );
   }
 
-  // 🔵 Helper: Color picker
-  void _mostrarColorPicker(BuildContext context, Function(Color) onColorSelected) {
-    Color tempColor = Colors.blue;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Seleccionar Color'),
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: tempColor,
-              onColorChanged: (color) {
-                tempColor = color;
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Cancelar'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            TextButton(
-              child: const Text('Aceptar'),
+  Widget _buildCategoriasSection(BuildContext context, EditNotificationsController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(child: _buildSectionLabel('Configurar Categorías')),
+            IconButton(
+              icon: const Icon(Icons.add),
               onPressed: () {
-                onColorSelected(tempColor);
-                Navigator.pop(context);
+                _mostrarAgregarCategoria(context, controller);
               },
             ),
           ],
-        );
-      },
+        ),
+        const SizedBox(height: 10),
+        Obx(() => Column(
+          children: controller.categorias.entries.map((e) {
+            final nombre = e.key;
+            final color = e.value['color'];
+            final icono = e.value['icon'];
+
+            return Card(
+              child: ListTile(
+                leading: GestureDetector(
+                  onTap: () {
+                    _mostrarSeleccionarIcono(context, controller, nombre);
+                  },
+                  child: Icon(icono, color: color),
+                ),
+                title: GestureDetector(
+                  onTap: () => _mostrarEditarNombreCategoria(context, controller, nombre),
+                  child: Text(nombre),
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.color_lens_outlined),
+                      onPressed: () {
+                        _mostrarColorPicker(context, (color) => controller.actualizarColorCategoria(nombre, color));
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      onPressed: () {
+                        _mostrarConfirmarEliminar(context, controller, nombre);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        )),
+      ],
     );
   }
 
-  IconData _iconoPorCategoria(String categoria) {
-    switch (categoria.toLowerCase()) {
-      case 'baño':
-        return Icons.shower;
-      case 'veterinario':
-        return Icons.local_hospital;
-      case 'medicina':
-        return Icons.medical_services;
-      case 'vacuna':
-        return Icons.vaccines;
-      default:
-        return Icons.pets;
-    }
+  Widget _buildGuardarButton() {
+    return Center(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.header,
+          foregroundColor: AppColors.primaryWhite,
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        onPressed: () {
+          Get.snackbar('¡Guardado!', 'Los cambios han sido aplicados.', backgroundColor: AppColors.primaryWhite, colorText: Colors.black);
+        },
+        child: const Text('Guardar Cambios'),
+      ),
+    );
   }
+void _mostrarColorPicker(BuildContext context, Function(Color) onColorSelected) {
+  Color tempColor = Colors.blue;
+
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text('Seleccionar Color'),
+      content: SingleChildScrollView(
+        child: ColorPicker(
+          pickerColor: tempColor,
+          onColorChanged: (color) {
+            tempColor = color;
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          child: const Text('Cancelar'),
+          onPressed: () => Navigator.pop(context),
+        ),
+        TextButton(
+          child: const Text('Aceptar'),
+          onPressed: () {
+            onColorSelected(tempColor);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+void _mostrarSeleccionarIcono(BuildContext context, EditNotificationsController controller, String categoria) {
+  IconData? selectedIcon;
+
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text('Seleccionar Icono'),
+      content: Wrap(
+        alignment: WrapAlignment.center,
+        children: [
+          _iconOption(Icons.shower, context, (icon) {
+            selectedIcon = icon;
+            if (categoria.isNotEmpty) {
+              controller.actualizarIconoCategoria(categoria, icon);
+              Navigator.pop(context);
+            }
+          }),
+          _iconOption(Icons.local_hospital, context, (icon) {
+            selectedIcon = icon;
+            if (categoria.isNotEmpty) {
+              controller.actualizarIconoCategoria(categoria, icon);
+              Navigator.pop(context);
+            }
+          }),
+          _iconOption(Icons.medical_services, context, (icon) {
+            selectedIcon = icon;
+            if (categoria.isNotEmpty) {
+              controller.actualizarIconoCategoria(categoria, icon);
+              Navigator.pop(context);
+            }
+          }),
+          _iconOption(Icons.vaccines, context, (icon) {
+            selectedIcon = icon;
+            if (categoria.isNotEmpty) {
+              controller.actualizarIconoCategoria(categoria, icon);
+              Navigator.pop(context);
+            }
+          }),
+          _iconOption(Icons.pets, context, (icon) {
+            selectedIcon = icon;
+            if (categoria.isNotEmpty) {
+              controller.actualizarIconoCategoria(categoria, icon);
+              Navigator.pop(context);
+            }
+          }),
+        ],
+      ),
+      actions: [
+        if (categoria.isEmpty)
+          TextButton(
+            child: const Text('Aceptar'),
+            onPressed: () {
+              if (selectedIcon != null) {
+                Navigator.pop(context, selectedIcon);
+              } else {
+                Get.snackbar('Error', 'Debes seleccionar un ícono');
+              }
+            },
+          ),
+      ],
+    ),
+  );
+}
+
+Widget _iconOption(IconData icon, BuildContext context, Function(IconData) onSelected) {
+  return IconButton(
+    icon: Icon(icon, size: 30),
+    onPressed: () => onSelected(icon),
+  );
+}
+
+void _mostrarAgregarCategoria(BuildContext context, EditNotificationsController controller) {
+  final TextEditingController nombreController = TextEditingController();
+  Color? selectedColor;
+  IconData? selectedIcon;
+
+  showDialog(
+    context: context,
+    builder: (_) => StatefulBuilder(
+      builder: (context, setState) => AlertDialog(
+        title: const Text('Agregar Categoría'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nombreController,
+              decoration: const InputDecoration(labelText: 'Nombre de la categoría'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () => _mostrarColorPicker(context, (color) {
+                selectedColor = color;
+                setState(() {});
+              }),
+              child: const Text('Seleccionar Color'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                final icono = await showDialog<IconData>(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text('Seleccionar Icono'),
+                    content: Wrap(
+                      children: [
+                        _iconOption(Icons.shower, context, (icon) => Navigator.pop(context, icon)),
+                        _iconOption(Icons.local_hospital, context, (icon) => Navigator.pop(context, icon)),
+                        _iconOption(Icons.medical_services, context, (icon) => Navigator.pop(context, icon)),
+                        _iconOption(Icons.vaccines, context, (icon) => Navigator.pop(context, icon)),
+                        _iconOption(Icons.pets, context, (icon) => Navigator.pop(context, icon)),
+                      ],
+                    ),
+                  ),
+                );
+                if (icono != null) {
+                  selectedIcon = icono;
+                  setState(() {});
+                }
+              },
+              child: const Text('Seleccionar Icono'),
+            ),
+            const SizedBox(height: 10),
+            if (selectedColor != null || selectedIcon != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (selectedColor != null)
+                    CircleAvatar(backgroundColor: selectedColor, radius: 14),
+                  const SizedBox(width: 10),
+                  if (selectedIcon != null)
+                    Icon(selectedIcon),
+                ],
+              ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Cancelar'),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: const Text('Agregar'),
+            onPressed: () {
+              final nombre = nombreController.text.trim();
+              if (nombre.isEmpty || selectedColor == null || selectedIcon == null) {
+                Get.snackbar('Error', 'Debes completar todos los campos.');
+              } else {
+                controller.agregarCategoria(nombre, selectedColor!, selectedIcon!);
+                Navigator.pop(context);
+              }
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+void _mostrarEditarNombreCategoria(BuildContext context, EditNotificationsController controller, String oldName) {
+  final TextEditingController nombreController = TextEditingController(text: oldName);
+
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text('Editar Nombre de Categoría'),
+      content: TextField(
+        controller: nombreController,
+        decoration: const InputDecoration(labelText: 'Nuevo nombre'),
+      ),
+      actions: [
+        TextButton(
+          child: const Text('Cancelar'),
+          onPressed: () => Navigator.pop(context),
+        ),
+        TextButton(
+          child: const Text('Guardar'),
+          onPressed: () {
+            final nuevoNombre = nombreController.text.trim();
+            if (nuevoNombre.isNotEmpty) {
+              controller.actualizarNombreCategoria(oldName, nuevoNombre);
+            }
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+void _mostrarConfirmarEliminar(BuildContext context, EditNotificationsController controller, String categoria) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text('Eliminar Categoría'),
+      content: Text('¿Estás seguro que deseas eliminar "$categoria"?'),
+      actions: [
+        TextButton(
+          child: const Text('Cancelar'),
+          onPressed: () => Navigator.pop(context),
+        ),
+        TextButton(
+          child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+          onPressed: () {
+            controller.eliminarCategoria(categoria);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+  );
+}
+Future<bool> _confirmarSalida(BuildContext context, EditNotificationsController controller) async {
+  final hayCambios = controller.anticipacion.value != '1 día antes' ||
+                     controller.frecuencia.value != 'Cada 6 horas' ||
+                     controller.recibirRecomendaciones.value != 'Solo en la app' ||
+                     controller.colorCalendario.value != const Color(0xFFFFFFFF) ||
+                     controller.colorDiasCargados.value != const Color(0xFFFFA726) ||
+                     controller.categorias.length != 4; // Cambio en número de categorías
+
+  if (hayCambios) {
+    final salir = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('¿Descartar cambios?'),
+        content: const Text('Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Salir'),
+          ),
+        ],
+      ),
+    );
+    return salir ?? false;
+  }
+
+  return true;
+}
 }
