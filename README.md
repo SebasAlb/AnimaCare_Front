@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # mapa
+=======
+# animacare_front
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
 
 A new Flutter project.
 

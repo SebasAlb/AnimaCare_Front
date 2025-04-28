@@ -6,7 +6,11 @@ plugins {
 }
 
 android {
+<<<<<<< HEAD
     namespace = "com.mapa.mapa"
+=======
+    namespace = "com.example.animacare_front"
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +25,11 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+<<<<<<< HEAD
         applicationId = "com.mapa.mapa"
+=======
+        applicationId = "com.example.animacare_front"
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

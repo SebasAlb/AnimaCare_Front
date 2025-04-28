@@ -4,10 +4,17 @@ project(runner LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
+<<<<<<< HEAD
 set(BINARY_NAME "mapa")
 # The unique GTK application identifier for this application. See:
 # https://wiki.gnome.org/HowDoI/ChooseApplicationID
 set(APPLICATION_ID "com.mapa.mapa")
+=======
+set(BINARY_NAME "animacare_front")
+# The unique GTK application identifier for this application. See:
+# https://wiki.gnome.org/HowDoI/ChooseApplicationID
+set(APPLICATION_ID "com.example.animacare_front")
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
