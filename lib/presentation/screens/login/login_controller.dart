@@ -36,7 +36,7 @@ class LoginController extends GetxController {
         isDismissible: true,
       );
       resetFields();
-      Get.offAllNamed('/recommendations');
+      Get.offAllNamed('/homeowner');
     });
   }
 
