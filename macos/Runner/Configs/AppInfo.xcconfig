@@ -6,6 +6,7 @@
 
 // The application's name. By default this is also the title of the Flutter window.
 <<<<<<< HEAD
+<<<<<<< HEAD
 PRODUCT_NAME = mapa
 
 // The application's bundle identifier
@@ -13,6 +14,15 @@ PRODUCT_BUNDLE_IDENTIFIER = com.mapa.mapa
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.mapa. All rights reserved.
+=======
+PRODUCT_NAME = historial
+
+// The application's bundle identifier
+PRODUCT_BUNDLE_IDENTIFIER = com.historial.historial
+
+// The copyright displayed in application information
+PRODUCT_COPYRIGHT = Copyright © 2025 com.historial. All rights reserved.
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
 PRODUCT_NAME = animacare_front
 

@@ -5,10 +5,17 @@ project(runner LANGUAGES CXX)
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 <<<<<<< HEAD
+<<<<<<< HEAD
 set(BINARY_NAME "mapa")
 # The unique GTK application identifier for this application. See:
 # https://wiki.gnome.org/HowDoI/ChooseApplicationID
 set(APPLICATION_ID "com.mapa.mapa")
+=======
+set(BINARY_NAME "historial")
+# The unique GTK application identifier for this application. See:
+# https://wiki.gnome.org/HowDoI/ChooseApplicationID
+set(APPLICATION_ID "com.historial.historial")
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
 set(BINARY_NAME "animacare_front")
 # The unique GTK application identifier for this application. See:

@@ -7,7 +7,11 @@ plugins {
 
 android {
 <<<<<<< HEAD
+<<<<<<< HEAD
     namespace = "com.mapa.mapa"
+=======
+    namespace = "com.historial.historial"
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
     namespace = "com.example.animacare_front"
 >>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
@@ -26,7 +30,11 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
 <<<<<<< HEAD
+<<<<<<< HEAD
         applicationId = "com.mapa.mapa"
+=======
+        applicationId = "com.historial.historial"
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
         applicationId = "com.example.animacare_front"
 >>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86

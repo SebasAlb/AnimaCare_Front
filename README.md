@@ -1,5 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # mapa
+=======
+# historial
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
 # animacare_front
 >>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86

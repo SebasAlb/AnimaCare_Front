@@ -9,7 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import 'package:mapa/main.dart';
+=======
+import 'package:historial/main.dart';
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
 import 'package:animacare_front/main.dart';
 >>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86

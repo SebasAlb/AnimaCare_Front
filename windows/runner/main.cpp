@@ -28,7 +28,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   Win32Window::Point origin(10, 10);
   Win32Window::Size size(1280, 720);
 <<<<<<< HEAD
+<<<<<<< HEAD
   if (!window.Create(L"mapa", origin, size)) {
+=======
+  if (!window.Create(L"historial", origin, size)) {
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
 =======
   if (!window.Create(L"animacare_front", origin, size)) {
 >>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
