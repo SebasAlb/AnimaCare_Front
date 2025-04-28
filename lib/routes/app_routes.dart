@@ -1,3 +1,4 @@
+import 'package:animacare_front/presentation/screens/add_edit_pets/add_edit_pets_screen.dart';
 import 'package:animacare_front/presentation/screens/home_owner/home_owner_screen.dart';
 import 'package:animacare_front/presentation/screens/owner_update/owner_update_screen.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class AppRoutes {
   static const String recommendations = '/recommendations';
   static const String homeOwner = '/homeowner';
   static const String ownerUpdate = '/ownerupdate';
-  // NUEVO: Agregamos tus rutas
+  static const String addEditPet = './addeditpet';
   static const String calendar = '/calendar'; // << NUEVO
   static const String editNotifications = '/edit-notifications'; // << NUEVO
   static const String addEvent = '/add-event'; // << NUEVA RUTA
@@ -35,7 +36,8 @@ class AppRoutes {
       case recommendations:
         return MaterialPageRoute(builder: (_) => const RecommendationsScreen());
 
-      // NUEVO: Agregamos tus rutas al switch
+      case addEditPet:
+        return MaterialPageRoute(builder: (_) => const AddEditPetScreen());
       case calendar: // << NUEVO
         return MaterialPageRoute(builder: (_) => const CalendarScreen()); // << NUEVO
       case editNotifications: // << NUEVO
