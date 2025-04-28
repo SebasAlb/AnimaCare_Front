@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
+    "name": "historial",
+    "short_name": "historial",
+=======
     "name": "animacare_front",
     "short_name": "animacare_front",
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
