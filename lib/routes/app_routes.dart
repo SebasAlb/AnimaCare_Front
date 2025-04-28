@@ -9,6 +9,8 @@ import 'package:animacare_front/presentation/screens/calendar/calendar_screen.da
 import 'package:animacare_front/presentation/screens/edit_notifications/edit_notifications_screen.dart';
 import 'package:animacare_front/presentation/screens/add_event/add_event_screen.dart';
 import 'package:animacare_front/presentation/screens/map/map_screen.dart';
+import 'package:animacare_front/presentation/screens/medical_history/medical_history_screen.dart';
+
 
 class AppRoutes {
   static const String login = '/login';
@@ -21,6 +23,7 @@ class AppRoutes {
   static const String editNotifications = '/edit-notifications';
   static const String addEvent = '/add-event';
   static const String map = '/map';
+  static const String medicalhistory = '/medicalhistory';
 
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -35,6 +38,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const SignupScreen());
       case recommendations:
         return MaterialPageRoute(builder: (_) => const RecommendationsScreen());
+      case medicalhistory:
+        return MaterialPageRoute(builder: (_) => const medicalhistoryScreen());
 
       case addEditPet:
         return MaterialPageRoute(builder: (_) => const AddEditPetScreen());
