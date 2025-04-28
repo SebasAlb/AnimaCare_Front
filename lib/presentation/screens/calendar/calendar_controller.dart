@@ -13,14 +13,20 @@ class CalendarController extends GetxController {
         'hora': '09:00 AM',
         'lugar': 'Clínica VetCare',
         'veterinario': 'Dr. Salazar',
-        'mascota': 'Firulais'
+        'mascota': 'Firulais',
+        'anticipacion': '1 día antes',
+        'frecuencia': 'Cada 6 horas',
+        'recibirRecordatorio': 'En app y celular',
       },
       {
         'nombre': 'Baño programado',
         'hora': '03:00 PM',
         'lugar': 'PetSpa Quito',
         'veterinario': 'No aplica',
-        'mascota': 'Firulais'
+        'mascota': 'Firulais',
+        'anticipacion': '1 día antes',
+        'frecuencia': 'Cada 6 horas',
+        'recibirRecordatorio': 'En app y celular',
       },
     ],
     DateTime.utc(2025, 4, 6): [
@@ -29,35 +35,50 @@ class CalendarController extends GetxController {
         'hora': '10:00 AM',
         'lugar': 'AnimalMed Center',
         'veterinario': 'Dra. González',
-        'mascota': 'Firulais'
+        'mascota': 'Firulais',
+        'anticipacion': '1 día antes',
+        'frecuencia': 'Cada 6 horas',
+        'recibirRecordatorio': 'En app y celular',
       },
       {
         'nombre': 'Entrega de medicina',
         'hora': '01:00 PM',
         'lugar': 'AnimalMed Center',
         'veterinario': 'Dra. González',
-        'mascota': 'Firulais'
+        'mascota': 'Firulais',
+        'anticipacion': '1 día antes',
+        'frecuencia': 'Cada 6 horas',
+        'recibirRecordatorio': 'En app y celular',
       },
       {
         'nombre': 'Desparasitación',
         'hora': '02:30 PM',
         'lugar': 'AnimalMed Center',
         'veterinario': 'Dra. González',
-        'mascota': 'Firulais'
+        'mascota': 'Firulais',
+        'anticipacion': '1 día antes',
+        'frecuencia': 'Cada 6 horas',
+        'recibirRecordatorio': 'En app y celular',
       },
       {
         'nombre': 'Revisión médica extra',
         'hora': '04:00 PM',
         'lugar': 'AnimalMed Center',
         'veterinario': 'Dra. González',
-        'mascota': 'Firulais'
+        'mascota': 'Firulais',
+        'anticipacion': '1 día antes',
+        'frecuencia': 'Cada 6 horas',
+        'recibirRecordatorio': 'En app y celular',
       },
       {
         'nombre': 'Aplicar tratamiento especial',
         'hora': '06:00 PM',
         'lugar': 'AnimalMed Center',
         'veterinario': 'Dra. González',
-        'mascota': 'Firulais'
+        'mascota': 'Firulais',
+        'anticipacion': '1 día antes',
+        'frecuencia': 'Cada 6 horas',
+        'recibirRecordatorio': 'En app y celular',
       },
     ],
     DateTime.utc(2025, 4, 10): [
@@ -66,14 +87,20 @@ class CalendarController extends GetxController {
         'hora': '11:00 AM',
         'lugar': 'PetSpa Quito',
         'veterinario': 'No aplica',
-        'mascota': 'Firulais'
+        'mascota': 'Firulais',
+        'anticipacion': '1 día antes',
+        'frecuencia': 'Cada 6 horas',
+        'recibirRecordatorio': 'En app y celular',
       },
       {
         'nombre': 'Revisión dental',
         'hora': '02:00 PM',
         'lugar': 'VetDent Quito',
         'veterinario': 'Dr. Paredes',
-        'mascota': 'Firulais'
+        'mascota': 'Firulais',
+        'anticipacion': '1 día antes',
+        'frecuencia': 'Cada 6 horas',
+        'recibirRecordatorio': 'En app y celular',
       },
     ],
     DateTime.utc(2025, 6, 15): [
@@ -82,14 +109,20 @@ class CalendarController extends GetxController {
         'hora': '10:30 AM',
         'lugar': 'Clínica AnimalCare',
         'veterinario': 'Dra. Martínez',
-        'mascota': 'Firulais'
+        'mascota': 'Firulais',
+        'anticipacion': '1 día antes',
+        'frecuencia': 'Cada 6 horas',
+        'recibirRecordatorio': 'En app y celular',
       },
       {
         'nombre': 'Vacuna contra parásitos',
         'hora': '12:00 PM',
         'lugar': 'Clínica AnimalCare',
         'veterinario': 'Dra. Martínez',
-        'mascota': 'Firulais'
+        'mascota': 'Firulais',
+        'anticipacion': '1 día',
+        'frecuencia': 'Cada 6 horas',
+        'recibirRecordatorio': 'No recibir',
       },
     ],
   }.obs;
@@ -128,5 +161,46 @@ class CalendarController extends GetxController {
     if (lower.contains('medicina') || lower.contains('medicamento')) return Icons.medical_services;
     if (lower.contains('vacuna')) return Icons.vaccines;
     return Icons.pets;
+  }
+
+  /// Agrega un nuevo evento con toda la información
+  void agregarEvento({
+    required DateTime fecha,
+    required String nombre,
+    required String hora,
+    required String lugar,
+    required String veterinario,
+    required String mascota,
+    required String anticipacion,
+    required String frecuencia,
+    required String recibirRecordatorio,
+  }) {
+    final nuevoEvento = {
+      'nombre': nombre,
+      'hora': hora,
+      'lugar': lugar,
+      'veterinario': veterinario,
+      'mascota': mascota,
+      'anticipacion': anticipacion,
+      'frecuencia': frecuencia,
+      'recibirRecordatorio': recibirRecordatorio,
+    };
+
+    if (eventos.containsKey(fecha)) {
+      eventos[fecha]!.add(nuevoEvento);
+    } else {
+      eventos[fecha] = [nuevoEvento];
+    }
+    eventos.refresh();
+  }
+
+  /// Elimina un evento (por índice en la lista del día)
+  void eliminarEvento(DateTime fecha, int index) {
+    if (eventos.containsKey(fecha)) {
+      eventos[fecha]!.removeAt(index);
+      if (eventos[fecha]!.isEmpty) {
+        eventos.remove(fecha); // si ya no hay eventos ese día, elimino el día
+      }
+    }
   }
 }
