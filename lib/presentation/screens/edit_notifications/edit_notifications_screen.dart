@@ -25,12 +25,12 @@ class EditNotificationsScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: ListView(
                     children: [
-                      _buildSectionLabel('Configurar Notificaciones'),
+                      _buildSectionLabel('Configurar Recomendaciones'),
                       _buildDropdowns(controller),
                       const SizedBox(height: 20),
                       _buildProbarNotificacionButton(),
                       const SizedBox(height: 30),
-                      _buildSectionLabel('Configurar Calendario'),
+                      _buildSectionLabel('Colores de Calendario'),
                       _buildCalendarioColors(context, controller),
                       const SizedBox(height: 30),
                       _buildCategoriasSection(context, controller),
@@ -62,7 +62,7 @@ class EditNotificationsScreen extends StatelessWidget {
             },
           ),
           const Text(
-            'Ajustes de Eventos',
+            'Ajustes de Calendario',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -96,29 +96,44 @@ class EditNotificationsScreen extends StatelessWidget {
   Widget _buildDropdowns(EditNotificationsController controller) {
     return Column(
       children: [
+        const SizedBox(height: 15),
+        // 🔥 Primero "¿Dónde recibir recordatorios?"
         Obx(() => _buildDropdown(
-          label: 'Anticipación del recordatorio',
-          value: controller.anticipacion.value,
-          items: ['1 día antes', '2 días antes', '3 días antes'],
-          onChanged: (v) => controller.anticipacion.value = v!,
-        )),
-        const SizedBox(height: 20),
-        Obx(() => _buildDropdown(
-          label: 'Frecuencia de recordatorio',
-          value: controller.frecuencia.value,
-          items: ['Cada 6 horas', 'Cada 12 horas', 'Cada 24 horas'],
-          onChanged: (v) => controller.frecuencia.value = v!,
-        )),
-        const SizedBox(height: 20),
-        Obx(() => _buildDropdown(
-          label: '¿Dónde recibir recordatorios?',
+          label: '¿Dónde recibir recomendaciones?',
           value: controller.recibirRecomendaciones.value,
           items: ['Solo en la app', 'Solo en el celular', 'En app y celular', 'No recibir'],
           onChanged: (v) => controller.recibirRecomendaciones.value = v!,
         )),
+        const SizedBox(height: 10),
+
+        // 🔥 Solo si NO elige "No recibir", mostramos los otros dos campos
+        Obx(() {
+          if (controller.recibirRecomendaciones.value == 'No recibir') {
+            return const SizedBox.shrink();
+          } else {
+            return Column(
+              children: [
+                _buildDropdown(
+                  label: 'Anticipación del recordatorio',
+                  value: controller.anticipacion.value,
+                  items: ['1 día antes', '2 días antes', '3 días antes'],
+                  onChanged: (v) => controller.anticipacion.value = v!,
+                ),
+                const SizedBox(height: 20),
+                _buildDropdown(
+                  label: 'Frecuencia de recordatorio',
+                  value: controller.frecuencia.value,
+                  items: ['Cada 6 horas', 'Cada 12 horas', 'Cada 24 horas'],
+                  onChanged: (v) => controller.frecuencia.value = v!,
+                ),
+              ],
+            );
+          }
+        }),
       ],
     );
   }
+
 
   Widget _buildDropdown({
     required String label,
@@ -180,6 +195,7 @@ class EditNotificationsScreen extends StatelessWidget {
   Widget _buildCalendarioColors(BuildContext context, EditNotificationsController controller) {
     return Column(
       children: [
+        const SizedBox(height: 15),
         _buildColorTile(
           context: context,
           label: 'Color de fondo del calendario',
@@ -188,7 +204,7 @@ class EditNotificationsScreen extends StatelessWidget {
             _mostrarColorPicker(context, (color) => controller.colorCalendario.value = color);
           },
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 15),
         Row(
           children: [
             Expanded(
