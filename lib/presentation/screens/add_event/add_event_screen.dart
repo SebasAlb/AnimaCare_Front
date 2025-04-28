@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'add_event_controller.dart';
+import 'package:animacare_front/presentation/theme/colors.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 
 class AddEventScreen extends StatelessWidget {
@@ -10,153 +11,151 @@ class AddEventScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(AddEventController());
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFA6DCEF),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header personalizado
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: const BoxDecoration(color: Color(0xFF75C9C8)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  const Text(
-                    'Agregar Evento',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(width: 48),
-                ],
-              ),
+    return WillPopScope(
+      onWillPop: () async {
+        final hayCambios = controller.nombreEvento.value.isNotEmpty ||
+                          controller.mascotaSeleccionada.value.isNotEmpty ||
+                          (controller.tipoLugar.value == 'manual' && controller.lugarEvento.value.isNotEmpty) ||
+                          (controller.tipoLugar.value == 'veterinaria' && controller.veterinariaSeleccionada.value.isNotEmpty) ||
+                          controller.fechaEvento.value != null ||
+                          controller.horaEvento.value != null ||
+                          controller.categoriaEvento.value.isNotEmpty;
+
+        if (hayCambios) {
+          final salir = await showDialog<bool>(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: const Text('¿Descartar cambios?'),
+              content: const Text('Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Cancelar'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('Salir'),
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ListView(
-                  children: [
-                    _buildInputField(
-                      label: 'Asignar un nombre al evento',
-                      onChanged: (value) => controller.nombreEvento.value = value,
-                    ),
-                    const SizedBox(height: 20),
-                    Obx(() => _buildDropdown(
-                      label: 'Seleccionar Mascota',
-                      value: controller.mascotaSeleccionada.value,
-                      items: controller.mascotas,
-                      onChanged: (nuevoValor) => controller.mascotaSeleccionada.value = nuevoValor!,
-                    )),
-                    const SizedBox(height: 20),
-                    // Selector Lugar o Veterinaria
-                    const Text('Lugar del Evento', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF3E0B53))),
-                    Obx(() => Row(
-                      children: [
-                        Expanded(
-                          child: RadioListTile<String>(
-                            title: const Text('Escribir Manualmente', style: TextStyle(color: Color(0xFF3E0B53))),
-                            value: 'manual',
-                            groupValue: controller.tipoLugar.value,
-                            onChanged: (valor) => controller.tipoLugar.value = valor!,
-                          ),
-                        ),
-                        Expanded(
-                          child: RadioListTile<String>(
-                            title: const Text('Veterinarias Guardadas', style: TextStyle(color: Color(0xFF3E0B53))),
-                            value: 'veterinaria',
-                            groupValue: controller.tipoLugar.value,
-                            onChanged: (valor) => controller.tipoLugar.value = valor!,
-                          ),
-                        ),
-                      ],
-                    )),
-                    const SizedBox(height: 10),
-
-                    // Dependiendo lo que seleccionen
-                    Obx(() {
-                      if (controller.tipoLugar.value == 'manual') {
-                        return _buildInputField(
-                          label: 'Escribir lugar',
-                          onChanged: (value) => controller.lugarEvento.value = value,
-                        );
-                      } else {
-                        return _buildDropdown(
-                          label: 'Seleccionar Veterinaria',
-                          value: controller.veterinariaSeleccionada.value.isEmpty
-                              ? controller.veterinarias.first
-                              : controller.veterinariaSeleccionada.value,
-                          items: controller.veterinarias,
-                          onChanged: (nuevoValor) => controller.veterinariaSeleccionada.value = nuevoValor!,
-                        );
-                      }
-                    }),
-                    const SizedBox(height: 20),
-
-                    // Fecha
-                    Obx(() => _buildDatePicker(
-                      context: context,
-                      label: 'Fecha',
-                      date: controller.fechaEvento.value,
-                      onDateSelected: (fecha) => controller.fechaEvento.value = fecha,
-                    )),
-                    const SizedBox(height: 20),
-
-                    // Hora
-                    Obx(() => _buildTimePicker(
-                      context: context,
-                      label: 'Hora',
-                      time: controller.horaEvento.value,
-                      onTimeSelected: (hora) => controller.horaEvento.value = hora,
-                    )),
-                    const SizedBox(height: 20),
-
-                    // Categoría
-                    Obx(() => _buildDropdownCategoria(
-                      label: 'Categoría',
-                      value: controller.categoriaEvento.value,
-                      items: controller.categorias,
-                      onChanged: (nuevoValor) => controller.categoriaEvento.value = nuevoValor!,
-                    )),
-
-                    const SizedBox(height: 40),
-
-                    // Botón Guardar
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () => _confirmarGuardado(context, controller),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF3E0B53),
-                          foregroundColor: Colors.white,
-                          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: const Text('Agregar Evento'),
+          );
+          return salir ?? false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              const SizedBox(height: 10),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: ListView(
+                    children: [
+                      _buildInputField(
+                        label: 'Asignar un nombre al evento',
+                        onChanged: (value) => controller.nombreEvento.value = value,
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 20),
+                      Obx(() => _buildDropdown(
+                        label: 'Seleccionar Mascota',
+                        value: controller.mascotaSeleccionada.value.isEmpty
+                            ? null
+                            : controller.mascotaSeleccionada.value,
+                        items: controller.mascotas,
+                        onChanged: (v) => controller.mascotaSeleccionada.value = v ?? '',
+                      )),
+                      const SizedBox(height: 20),
+                      _buildLugarSection(controller),
+                      const SizedBox(height: 20),
+                      _buildFechaHoraRow(context, controller),
+                      const SizedBox(height: 20),
+                      Obx(() => _buildDropdownCategoria(
+                        label: 'Categoría',
+                        value: controller.categoriaEvento.value.isEmpty
+                            ? null
+                            : controller.categoriaEvento.value,
+                        items: controller.categorias,
+                        onChanged: (v) => controller.categoriaEvento.value = v ?? '',
+                      )),
+                      const SizedBox(height: 40),
+                      _buildGuardarButton(context, controller),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // -------------------
-  // Widgets Secundarios
-  // -------------------
+  // Header
+  Widget _buildHeader(BuildContext context) {
+    final controller = Get.find<AddEventController>();
 
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: const BoxDecoration(color: AppColors.header),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () async {
+              final hayCambios = controller.nombreEvento.value.isNotEmpty ||
+                                controller.mascotaSeleccionada.value.isNotEmpty ||
+                                (controller.tipoLugar.value == 'manual' && controller.lugarEvento.value.isNotEmpty) ||
+                                (controller.tipoLugar.value == 'veterinaria' && controller.veterinariaSeleccionada.value.isNotEmpty) ||
+                                controller.fechaEvento.value != null ||
+                                controller.horaEvento.value != null ||
+                                controller.categoriaEvento.value.isNotEmpty;
+
+              if (hayCambios) {
+                final salir = await showDialog<bool>(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text('¿Descartar cambios?'),
+                    content: const Text('Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancelar'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Salir'),
+                      ),
+                    ],
+                  ),
+                );
+                if (salir == true) {
+                  Navigator.pop(context);
+                }
+              } else {
+                Navigator.pop(context);
+              }
+            },
+          ),
+          const Text(
+            'Agregar Evento',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 48),
+        ],
+      ),
+    );
+  }
+
+  // Input Field
   Widget _buildInputField({
     required String label,
     required ValueChanged<String> onChanged,
@@ -164,7 +163,7 @@ class AddEventScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF3E0B53))),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
         const SizedBox(height: 8),
         TextField(
           decoration: InputDecoration(
@@ -178,94 +177,17 @@ class AddEventScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDatePicker({
-    required BuildContext context,
-    required String label,
-    required DateTime date,
-    required ValueChanged<DateTime> onDateSelected,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF3E0B53))),
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () async {
-            final pickedDate = await showDatePicker(
-              context: context,
-              initialDate: date,
-              firstDate: DateTime(2020),
-              lastDate: DateTime(2030),
-            );
-            if (pickedDate != null) {
-              onDateSelected(pickedDate);
-            }
-          },
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '${date.day}/${date.month}/${date.year}',
-              style: const TextStyle(color: Colors.black),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTimePicker({
-    required BuildContext context,
-    required String label,
-    required TimeOfDay time,
-    required ValueChanged<TimeOfDay> onTimeSelected,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF3E0B53))),
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () async {
-            final pickedTime = await showTimePicker(
-              context: context,
-              initialTime: time,
-            );
-            if (pickedTime != null) {
-              onTimeSelected(pickedTime);
-            }
-          },
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '${time.hour}:${time.minute.toString().padLeft(2, '0')}',
-              style: const TextStyle(color: Colors.black),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
+  // Dropdown genérico
   Widget _buildDropdown({
     required String label,
-    required String value,
+    required String? value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF3E0B53))),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -275,6 +197,7 @@ class AddEventScreen extends StatelessWidget {
           ),
           child: DropdownButton<String>(
             value: value,
+            hint: const Text('Seleccionar'),
             isExpanded: true,
             underline: Container(),
             items: items.map((item) {
@@ -290,16 +213,132 @@ class AddEventScreen extends StatelessWidget {
     );
   }
 
+  // Lugar Section
+  Widget _buildLugarSection(AddEventController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Lugar del Evento', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
+        Obx(() => Row(
+          children: [
+            Expanded(
+              child: RadioListTile<String>(
+                title: const Text('Escribir Manualmente', style: TextStyle(color: Colors.white)),
+                value: 'manual',
+                groupValue: controller.tipoLugar.value,
+                onChanged: (v) => controller.tipoLugar.value = v!,
+              ),
+            ),
+            Expanded(
+              child: RadioListTile<String>(
+                title: const Text('Veterinarias Guardadas', style: TextStyle(color: Colors.white)),
+                value: 'veterinaria',
+                groupValue: controller.tipoLugar.value,
+                onChanged: (v) => controller.tipoLugar.value = v!,
+              ),
+            ),
+          ],
+        )),
+        const SizedBox(height: 10),
+        Obx(() {
+          if (controller.tipoLugar.value == 'manual') {
+            return _buildInputField(
+              label: 'Escribir lugar',
+              onChanged: (v) => controller.lugarEvento.value = v,
+            );
+          } else {
+            return _buildDropdown(
+              label: 'Seleccionar Veterinaria',
+              value: controller.veterinariaSeleccionada.value.isEmpty
+                  ? null
+                  : controller.veterinariaSeleccionada.value,
+              items: controller.veterinarias,
+              onChanged: (v) => controller.veterinariaSeleccionada.value = v ?? '',
+            );
+          }
+        }),
+      ],
+    );
+  }
+
+  // Fecha y Hora Row
+  Widget _buildFechaHoraRow(BuildContext context, AddEventController controller) {
+    return Row(
+      children: [
+        Expanded(child: _buildFecha(context, controller)),
+        const SizedBox(width: 10),
+        Expanded(child: _buildHora(context, controller)),
+      ],
+    );
+  }
+
+  Widget _buildFecha(BuildContext context, AddEventController controller) {
+    return Obx(() => GestureDetector(
+      onTap: () async {
+        final picked = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime.now(),
+          lastDate: DateTime(2030),
+        );
+        if (picked != null) {
+          controller.fechaEvento.value = picked;
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          controller.fechaEvento.value != null
+              ? '${controller.fechaEvento.value!.day}/${controller.fechaEvento.value!.month}/${controller.fechaEvento.value!.year}'
+              : 'Seleccionar Fecha',
+          style: const TextStyle(color: Colors.black),
+        ),
+      ),
+    ));
+  }
+
+  Widget _buildHora(BuildContext context, AddEventController controller) {
+    return Obx(() => GestureDetector(
+      onTap: () async {
+        final picked = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.now(),
+        );
+        if (picked != null) {
+          controller.horaEvento.value = picked;
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          controller.horaEvento.value != null
+              ? controller.horaEvento.value!.format(context)
+              : 'Seleccionar Hora',
+          style: const TextStyle(color: Colors.black),
+        ),
+      ),
+    ));
+  }
+
+  // Dropdown Categorías con Ícono y Color
   Widget _buildDropdownCategoria({
     required String label,
-    required String value,
+    required String? value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF3E0B53))),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -309,6 +348,7 @@ class AddEventScreen extends StatelessWidget {
           ),
           child: DropdownButton<String>(
             value: value,
+            hint: const Text('Seleccionar'),
             isExpanded: true,
             underline: Container(),
             items: items.map((item) {
@@ -337,22 +377,12 @@ class AddEventScreen extends StatelessWidget {
               }
               return DropdownMenuItem(
                 value: item,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(icon, color: Colors.white, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        item,
-                        style: const TextStyle(color: Color(0xFF3E0B53), fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
+                child: Row(
+                  children: [
+                    Icon(icon, color: color),
+                    const SizedBox(width: 8),
+                    Text(item),
+                  ],
                 ),
               );
             }).toList(),
@@ -363,29 +393,59 @@ class AddEventScreen extends StatelessWidget {
     );
   }
 
+  // Botón Guardar
+  Widget _buildGuardarButton(BuildContext context, AddEventController controller) {
+    return Center(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.header,
+          foregroundColor: AppColors.primaryWhite,
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        onPressed: () => _validarGuardar(context, controller),
+        child: const Text('Agregar Evento'),
+      ),
+    );
+  }
+
+  void _validarGuardar(BuildContext context, AddEventController controller) {
+    if (controller.nombreEvento.value.isEmpty ||
+        (controller.tipoLugar.value == 'manual' && controller.lugarEvento.value.isEmpty) ||
+        (controller.tipoLugar.value == 'veterinaria' && controller.veterinariaSeleccionada.value.isEmpty) ||
+        controller.fechaEvento.value == null ||
+        controller.horaEvento.value == null ||
+        controller.categoriaEvento.value.isEmpty) {
+      Get.snackbar('Error', 'Por favor completa todos los campos.', backgroundColor: Colors.white, colorText: Colors.black);
+    } else {
+      _confirmarGuardado(context, controller);
+    }
+  }
+
   void _confirmarGuardado(BuildContext context, AddEventController controller) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Confirmar'),
+        title: const Text('Confirmar Evento'),
         content: const Text('¿Deseas agregar este evento?'),
         actions: [
           TextButton(
-            child: const Text('Cancelar'),
             onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
           ),
           TextButton(
-            child: const Text('Agregar'),
             onPressed: () {
               Navigator.pop(context);
               Get.offAllNamed(AppRoutes.calendar);
               Get.snackbar(
-                'Evento "${controller.nombreEvento.value}"',
-                'Programado a las ${controller.horaEvento.value.format(context)}',
+                'Evento Agregado',
+                'El evento se programó exitosamente.',
                 backgroundColor: Colors.white,
                 colorText: Colors.black,
               );
             },
+            child: const Text('Agregar'),
           ),
         ],
       ),
