@@ -15,6 +15,11 @@ class AddEventController extends GetxController {
   final veterinarias = ['Veterinaria Paws', 'Centro AnimalCare', 'PetClinic Plus'].obs;
   final mascotas = ['Firulais', 'Mishi', 'Kira', 'Luna'].obs;
 
+  final anticipacion = '1 día antes'.obs;
+  final frecuencia = 'Cada 6 horas'.obs;
+  final recibirRecordatorio = 'Solo en la app'.obs;
+
+
   void resetForm() {
     nombreEvento.value = '';
     tipoLugar.value = 'manual';
@@ -24,5 +29,9 @@ class AddEventController extends GetxController {
     horaEvento.value = null;
     categoriaEvento.value = '';
     mascotaSeleccionada.value = '';
+    anticipacion.value = '1 día antes';
+    frecuencia.value = 'Cada 6 horas';
+    recibirRecordatorio.value = 'Solo en la app';
   }
+
 }
