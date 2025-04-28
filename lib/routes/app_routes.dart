@@ -5,6 +5,10 @@ import 'package:animacare_front/presentation/screens/login/login_screen.dart';
 import 'package:animacare_front/presentation/screens/signup/signup_screen.dart';
 import 'package:animacare_front/presentation/screens/recommendations/recommendations_screen.dart';
 
+// NUEVO: Importaciones de tus pantallas
+import 'package:animacare_front/presentation/screens/calendar/calendar_screen.dart'; // << NUEVO
+import 'package:animacare_front/presentation/screens/edit_notifications/edit_notifications_screen.dart'; // << NUEVO
+import 'package:animacare_front/presentation/screens/add_event/add_event_screen.dart'; // << NUEVO
 
 class AppRoutes {
   static const String login = '/login';
@@ -12,6 +16,10 @@ class AppRoutes {
   static const String recommendations = '/recommendations';
   static const String homeOwner = '/homeowner';
   static const String ownerUpdate = '/ownerupdate';
+  // NUEVO: Agregamos tus rutas
+  static const String calendar = '/calendar'; // << NUEVO
+  static const String editNotifications = '/edit-notifications'; // << NUEVO
+  static const String addEvent = '/add-event'; // << NUEVA RUTA
 
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -26,6 +34,15 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const SignupScreen());
       case recommendations:
         return MaterialPageRoute(builder: (_) => const RecommendationsScreen());
+
+      // NUEVO: Agregamos tus rutas al switch
+      case calendar: // << NUEVO
+        return MaterialPageRoute(builder: (_) => const CalendarScreen()); // << NUEVO
+      case editNotifications: // << NUEVO
+        return MaterialPageRoute(builder: (_) => const EditNotificationsScreen()); // << NUEVO
+      case addEvent:
+        return MaterialPageRoute(builder: (_) => const AddEventScreen());
+
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(
