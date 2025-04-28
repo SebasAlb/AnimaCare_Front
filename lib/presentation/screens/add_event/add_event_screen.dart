@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'add_event_controller.dart';
 import 'package:animacare_front/presentation/theme/colors.dart';
 import 'package:animacare_front/routes/app_routes.dart';
+import 'package:animacare_front/presentation/screens/calendar/calendar_controller.dart';
+
 
 class AddEventScreen extends StatelessWidget {
   const AddEventScreen({super.key});
@@ -82,6 +84,48 @@ class AddEventScreen extends StatelessWidget {
                         onChanged: (v) => controller.categoriaEvento.value = v ?? '',
                       )),
                       const SizedBox(height: 40),
+
+                      // Recibir Recordatorio en:
+                      Obx(() => _buildDropdown(
+                        label: 'Recibir Recordatorio en:',
+                        value: controller.recibirRecordatorio.value,
+                        items: ['Solo en la app', 'Solo en el celular', 'En app y celular', 'No recibir'],
+                        onChanged: (v) => controller.recibirRecordatorio.value = v ?? 'Solo en la app',
+                      )),
+
+                      const SizedBox(height: 20),
+
+                      // Si el usuario no pone "No recibir", mostramos la fila con Frecuencia y Anticipación
+                      Obx(() {
+                        if (controller.recibirRecordatorio.value == 'No recibir') {
+                          return const SizedBox.shrink(); // No mostrar nada
+                        } else {
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: _buildDropdown(
+                                  label: 'Frecuencia',
+                                  value: controller.frecuencia.value,
+                                  items: ['Cada 6 horas', 'Cada 12 horas', 'Cada 24 horas'],
+                                  onChanged: (v) => controller.frecuencia.value = v ?? 'Cada 6 horas',
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: _buildDropdown(
+                                  label: 'Anticipación',
+                                  value: controller.anticipacion.value,
+                                  items: ['1 día antes', '2 días antes', '3 días antes'],
+                                  onChanged: (v) => controller.anticipacion.value = v ?? '1 día antes',
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                      }),
+
+                      const SizedBox(height: 40),
+
                       _buildGuardarButton(context, controller),
                     ],
                   ),
@@ -302,31 +346,64 @@ class AddEventScreen extends StatelessWidget {
   }
 
   Widget _buildHora(BuildContext context, AddEventController controller) {
-    return Obx(() => GestureDetector(
-      onTap: () async {
-        final picked = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay.now(),
-        );
-        if (picked != null) {
+  final TextEditingController horaController = TextEditingController(
+    text: controller.horaEvento.value != null ? controller.horaEvento.value!.format(context) : '',
+  );
+
+  return Obx(() => GestureDetector(
+    onTap: () async {
+      final picked = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (picked != null) {
+        final ahora = TimeOfDay.now();
+        final hoy = DateTime.now();
+
+        final selectedDate = controller.fechaEvento.value ?? hoy;
+        final isToday = selectedDate.day == hoy.day &&
+                        selectedDate.month == hoy.month &&
+                        selectedDate.year == hoy.year;
+
+        // Validamos: si es hoy, no permitir horas pasadas
+        if (isToday &&
+            (picked.hour < ahora.hour || (picked.hour == ahora.hour && picked.minute < ahora.minute))) {
+          Get.snackbar(
+            'Hora no válida',
+            'No puedes seleccionar una hora pasada.',
+            backgroundColor: Colors.white,
+            colorText: Colors.black,
+          );
+        } else {
           controller.horaEvento.value = picked;
+          horaController.text = picked.format(context);
         }
-      },
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          controller.horaEvento.value != null
-              ? controller.horaEvento.value!.format(context)
-              : 'Seleccionar Hora',
-          style: const TextStyle(color: Colors.black),
-        ),
+      }
+    },
+    child: Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
       ),
-    ));
-  }
+      child: Row(
+        children: [
+          const Icon(Icons.access_time, color: Colors.black),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              controller.horaEvento.value != null
+                  ? controller.horaEvento.value!.format(context)
+                  : 'Seleccionar Hora',
+              style: const TextStyle(color: Colors.black),
+            ),
+          ),
+        ],
+      ),
+    ),
+  ));
+}
+
 
   // Dropdown Categorías con Ícono y Color
   Widget _buildDropdownCategoria({
@@ -437,7 +514,29 @@ class AddEventScreen extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              Get.offAllNamed(AppRoutes.calendar);
+
+              final calendarController = Get.find<CalendarController>(); // 🔥 Agregar evento al calendar
+
+              calendarController.agregarEvento(
+                fecha: controller.fechaEvento.value!,
+                nombre: controller.nombreEvento.value,
+                hora: controller.horaEvento.value!.format(context),
+                lugar: controller.tipoLugar.value == 'manual'
+                    ? controller.lugarEvento.value
+                    : controller.veterinariaSeleccionada.value,
+                veterinario: controller.tipoLugar.value == 'veterinaria'
+                    ? 'Veterinario asignado'
+                    : 'No aplica',
+                mascota: controller.mascotaSeleccionada.value,
+                anticipacion: controller.anticipacion.value,
+                frecuencia: controller.frecuencia.value,
+                recibirRecordatorio: controller.recibirRecordatorio.value,
+              );
+              
+              controller.resetForm(); // 🔥 Limpiar el formulario
+
+              Get.offAllNamed(AppRoutes.calendar); // 🔥 Redirigir a CalendarScreen
+
               Get.snackbar(
                 'Evento Agregado',
                 'El evento se programó exitosamente.',
@@ -451,4 +550,6 @@ class AddEventScreen extends StatelessWidget {
       ),
     );
   }
+
+
 }
