@@ -27,4 +27,8 @@ class HomeOwnerController extends GetxController {
     // Navegar a editar perfil
     Get.snackbar('Editar Perfil', 'Funcionalidad no implementada aún.');
   }
+
+  void goToDetailsPet(){
+    Get.offAllNamed('/recommendations');
+  }
 }

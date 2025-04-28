@@ -33,7 +33,6 @@ class HomeOwnerScreen extends StatelessWidget {
                 isOwnerMode: true,
               ),
               const SizedBox(height: 20),
-              // El resto del contenido con padding interno
               Expanded(
                 child: Obx(() => ListView.builder(
                   padding: const EdgeInsets.all(16),
@@ -42,7 +41,7 @@ class HomeOwnerScreen extends StatelessWidget {
                     final pet = controller.pets[index];
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: _buildPetCard(pet['name']!, pet['description']!),
+                      child: _buildPetCard(context, pet['name']!, pet['description']!),
                     );
                   },
                 )),
@@ -71,68 +70,54 @@ class HomeOwnerScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPetCard(String name, String description) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.deepPurple[900],
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            backgroundColor: Colors.white,
-            child: Icon(Icons.pets, color: Colors.grey),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    )),
-                const SizedBox(height: 4),
-                Text(description,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                    )),
-              ],
+  Widget _buildPetCard(BuildContext context, String name, String description) {
+    final controller = Get.put(HomeOwnerController());
+    return InkWell(
+      onTap: () {
+        controller.goToDetailsPet();
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.deepPurple[900],
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 5,
+              offset: Offset(0, 3),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.cyan[300],
-        border: Border(
-          top: BorderSide(color: Colors.grey.shade300),
+          ],
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: const [
-          Icon(Icons.home, size: 30),
-          Icon(Icons.pets, size: 30),
-          Icon(Icons.lock, size: 30),
-        ],
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            const CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(Icons.pets, color: Colors.grey),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      )),
+                  const SizedBox(height: 4),
+                  Text(description,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                      )),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
