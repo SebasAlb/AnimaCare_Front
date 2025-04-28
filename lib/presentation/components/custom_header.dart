@@ -5,12 +5,14 @@ class CustomHeader extends StatelessWidget {
   final String petName;
   final VoidCallback onEdit;
   final VoidCallback onViewRecord;
+  final bool isCalendarMode; // <<<<<< AÑADIDO PARA EL CALENDARIO
 
   const CustomHeader({
     super.key,
     required this.petName,
     required this.onEdit,
     required this.onViewRecord,
+    this.isCalendarMode = false, // <<<<<< Valor por defecto, en el calendario se tienen dos opciones diferentes
   });
 
   @override
@@ -40,11 +42,17 @@ class CustomHeader extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.edit, color: Colors.white),
+                icon: Icon(
+                  isCalendarMode ? Icons.add : Icons.edit, // <<<<<< Cambio dinámico
+                  color: Colors.white,
+                ),
                 onPressed: onEdit,
               ),
               IconButton(
-                icon: const Icon(Icons.vaccines, color: Colors.white),
+                icon: Icon(
+                  isCalendarMode ? Icons.settings : Icons.vaccines, // <<<<<< Cambio dinámico
+                  color: Colors.white,
+                ),
                 onPressed: onViewRecord,
               ),
             ],
