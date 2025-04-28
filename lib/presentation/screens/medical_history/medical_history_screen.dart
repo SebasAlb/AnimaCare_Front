@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../components/custom_header.dart';
-import '../../../components/custom_navbar.dart';
-import '../../../../routes/app_routes.dart';
-import 'medical_history_controller.dart'; // Creamos el controlador también
+import 'package:animacare_front/presentation/components/custom_header.dart';
+import 'package:animacare_front/presentation/components/custom_navbar.dart';
+import 'package:animacare_front/routes/app_routes.dart';
+import './medical_history_controller.dart'; // Creamos el controlador también
 
 class MedicalHistoryScreen extends StatelessWidget {
   const MedicalHistoryScreen({super.key});
@@ -21,10 +21,10 @@ class MedicalHistoryScreen extends StatelessWidget {
             CustomHeader(
               petName: controller.petName.value,
               onEdit: () {
-                Navigator.pushNamed(context, AppRoutes.editMedicalHistory);
+                //Navigator.pushNamed(context, AppRoutes.editMedicalHistory);
               },
               onViewRecord: () {
-                Navigator.pushNamed(context, AppRoutes.viewMedicalRecord);
+                //Navigator.pushNamed(context, AppRoutes.viewMedicalRecord);
               },
             ),
             const SizedBox(height: 20),
@@ -91,7 +91,7 @@ class MedicalHistoryScreen extends StatelessWidget {
               Navigator.pushNamed(context, AppRoutes.homeOwner);
               break;
             case 3:
-              Navigator.pushNamed(context, AppRoutes.profile);
+              Navigator.pushNamed(context, AppRoutes.homeOwner);
               break;
           }
         },
@@ -154,18 +154,4 @@ class MedicalHistoryScreen extends StatelessWidget {
   }
 }
 
-import 'package:get/get.dart';
 
-class MedicalHistoryController extends GetxController {
-  var petName = 'Nombre Mascota'.obs;
-  var vaccines = 'Vacuna de la rabia aplicada.'.obs;
-  var dewormings = 'Última desparasitación hace 3 meses.'.obs;
-
-  void updateVaccines(String newValue) {
-    vaccines.value = newValue;
-  }
-
-  void updateDewormings(String newValue) {
-    dewormings.value = newValue;
-  }
-}

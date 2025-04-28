@@ -39,7 +39,7 @@ class AppRoutes {
       case recommendations:
         return MaterialPageRoute(builder: (_) => const RecommendationsScreen());
       case medicalhistory:
-        return MaterialPageRoute(builder: (_) => const medicalhistoryScreen());
+        return MaterialPageRoute(builder: (_) => const MedicalHistoryScreen());
 
       case addEditPet:
         return MaterialPageRoute(builder: (_) => const AddEditPetScreen());

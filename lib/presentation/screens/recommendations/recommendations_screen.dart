@@ -21,10 +21,10 @@ class RecommendationsScreen extends StatelessWidget {
             CustomHeader(
               petName: 'Gato ...',
               onEdit: () {
-                Navigator.pushNamed(context, AppRoutes.addEvent);//cambiar
+                Navigator.pushNamed(context, AppRoutes.addEditPet);//cambiar
               },
               onViewRecord: () {
-                Navigator.pushNamed(context, AppRoutes.editNotifications);//cambiar
+                Navigator.pushNamed(context, AppRoutes.medicalhistory);//cambiar
               },
               isRecommendationMode: true,
             ),

@@ -1,5 +1,5 @@
+import 'package:animacare_front/presentation/screens/map/map_screen.dart';
 import 'package:flutter/material.dart';
-import 'presentation/screens/map_screen.dart';
 
 void main() {
   runApp(MyApp());

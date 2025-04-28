@@ -2,8 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../../services/places_service.dart';
-import '../components/custom_navbar.dart';
+import 'package:animacare_front/presentation/screens/map/places_service.dart';
+import 'package:animacare_front/presentation/components/custom_navbar.dart';
+import 'package:animacare_front/routes/app_routes.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -135,17 +136,23 @@ class _MapScreenState extends State<MapScreen> {
             left: 0,
             right: 0,
             child: CustomNavBar(
-              onCenterLocation: _getCurrentLocation,
-              onFavorites: () {
-                // Aquí pondrás tus favoritos
-              },
-              onPetDetails: () {
-                // Aquí pondrás los detalles
-              },
-              onRecommendations: () {
-                // Aquí pondrás recomendaciones
-              },
-            ),
+        currentIndex: 1,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushNamed(context, AppRoutes.calendar);
+              break;
+            case 1:
+              Navigator.pushNamed(context, AppRoutes.map);
+              break;
+            case 2:
+              Navigator.pushNamed(context, AppRoutes.homeOwner);
+              break;
+            case 3:
+              break;
+          }
+        },
+      ),
           ),
         ],
       ),
