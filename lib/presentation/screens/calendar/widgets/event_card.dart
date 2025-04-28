@@ -6,10 +6,10 @@ class EventCard extends StatelessWidget {
   final String hora;
   final String lugar;
   final String veterinario;
+  final String mascota;
   final Color color;
   final IconData icono;
   final VoidCallback onTap;
-  final String mascota;
 
   const EventCard({
     Key? key,
@@ -31,28 +31,67 @@ class EventCard extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Hora (20%)
             Expanded(
+              flex: 3,
               child: Text(
-                nombre,
-                style: const TextStyle(
-                  color: AppColors.primaryWhite, // <<< cambio aquí
+                hora,
+                style: TextStyle(
+                  color: AppColors.primaryWhite.withOpacity(0.8),
                   fontWeight: FontWeight.bold,
+                  fontSize: 14,
                 ),
                 overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              hora,
-              style: TextStyle(
-                color: AppColors.primaryWhite.withOpacity(0.7), // <<< cambio aquí usando withOpacity
-                fontSize: 14,
+
+            // Nombre del evento (40%)
+            Expanded(
+              flex: 4,
+              child: Align(
+                alignment: Alignment.center, // << Esto centra el texto dentro de su Expanded
+                child: Text(
+                  nombre,
+                  textAlign: TextAlign.center, // << Además, centra el texto dentro del espacio del Text
+                  style: const TextStyle(
+                    color: AppColors.primaryWhite,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  softWrap: false, // << No permite que baje a otra línea
+                ),
               ),
             ),
             const SizedBox(width: 8),
-            Icon(icono, color: AppColors.primaryWhite), // <<< cambio aquí
+
+
+
+            // Nombre de la mascota (40%) + icono
+            Expanded(
+              flex: 4,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Icon(Icons.pets, color: AppColors.primaryWhite, size: 18),
+                  const SizedBox(width: 4),
+                  Text(
+                    mascota,
+                    style: const TextStyle(
+                      color: AppColors.primaryWhite,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
