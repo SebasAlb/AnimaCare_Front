@@ -68,16 +68,6 @@ class AddEditPetScreen extends StatelessWidget {
             ),
           ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color(0xFF75C9C8),
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.black,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
-          ],
-        ),
       ),
     );
   }

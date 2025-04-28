@@ -119,16 +119,6 @@ class _UserOwnerScreenState extends State<UserOwnerScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF4DD0E2), // Fondo del BottomNavBar
-        selectedItemColor: const Color(0xFF301B92), // Color del ícono activo
-        unselectedItemColor: const Color(0xFF222222), // Color de íconos inactivos
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.pets), label: ''),
-        ],
-      ),
     );
   }
 }
