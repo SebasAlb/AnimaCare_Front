@@ -5,14 +5,19 @@ class CustomHeader extends StatelessWidget {
   final String petName;
   final VoidCallback onEdit;
   final VoidCallback onViewRecord;
-  final bool isCalendarMode; // <<<<<< AÑADIDO PARA EL CALENDARIO
+  final bool isCalendarMode;
+  final bool isOwnerMode;
+  final bool isRecommendationMode;
+
 
   const CustomHeader({
     super.key,
     required this.petName,
     required this.onEdit,
     required this.onViewRecord,
-    this.isCalendarMode = false, // <<<<<< Valor por defecto, en el calendario se tienen dos opciones diferentes
+    this.isCalendarMode = false,
+    this.isOwnerMode = false,
+    this.isRecommendationMode = false,
   });
 
   @override
@@ -43,22 +48,35 @@ class CustomHeader extends StatelessWidget {
             children: [
               IconButton(
                 icon: Icon(
-                  isCalendarMode ? Icons.add : Icons.edit, // <<<<<< Cambio dinámico
+                  _getEditIcon(),
                   color: Colors.white,
                 ),
                 onPressed: onEdit,
               ),
-              IconButton(
-                icon: Icon(
-                  isCalendarMode ? Icons.settings : Icons.vaccines, // <<<<<< Cambio dinámico
-                  color: Colors.white,
+              if (!isOwnerMode) // Solo si el ícono existe
+                IconButton(
+                  icon: Icon(
+                    _getSettingsIcon(),
+                    color: Colors.white
+                  ),
+                  onPressed: onViewRecord,
                 ),
-                onPressed: onViewRecord,
-              ),
             ],
           ),
         ],
       ),
     );
   }
+
+  IconData _getEditIcon() {
+    if (isRecommendationMode) return Icons.recommend;
+    if (isCalendarMode && isOwnerMode) return Icons.add;
+    return Icons.edit;
+  }
+
+  IconData _getSettingsIcon() {
+    return isCalendarMode ? Icons.settings : Icons.vaccines;
+  }
+
 }
+

@@ -1,3 +1,6 @@
+import 'package:animacare_front/presentation/components/custom_header.dart';
+import 'package:animacare_front/presentation/components/custom_navbar.dart';
+import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'home_owner_controller.dart';
@@ -9,50 +12,61 @@ class HomeOwnerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(HomeOwnerController());
-    final size = MediaQuery.of(context).size;
 
     return WillPopScope(
       onWillPop: () async {
         return await ExitDialog.show();
       },
       child: Scaffold(
-        backgroundColor: Colors.cyan[300],
-        appBar: AppBar(
-          backgroundColor: Colors.cyan[300],
-          elevation: 0,
-          leading: const Icon(Icons.person),
-          title: const Text('Usuario (Dueño)', style: TextStyle(fontWeight: FontWeight.bold)),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: controller.editProfile,
-            ),
-          ],
+        backgroundColor: const Color(0xFF4DD0E2),
+        body: SafeArea(
+          child: Column(
+            children: [
+              CustomHeader(
+                petName: 'Dueño ...',
+                onEdit: () {
+                  Navigator.pushNamed(context, AppRoutes.ownerUpdate);
+                },
+                onViewRecord: () {
+                  Navigator.pushNamed(context, AppRoutes.editNotifications);
+                },
+                isOwnerMode: true,
+              ),
+              const SizedBox(height: 20),
+              // El resto del contenido con padding interno
+              Expanded(
+                child: Obx(() => ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: controller.pets.length,
+                  itemBuilder: (context, index) {
+                    final pet = controller.pets[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _buildPetCard(pet['name']!, pet['description']!),
+                    );
+                  },
+                )),
+              ),
+            ],
+          ),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: Obx(() => ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: controller.pets.length,
-                    itemBuilder: (context, index) {
-                      final pet = controller.pets[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _buildPetCard(pet['name']!, pet['description']!),
-                      );
-                    },
-                  )),
-            ),
-            _buildBottomNavigationBar(),
-          ],
+        bottomNavigationBar: CustomNavBar(
+          currentIndex: 2,
+          onTap: (index) {
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, AppRoutes.calendar);
+                break;
+              case 1:
+                Navigator.pushNamed(context, AppRoutes.map);
+                break;
+              case 2:
+                break;
+              case 3:
+                break;
+            }
+          },
         ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.white,
-          onPressed: controller.addPet,
-          child: const Icon(Icons.add, color: Colors.black),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
   }

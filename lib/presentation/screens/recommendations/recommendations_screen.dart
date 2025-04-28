@@ -1,3 +1,4 @@
+import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'recommendations_controller.dart';
@@ -17,11 +18,16 @@ class RecommendationsScreen extends StatelessWidget {
         child: Column(
           children: [
             // Header fuera del padding para ocupar todo el ancho
-            Obx(() => CustomHeader(
-              petName: controller.petName.value,
-              onEdit: () {},
-              onViewRecord: () {},
-            )),
+            CustomHeader(
+              petName: 'Gato ...',
+              onEdit: () {
+                Navigator.pushNamed(context, AppRoutes.addEvent);//cambiar
+              },
+              onViewRecord: () {
+                Navigator.pushNamed(context, AppRoutes.editNotifications);//cambiar
+              },
+              isRecommendationMode: true,
+            ),
             const SizedBox(height: 20),
             // El resto del contenido con padding interno
             Expanded(
@@ -93,11 +99,22 @@ class RecommendationsScreen extends StatelessWidget {
           ],
         ),
       ),
-      // Barra de navegación inferior
       bottomNavigationBar: CustomNavBar(
         currentIndex: 2,
         onTap: (index) {
-          // Acción cuando cambies de tab
+          switch (index) {
+            case 0:
+              Navigator.pushNamed(context, AppRoutes.calendar);
+              break;
+            case 1:
+              Navigator.pushNamed(context, AppRoutes.map);
+              break;
+            case 2:
+              Navigator.pushNamed(context, AppRoutes.homeOwner);
+              break;
+            case 3:
+              break;
+          }
         },
       ),
     );
