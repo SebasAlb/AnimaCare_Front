@@ -5,11 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/screens/login/login_screen.dart';
 import 'package:animacare_front/presentation/screens/signup/signup_screen.dart';
 import 'package:animacare_front/presentation/screens/recommendations/recommendations_screen.dart';
-
-// NUEVO: Importaciones de tus pantallas
-import 'package:animacare_front/presentation/screens/calendar/calendar_screen.dart'; // << NUEVO
-import 'package:animacare_front/presentation/screens/edit_notifications/edit_notifications_screen.dart'; // << NUEVO
-import 'package:animacare_front/presentation/screens/add_event/add_event_screen.dart'; // << NUEVO
+import 'package:animacare_front/presentation/screens/calendar/calendar_screen.dart';
+import 'package:animacare_front/presentation/screens/edit_notifications/edit_notifications_screen.dart';
+import 'package:animacare_front/presentation/screens/add_event/add_event_screen.dart';
+import 'package:animacare_front/presentation/screens/map/map_screen.dart';
 
 class AppRoutes {
   static const String login = '/login';
@@ -18,9 +17,10 @@ class AppRoutes {
   static const String homeOwner = '/homeowner';
   static const String ownerUpdate = '/ownerupdate';
   static const String addEditPet = './addeditpet';
-  static const String calendar = '/calendar'; // << NUEVO
-  static const String editNotifications = '/edit-notifications'; // << NUEVO
-  static const String addEvent = '/add-event'; // << NUEVA RUTA
+  static const String calendar = '/calendar';
+  static const String editNotifications = '/edit-notifications';
+  static const String addEvent = '/add-event';
+  static const String map = '/map';
 
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -38,12 +38,16 @@ class AppRoutes {
 
       case addEditPet:
         return MaterialPageRoute(builder: (_) => const AddEditPetScreen());
-      case calendar: // << NUEVO
-        return MaterialPageRoute(builder: (_) => const CalendarScreen()); // << NUEVO
-      case editNotifications: // << NUEVO
-        return MaterialPageRoute(builder: (_) => const EditNotificationsScreen()); // << NUEVO
+      case calendar:
+        return MaterialPageRoute(builder: (_) => const CalendarScreen());
+      case editNotifications:
+        return MaterialPageRoute(builder: (_) => const EditNotificationsScreen());
       case addEvent:
         return MaterialPageRoute(builder: (_) => const AddEventScreen());
+
+
+      case map:
+        return MaterialPageRoute(builder: (_) => MapScreen());
 
       default:
         return MaterialPageRoute(

@@ -10,7 +10,7 @@ import 'widgets/table_calendar_format_button.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/routes/app_routes.dart';
-import 'package:animacare_front/presentation/theme/colors.dart'; // << Importación correcta
+import 'package:animacare_front/presentation/theme/colors.dart';
 
 class CalendarScreen extends StatelessWidget {
   const CalendarScreen({super.key});
