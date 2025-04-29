@@ -23,7 +23,7 @@ class HomeOwnerScreen extends StatelessWidget {
           child: Column(
             children: [
               CustomHeader(
-                petName: 'Dueño ...',
+                petName: 'Sebastian',
                 onEdit: () {
                   Navigator.pushNamed(context, AppRoutes.ownerUpdate);
                 },

@@ -1,3 +1,4 @@
+import 'package:animacare_front/presentation/theme/colors.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,23 +14,21 @@ class RecommendationsScreen extends StatelessWidget {
     final controller = Get.put(RecommendationsController());
 
     return Scaffold(
-      backgroundColor: const Color(0xFF4DD0E2),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
-            // Header fuera del padding para ocupar todo el ancho
             CustomHeader(
-              petName: 'Gato ...',
+              petName: 'Gato 1',
               onEdit: () {
-                Navigator.pushNamed(context, AppRoutes.addEditPet);//cambiar
+                Navigator.pushNamed(context, AppRoutes.addEditPet);
               },
               onViewRecord: () {
-                Navigator.pushNamed(context, AppRoutes.medicalhistory);//cambiar
+                Navigator.pushNamed(context, AppRoutes.medicalhistory);
               },
               isRecommendationMode: true,
             ),
             const SizedBox(height: 20),
-            // El resto del contenido con padding interno
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),

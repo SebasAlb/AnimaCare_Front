@@ -29,6 +29,6 @@ class HomeOwnerController extends GetxController {
   }
 
   void goToDetailsPet(){
-    Get.offAllNamed('/recommendations');
+    Get.toNamed('/recommendations');
   }
 }

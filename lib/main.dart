@@ -16,10 +16,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true, // Opcional, si quieres usar Material 3
+        useMaterial3: true,
       ),
-      initialRoute: AppRoutes.login, // Primera pantalla que se muestra
-      onGenerateRoute: AppRoutes.generateRoute, // Cómo se generan las rutas
+      initialRoute: AppRoutes.login,
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }

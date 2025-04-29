@@ -574,6 +574,7 @@ Future<bool> _confirmarSalida(BuildContext context, EditNotificationsController 
       builder: (_) => AlertDialog(
         title: const Text('¿Descartar cambios?'),
         content: const Text('Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
+        backgroundColor: Colors.white,
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),

@@ -1,115 +1,94 @@
-import 'package:animacare_front/presentation/screens/owner_update/owner_update_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'owner_update_controller.dart';
+import 'package:animacare_front/presentation/theme/colors.dart';
 
-class UserOwnerScreen extends StatefulWidget {
-  const UserOwnerScreen({Key? key}) : super(key: key);
-
-  @override
-  State<UserOwnerScreen> createState() => _UserOwnerScreenState();
-}
-
-class _UserOwnerScreenState extends State<UserOwnerScreen> {
-  final OwnerUpdateController _controller = OwnerUpdateController();
+class UserOwnerScreen extends StatelessWidget {
+  const UserOwnerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF4DD0E2), // Fondo de toda la pantalla
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF301B92), // Color del AppBar
-        title: const Text(
-          'Información Usuario (Dueño)',
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+    final controller = Get.put(OwnerUpdateController());
+
+    return WillPopScope(
+      onWillPop: () => _confirmarSalida(context, controller),
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
           child: Column(
             children: [
-              const CircleAvatar(
-                radius: 60,
-                backgroundColor: Colors.white,
-                child: Icon(Icons.person, size: 80, color: Color(0xFF222222)), // Ícono negro
-              ),
-              const SizedBox(height: 24),
-
-              TextField(
-                controller: _controller.nameController,
-                style: const TextStyle(color: Color(0xFF222222)), // Texto de input negro
-                decoration: InputDecoration(
-                  hintText: 'Nombre',
-                  hintStyle: const TextStyle(color: Colors.black45),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              TextField(
-                controller: _controller.lastNameController,
-                style: const TextStyle(color: Color(0xFF222222)),
-                decoration: InputDecoration(
-                  hintText: 'Apellido',
-                  hintStyle: const TextStyle(color: Colors.black45),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              TextField(
-                controller: _controller.emailController,
-                style: const TextStyle(color: Color(0xFF222222)),
-                decoration: InputDecoration(
-                  hintText: 'Correo Electrónico',
-                  hintStyle: const TextStyle(color: Colors.black45),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              GestureDetector(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Función de cambiar contraseña aún no implementada')),
-                  );
-                },
-                child: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Cambiar Contraseña',
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 32),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    _controller.saveUserInfo();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF301B92), // Botón de azul oscuro
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  ),
-                  child: const Text(
-                    'Guardar',
-                    style: TextStyle(color: Colors.white),
+              _buildHeader(context, controller),
+              const SizedBox(height: 10),
+              Expanded( // 🔥 Solución: usar Expanded para que lo que viene abajo pueda scrollar y no desborde
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircleAvatar(
+                        radius: 60,
+                        backgroundColor: AppColors.cardBackground,
+                        child: Icon(Icons.person, size: 80, color: AppColors.header),
+                      ),
+                      const SizedBox(height: 24),
+                      _buildTextField(
+                        label: 'Nombre',
+                        hint: 'Ingrese su nombre',
+                        controller: controller.nameController,
+                        icon: Icons.person,
+                      ),
+                      const SizedBox(height: 20),
+                      _buildTextField(
+                        label: 'Apellido',
+                        hint: 'Ingrese su apellido',
+                        controller: controller.lastNameController,
+                        icon: Icons.person_outline,
+                      ),
+                      const SizedBox(height: 20),
+                      _buildTextField(
+                        label: 'Correo Electrónico',
+                        hint: 'Ingrese su correo electrónico',
+                        controller: controller.emailController,
+                        icon: Icons.email,
+                        type: TextInputType.emailAddress,
+                      ),
+                      const SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Función de cambiar contraseña aún no implementada'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        },
+                        child: const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Cambiar Contraseña',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.header,
+                          minimumSize: const Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: controller.saveUserInfo,
+                        child: const Text(
+                          'Guardar',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -117,6 +96,102 @@ class _UserOwnerScreenState extends State<UserOwnerScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, OwnerUpdateController controller) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: const BoxDecoration(color: AppColors.header),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.primaryWhite),
+            onPressed: () async {
+              final salir = await _confirmarSalida(context, controller);
+              if (salir) Navigator.pop(context);
+            },
+          ),
+          const Text(
+            'Información de Usuario',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: AppColors.primaryWhite,
+            ),
+          ),
+          const SizedBox(width: 48),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _confirmarSalida(BuildContext context, OwnerUpdateController controller) async {
+    final hayCambios = controller.nameController.text.isNotEmpty ||
+        controller.lastNameController.text.isNotEmpty ||
+        controller.emailController.text.isNotEmpty;
+
+    if (hayCambios) {
+      final salir = await showDialog<bool>(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('¿Descartar cambios?'),
+          content: const Text('Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
+          backgroundColor: Colors.white,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Salir'),
+            ),
+          ],
+        ),
+      );
+      return salir ?? false;
+    }
+
+    return true;
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    required IconData icon,
+    TextInputType type = TextInputType.text,
+    bool obscureText = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          keyboardType: type,
+          obscureText: obscureText,
+          decoration: InputDecoration(
+            hintText: hint,
+            prefixIcon: Icon(icon, color: AppColors.header),
+            filled: true,
+            fillColor: const Color(0xFFF0F4F8),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

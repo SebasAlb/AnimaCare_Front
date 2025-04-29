@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/routes/app_routes.dart';
-import './medical_history_controller.dart'; // Creamos el controlador también
+import './medical_history_controller.dart';
 
 class MedicalHistoryScreen extends StatelessWidget {
   const MedicalHistoryScreen({super.key});
@@ -17,15 +17,15 @@ class MedicalHistoryScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header fuera del padding para ocupar todo el ancho
             CustomHeader(
-              petName: controller.petName.value,
+              petName: "Gato 1",
               onEdit: () {
-                //Navigator.pushNamed(context, AppRoutes.editMedicalHistory);
+                Navigator.pushNamed(context, AppRoutes.ownerUpdate);
               },
               onViewRecord: () {
-                //Navigator.pushNamed(context, AppRoutes.viewMedicalRecord);
+                Navigator.pushNamed(context, AppRoutes.ownerUpdate);
               },
+              isHistoryMode: true,
             ),
             const SizedBox(height: 20),
             Expanded(

@@ -6,48 +6,51 @@ import 'package:animacare_front/presentation/screens/map/places_service.dart';
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 
-class MapScreen extends StatefulWidget {
-  @override
-  _MapScreenState createState() => _MapScreenState();
-}
-
-class _MapScreenState extends State<MapScreen> {
-  Completer<GoogleMapController> _controller = Completer();
-  LatLng _initialPosition = LatLng(-0.1807, -78.4678); // Quito
-  TextEditingController _searchController = TextEditingController();
+class MapScreen extends StatelessWidget {
+  final Completer<GoogleMapController> _controller = Completer();
+  final TextEditingController _searchController = TextEditingController();
   final PlacesService _placesService = PlacesService();
-  List<Place> _places = [];
+  final ValueNotifier<LatLng> _initialPosition = ValueNotifier(LatLng(-0.1807, -78.4678));
+  final ValueNotifier<List<Place>> _places = ValueNotifier([]);
 
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentLocation();
+  MapScreen({super.key}) {
+    _initLocation();
   }
 
-  Future<void> _getCurrentLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    setState(() {
-      _initialPosition = LatLng(position.latitude, position.longitude);
-    });
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newLatLng(_initialPosition));
-  }
-
-  Future<void> _searchPlaces(String query) async {
+  void _initLocation() async {
     try {
-      final places = await _placesService.searchPlaces(query, _initialPosition);
-      setState(() {
-        _places = places;
-      });
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return;
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) return;
+      }
+
+      if (permission == LocationPermission.deniedForever) return;
+
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      _initialPosition.value = LatLng(position.latitude, position.longitude);
+
+      final controller = await _controller.future;
+      controller.animateCamera(CameraUpdate.newLatLng(_initialPosition.value));
     } catch (e) {
-      print('Error al buscar lugares: $e');
+      debugPrint('Ubicación no disponible: $e');
+    }
+  }
+
+  void _searchPlaces(String query) async {
+    try {
+      final places = await _placesService.searchPlaces(query, _initialPosition.value);
+      _places.value = places;
+    } catch (e) {
+      debugPrint('Error al buscar lugares: $e');
     }
   }
 
   Future<void> _moveToLocation(LatLng location) async {
-    final GoogleMapController controller = await _controller.future;
+    final controller = await _controller.future;
     await controller.animateCamera(CameraUpdate.newLatLngZoom(location, 16));
   }
 
@@ -57,17 +60,15 @@ class _MapScreenState extends State<MapScreen> {
       backgroundColor: Colors.grey[100],
       body: Stack(
         children: [
-          GoogleMap(
-            mapType: MapType.normal,
-            initialCameraPosition: CameraPosition(
-              target: _initialPosition,
-              zoom: 14.0,
+          ValueListenableBuilder(
+            valueListenable: _initialPosition,
+            builder: (context, value, _) => GoogleMap(
+              mapType: MapType.normal,
+              initialCameraPosition: CameraPosition(target: value, zoom: 14.0),
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              onMapCreated: (controller) => _controller.complete(controller),
             ),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            onMapCreated: (GoogleMapController controller) {
-              _controller.complete(controller);
-            },
           ),
           Positioned(
             top: 50,
@@ -80,11 +81,7 @@ class _MapScreenState extends State<MapScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset: Offset(0, 5),
-                      ),
+                      BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 5)),
                     ],
                   ),
                   child: TextField(
@@ -95,13 +92,14 @@ class _MapScreenState extends State<MapScreen> {
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     ),
-                    onSubmitted: (value) {
-                      _searchPlaces(value);
-                    },
+                    onSubmitted: _searchPlaces,
                   ),
                 ),
-                if (_places.isNotEmpty)
-                  Container(
+                ValueListenableBuilder<List<Place>>(
+                  valueListenable: _places,
+                  builder: (context, places, _) => places.isEmpty
+                      ? SizedBox.shrink()
+                      : Container(
                     margin: EdgeInsets.only(top: 10),
                     padding: EdgeInsets.all(10),
                     height: 200,
@@ -110,32 +108,29 @@ class _MapScreenState extends State<MapScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: ListView.builder(
-                      itemCount: _places.length,
+                      itemCount: places.length,
                       itemBuilder: (context, index) {
-                        final place = _places[index];
+                        final place = places[index];
                         return ListTile(
                           leading: Icon(Icons.location_on, color: Colors.red),
                           title: Text(place.name),
                           subtitle: Text(place.address),
                           onTap: () {
                             _moveToLocation(LatLng(place.lat, place.lng));
-                            setState(() {
-                              _places = [];
-                              _searchController.clear();
-                            });
+                            _places.value = [];
+                            _searchController.clear();
                           },
                         );
                       },
                     ),
                   ),
+                ),
               ],
             ),
           ),
-          Positioned(
-            bottom: 20,
-            left: 0,
-            right: 0,
-            child: CustomNavBar(
+        ],
+      ),
+      bottomNavigationBar: CustomNavBar( // <-- AQUÍ, FUERA DEL BODY
         currentIndex: 1,
         onTap: (index) {
           switch (index) {
@@ -143,7 +138,6 @@ class _MapScreenState extends State<MapScreen> {
               Navigator.pushNamed(context, AppRoutes.calendar);
               break;
             case 1:
-              Navigator.pushNamed(context, AppRoutes.map);
               break;
             case 2:
               Navigator.pushNamed(context, AppRoutes.homeOwner);
@@ -152,9 +146,6 @@ class _MapScreenState extends State<MapScreen> {
               break;
           }
         },
-      ),
-          ),
-        ],
       ),
     );
   }

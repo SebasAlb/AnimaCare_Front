@@ -50,10 +50,10 @@ class CustomNavBar extends StatelessWidget {
             icon: Icon(Icons.home, size: 28),
             label: 'Inicio',
           ),
-          BottomNavigationBarItem(
+          /*BottomNavigationBarItem(
             icon: Icon(Icons.person, size: 28),
             label: 'Perfil',
-          ),
+          ),*/
         ],
       ),
     );

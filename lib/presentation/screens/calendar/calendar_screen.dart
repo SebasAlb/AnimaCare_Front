@@ -35,8 +35,6 @@ class CalendarScreen extends StatelessWidget {
               isCalendarMode: true,
             ),
             const SizedBox(height: 10),
-
-            // Header personalizado (Mes y Año)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               color: AppColors.header,
@@ -268,6 +266,7 @@ class CalendarScreen extends StatelessWidget {
                       builder: (context) => AlertDialog(
                         title: const Text('¿Eliminar evento?'),
                         content: const Text('¿Seguro que deseas eliminar este evento?'),
+                        backgroundColor: Colors.white,
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context, false),

@@ -8,6 +8,7 @@ class CustomHeader extends StatelessWidget {
   final bool isCalendarMode;
   final bool isOwnerMode;
   final bool isRecommendationMode;
+  final bool isHistoryMode;
 
 
   const CustomHeader({
@@ -18,6 +19,7 @@ class CustomHeader extends StatelessWidget {
     this.isCalendarMode = false,
     this.isOwnerMode = false,
     this.isRecommendationMode = false,
+    this.isHistoryMode = false,
   });
 
   @override
@@ -46,14 +48,15 @@ class CustomHeader extends StatelessWidget {
           ),
           Row(
             children: [
-              IconButton(
-                icon: Icon(
-                  _getEditIcon(),
-                  color: Colors.white,
+              if (!isHistoryMode)
+                IconButton(
+                  icon: Icon(
+                    _getEditIcon(),
+                    color: Colors.white,
+                  ),
+                  onPressed: onEdit,
                 ),
-                onPressed: onEdit,
-              ),
-              if (!isOwnerMode) // Solo si el ícono existe
+              if (!isOwnerMode && !isHistoryMode) // Solo si el ícono existe
                 IconButton(
                   icon: Icon(
                     _getSettingsIcon(),
@@ -69,13 +72,14 @@ class CustomHeader extends StatelessWidget {
   }
 
   IconData _getEditIcon() {
-    if (isRecommendationMode) return Icons.recommend;
-    if (isCalendarMode && isOwnerMode) return Icons.add;
+    if (isRecommendationMode) return Icons.edit;
+    if (isCalendarMode) return Icons.add;
+    if(isOwnerMode) return Icons.edit;
     return Icons.edit;
   }
 
   IconData _getSettingsIcon() {
-    return isCalendarMode ? Icons.settings : Icons.vaccines;
+    return isCalendarMode ? Icons.settings : Icons.medical_information;
   }
 
 }
