@@ -16,10 +16,10 @@ class _UserOwnerScreenState extends State<UserOwnerScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF4DD0E2), // Fondo de toda la pantalla
       appBar: AppBar(
-        backgroundColor: const Color(0xFF4DD0E2), // Color del AppBar
+        backgroundColor: const Color(0xFF301B92), // Color del AppBar
         title: const Text(
           'Información Usuario (Dueño)',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
         elevation: 0,
@@ -105,9 +105,7 @@ class _UserOwnerScreenState extends State<UserOwnerScreen> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF301B92), // Botón de azul oscuro
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                   ),
                   child: const Text(
                     'Guardar',

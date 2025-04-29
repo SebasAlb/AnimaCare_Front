@@ -33,6 +33,31 @@ class HomeOwnerScreen extends StatelessWidget {
                 isOwnerMode: true,
               ),
               const SizedBox(height: 20),
+              
+              // Botón de agregar
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Acción al presionar el botón
+                      Navigator.pushNamed(context, AppRoutes.addEditPet);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(14),
+                      backgroundColor: Colors.white, // Fondo blanco
+                      foregroundColor: Colors.deepPurple, // Icono color morado
+                      elevation: 5,
+                    ),
+                    child: const Icon(Icons.add, size: 28),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
               Expanded(
                 child: Obx(() => ListView.builder(
                   padding: const EdgeInsets.all(16),
