@@ -165,7 +165,6 @@ class AddEventScreen extends StatelessWidget {
                   builder: (_) => AlertDialog(
                     title: const Text('¿Descartar cambios?'),
                     content: const Text('Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
-                    backgroundColor: Colors.white,
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
@@ -516,28 +515,31 @@ class AddEventScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
 
-              final calendarController = Get.find<CalendarController>(); // 🔥 Agregar evento al calendar
+              // Aquí eliminamos la llamada a `agregarEvento` para evitar que se ejecute
+              // final calendarController = Get.find<CalendarController>();
+              // calendarController.agregarEvento(
+              //   fecha: controller.fechaEvento.value!,
+              //   nombre: controller.nombreEvento.value,
+              //   hora: controller.horaEvento.value!.format(context),
+              //   lugar: controller.tipoLugar.value == 'manual'
+              //       ? controller.lugarEvento.value
+              //       : controller.veterinariaSeleccionada.value,
+              //   veterinario: controller.tipoLugar.value == 'veterinaria'
+              //       ? 'Veterinario asignado'
+              //       : 'No aplica',
+              //   mascota: controller.mascotaSeleccionada.value,
+              //   anticipacion: controller.anticipacion.value,
+              //   frecuencia: controller.frecuencia.value,
+              //   recibirRecordatorio: controller.recibirRecordatorio.value,
+              // );
 
-              calendarController.agregarEvento(
-                fecha: controller.fechaEvento.value!,
-                nombre: controller.nombreEvento.value,
-                hora: controller.horaEvento.value!.format(context),
-                lugar: controller.tipoLugar.value == 'manual'
-                    ? controller.lugarEvento.value
-                    : controller.veterinariaSeleccionada.value,
-                veterinario: controller.tipoLugar.value == 'veterinaria'
-                    ? 'Veterinario asignado'
-                    : 'No aplica',
-                mascota: controller.mascotaSeleccionada.value,
-                anticipacion: controller.anticipacion.value,
-                frecuencia: controller.frecuencia.value,
-                recibirRecordatorio: controller.recibirRecordatorio.value,
-              );
-              
-              controller.resetForm(); // 🔥 Limpiar el formulario
+              // Limpiar el formulario
+              controller.resetForm(); 
 
-              Get.offAllNamed(AppRoutes.calendar); // 🔥 Redirigir a CalendarScreen
+              // Redirigir a CalendarScreen
+              Get.offAllNamed(AppRoutes.calendar);
 
+              // Solo mostrar el mensaje de que se guardó correctamente
               Get.snackbar(
                 'Evento Agregado',
                 'El evento se programó exitosamente.',
@@ -550,5 +552,5 @@ class AddEventScreen extends StatelessWidget {
         ],
       ),
     );
-  }
+}
 }
