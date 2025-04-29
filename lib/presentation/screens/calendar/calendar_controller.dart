@@ -6,6 +6,9 @@ class CalendarController extends GetxController {
   final focusedDay = DateTime.now().obs;
   final calendarFormat = CalendarFormat.month.obs;
 
+  final modoEventos = false.obs; //  Modo Eventos o Modo Calendario
+  final searchQuery = ''.obs;  //  Texto para buscar eventos
+
   final eventos = <DateTime, List<Map<String, String>>>{
     DateTime.utc(2025, 4, 5): [
       {
@@ -79,50 +82,6 @@ class CalendarController extends GetxController {
         'anticipacion': '1 día antes',
         'frecuencia': 'Cada 6 horas',
         'recibirRecordatorio': 'En app y celular',
-      },
-    ],
-    DateTime.utc(2025, 4, 10): [
-      {
-        'nombre': 'Baño mensual',
-        'hora': '11:00 AM',
-        'lugar': 'PetSpa Quito',
-        'veterinario': 'No aplica',
-        'mascota': 'Firulais',
-        'anticipacion': '1 día antes',
-        'frecuencia': 'Cada 6 horas',
-        'recibirRecordatorio': 'En app y celular',
-      },
-      {
-        'nombre': 'Revisión dental',
-        'hora': '02:00 PM',
-        'lugar': 'VetDent Quito',
-        'veterinario': 'Dr. Paredes',
-        'mascota': 'Firulais',
-        'anticipacion': '1 día antes',
-        'frecuencia': 'Cada 6 horas',
-        'recibirRecordatorio': 'En app y celular',
-      },
-    ],
-    DateTime.utc(2025, 6, 15): [
-      {
-        'nombre': 'Administrar medicamento',
-        'hora': '10:30 AM',
-        'lugar': 'Clínica AnimalCare',
-        'veterinario': 'Dra. Martínez',
-        'mascota': 'Firulais',
-        'anticipacion': '1 día antes',
-        'frecuencia': 'Cada 6 horas',
-        'recibirRecordatorio': 'En app y celular',
-      },
-      {
-        'nombre': 'Vacuna contra parásitos',
-        'hora': '12:00 PM',
-        'lugar': 'Clínica AnimalCare',
-        'veterinario': 'Dra. Martínez',
-        'mascota': 'Firulais',
-        'anticipacion': '1 día',
-        'frecuencia': 'Cada 6 horas',
-        'recibirRecordatorio': 'No recibir',
       },
     ],
   }.obs;
@@ -203,4 +162,51 @@ class CalendarController extends GetxController {
       }
     }
   }
+
+  // 🔥 FUNCIONES NUEVAS 🔥
+
+  void toggleModoEventos() {
+    modoEventos.value = !modoEventos.value;
+
+    // Si entramos en modo eventos, aseguramos que el formato sea 2 semanas
+    if (modoEventos.value) {
+      calendarFormat.value = CalendarFormat.twoWeeks;  // Cambiar a 2 semanas
+    }
+
+    // El formato no cambia al salir del modo eventos, se mantiene en 2 semanas
+  }
+
+
+
+  void filtrarEventos(String query) {
+    searchQuery.value = query;
+  }
+
+  List<Map<String, dynamic>> get eventosFiltrados {
+    List<Map<String, dynamic>> resultados = [];
+
+    eventos.forEach((fecha, listaEventos) {
+      for (var evento in listaEventos) {
+        final nombre = evento['nombre']?.toLowerCase() ?? '';
+        final veterinario = evento['veterinario']?.toLowerCase() ?? '';
+        final mascota = evento['mascota']?.toLowerCase() ?? '';
+
+        if (searchQuery.value.isEmpty ||
+            nombre.contains(searchQuery.value.toLowerCase()) ||
+            veterinario.contains(searchQuery.value.toLowerCase()) ||
+            mascota.contains(searchQuery.value.toLowerCase())) {
+          resultados.add({
+            'fecha': fecha,
+            'evento': evento,
+          });
+        }
+      }
+    });
+
+    // Ordenar por fecha
+    resultados.sort((a, b) => a['fecha'].compareTo(b['fecha']));
+
+    return resultados;
+  }
+
 }
