@@ -35,106 +35,166 @@ class CalendarScreen extends StatelessWidget {
               isCalendarMode: true,
             ),
             const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              color: AppColors.header,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => _openMonthPicker(context, controller),
-                        child: Obx(() => Text(
-                              _monthName(controller.focusedDay.value.month),
-                              style: const TextStyle(
-                                color: AppColors.primaryWhite,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )),
-                      ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () => _openYearPicker(context, controller),
-                        child: Obx(() => Text(
-                              '${controller.focusedDay.value.year}',
-                              style: const TextStyle(
-                                color: AppColors.primaryWhite,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )),
-                      ),
-                    ],
-                  ),
-                  TableCalendarFormatButton(controller: controller),
-                ],
-              ),
-            ),
+
+            
+
+
+            // Header personalizado (Mes y Año)
+            Obx(() {
+              if (controller.modoEventos.value) {
+                return const SizedBox(); // Ocultamos el header cuando está en modo eventos
+              }
+
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                color: AppColors.header,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => _openMonthPicker(context, controller),
+                          child: Text(
+                            _monthName(controller.focusedDay.value.month),
+                            style: const TextStyle(
+                              color: AppColors.primaryWhite,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () => _openYearPicker(context, controller),
+                          child: Text(
+                            '${controller.focusedDay.value.year}',
+                            style: const TextStyle(
+                              color: AppColors.primaryWhite,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    TableCalendarFormatButton(controller: controller),
+                  ],
+                ),
+              );
+            }),
+
 
             // Calendario
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.cardBackground,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Obx(() => TableCalendar(
-                      firstDay: DateTime.utc(2020, 1, 1),
-                      lastDay: DateTime.utc(2030, 12, 31),
-                      focusedDay: controller.focusedDay.value,
-                      calendarFormat: controller.calendarFormat.value,
-                      onFormatChanged: (format) {
-                        controller.calendarFormat.value = format;
-                      },
-                      onDaySelected: (selectedDay, focusedDay) {
-                        controller.focusedDay.value = selectedDay;
-                      },
-                      onPageChanged: (focusedDay) {
-                        controller.focusedDay.value = focusedDay;
-                      },
-                      selectedDayPredicate: (day) => isSameDay(controller.focusedDay.value, day),
-                      eventLoader: (day) => controller.obtenerEventosPorDia(day),
-                      headerVisible: false,
-                      calendarBuilders: CalendarBuilders(
-                        defaultBuilder: (context, day, focusedDay) => CalendarDayItem(
-                          day: day,
-                          isSelected: false,
-                          isOverloaded: controller.isDayLoaded(day),
-                        ),
-                        selectedBuilder: (context, day, focusedDay) => CalendarDayItem(
-                          day: day,
-                          isSelected: true,
-                          isOverloaded: controller.isDayLoaded(day),
-                        ),
-                        markerBuilder: (context, date, events) {
-                          final eventList = events.cast<Map<String, String>>();
-                          return EventMarkers(eventos: eventList);
-                        },
+            Obx(() {
+              if (controller.modoEventos.value) {
+                return const SizedBox(); // Ocultamos el calendario en modo eventos
+              }
+
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBackground,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: TableCalendar(
+                    firstDay: DateTime.utc(2020, 1, 1),
+                    lastDay: DateTime.utc(2030, 12, 31),
+                    focusedDay: controller.focusedDay.value,
+                    calendarFormat: controller.calendarFormat.value,
+                    onFormatChanged: (format) {
+                      controller.calendarFormat.value = format;
+                    },
+                    onDaySelected: (selectedDay, focusedDay) {
+                      controller.focusedDay.value = selectedDay;
+                    },
+                    onPageChanged: (focusedDay) {
+                      controller.focusedDay.value = focusedDay;
+                    },
+                    selectedDayPredicate: (day) => isSameDay(controller.focusedDay.value, day),
+                    eventLoader: (day) => controller.obtenerEventosPorDia(day),
+                    headerVisible: false,
+
+                    calendarBuilders: CalendarBuilders(
+                      defaultBuilder: (context, day, focusedDay) => CalendarDayItem(
+                        day: day,
+                        isSelected: false,
+                        isOverloaded: controller.isDayLoaded(day),
                       ),
-                    )),
-              ),
-            ),
+                      selectedBuilder: (context, day, focusedDay) => CalendarDayItem(
+                        day: day,
+                        isSelected: true,
+                        isOverloaded: controller.isDayLoaded(day),
+                      ),
+                      markerBuilder: (context, date, events) {
+                        final eventList = events.cast<Map<String, String>>();
+                        return EventMarkers(eventos: eventList);
+                      },
+                    ),
+                    
+                  ),
+                ),
+              );
+            }),
+
 
             // Label del día seleccionado
             Obx(() {
-              final eventos = controller.obtenerEventosPorDia(controller.focusedDay.value);
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: AppColors.labelBackground,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '${eventos.length} eventos para ${controller.focusedDay.value.day}/${controller.focusedDay.value.month}/${controller.focusedDay.value.year}',
-                  style: const TextStyle(
-                    color: AppColors.primaryWhite,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+              final eventosEnFecha = controller.obtenerEventosPorDia(controller.focusedDay.value).length;
+
+              return GestureDetector(
+                onTap: controller.toggleModoEventos,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: AppColors.labelBackground,
+                    borderRadius: BorderRadius.circular(8),
                   ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        controller.modoEventos.value
+                            ? 'Eventos'
+                            : '$eventosEnFecha ${eventosEnFecha == 1 ? 'evento' : 'eventos'} en ${controller.focusedDay.value.day}/${controller.focusedDay.value.month}/${controller.focusedDay.value.year}', // Condicional para singular/plural
+                        style: const TextStyle(
+                          color: AppColors.primaryWhite,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Icon(
+                        controller.modoEventos.value ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+                        color: Colors.white,
+                      )
+                    ],
+                  ),
+                ),
+              );
+            }),
+
+            
+            Obx(() {
+              if (!controller.modoEventos.value) {
+                return const SizedBox(); // 🔥 Si no estamos en modo eventos, NO mostrar el buscador
+              }
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Buscar eventos...',
+                    filled: true,
+                    fillColor: AppColors.primaryWhite,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: const Icon(Icons.search),
+                  ),
+                  onChanged: (value) {
+                    controller.searchQuery.value = value; // 🔥 Actualiza el valor del filtro
+                  },
                 ),
               );
             }),
@@ -144,48 +204,139 @@ class CalendarScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Obx(() {
-                  final eventos = controller.obtenerEventosPorDia(controller.focusedDay.value);
+                  if (controller.modoEventos.value) {
+                    final eventosFiltrados = controller.eventosFiltrados;
 
-                  if (eventos.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'No hay recordatorios para este día',
-                        style: TextStyle(color: AppColors.primaryWhite, fontSize: 16),
-                      ),
+                    if (eventosFiltrados.isEmpty) {
+                      return const Center(
+                        child: Text('No hay eventos que coincidan.', style: TextStyle(color: AppColors.primaryWhite)),
+                      );
+                    }
+
+                    DateTime? ultimaFechaMostrada; // 🔥 Declarar fuera del ListView para controlarlo en todo el recorrido
+
+                    return ListView.builder(
+                      itemCount: eventosFiltrados.length,
+                      itemBuilder: (context, index) {
+                        final item = eventosFiltrados[index];
+                        final evento = item['evento'] as Map<String, String>;
+                        final fecha = item['fecha'] as DateTime;
+
+                        // 🔥 Verificar si hay que mostrar la fecha o no
+                        bool mostrarFecha = false;
+                        if (ultimaFechaMostrada == null || !isSameDay(ultimaFechaMostrada, fecha)) {
+                          mostrarFecha = true;
+                          ultimaFechaMostrada = fecha;
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (mostrarFecha)
+                              GestureDetector(
+                                onTap: () {
+                                  controller.focusedDay.value = fecha;
+                                  controller.toggleModoEventos(); // 🔥 Volver a modo calendario
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(vertical: 8.0),
+                                  padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.labelBackground,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    '${fecha.day}/${fecha.month}/${fecha.year}',
+                                    style: const TextStyle(
+                                      color: AppColors.primaryWhite,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                            EventCard(
+                              nombre: evento['nombre'] ?? '',
+                              hora: evento['hora'] ?? '',
+                              lugar: evento['lugar'] ?? '',
+                              veterinario: evento['veterinario'] ?? '',
+                              mascota: evento['mascota'] ?? '',
+                              color: controller.obtenerColorEvento(evento['nombre'] ?? ''),
+                              icono: controller.obtenerIconoEvento(evento['nombre'] ?? ''),
+                              onTap: () {
+                                _showEventDetails(
+                                  context,
+                                  evento['nombre'] ?? '',
+                                  evento['hora'] ?? '',
+                                  evento['lugar'] ?? '',
+                                  evento['veterinario'] ?? '',
+                                  evento['mascota'] ?? '',
+                                  evento['anticipacion'] ?? '',
+                                  evento['frecuencia'] ?? '',
+                                  evento['recibirRecordatorio'] ?? '',
+                                  0, // No importa el índice en modo búsqueda
+                                  controller,
+                                  fechaReal: fecha,
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        );
+                      },
+                    );
+
+
+
+                  } else {
+                    // 🔥 Código original de eventos por día (cuando modoEventos = false)
+                    final eventos = controller.obtenerEventosPorDia(controller.focusedDay.value);
+
+                    if (eventos.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'No hay recordatorios para este día',
+                          style: TextStyle(color: AppColors.primaryWhite, fontSize: 16),
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      itemCount: eventos.length,
+                      itemBuilder: (context, index) {
+                        final evento = eventos[index];
+                        return EventCard(
+                          nombre: evento['nombre'] ?? '',
+                          hora: evento['hora'] ?? '',
+                          lugar: evento['lugar'] ?? '',
+                          veterinario: evento['veterinario'] ?? '',
+                          mascota: evento['mascota'] ?? '',
+                          color: controller.obtenerColorEvento(evento['nombre'] ?? ''),
+                          icono: controller.obtenerIconoEvento(evento['nombre'] ?? ''),
+                          onTap: () {
+                            _showEventDetails(
+                              context,
+                              evento['nombre'] ?? '',
+                              evento['hora'] ?? '',
+                              evento['lugar'] ?? '',
+                              evento['veterinario'] ?? '',
+                              evento['mascota'] ?? '',
+                              evento['anticipacion'] ?? '',
+                              evento['frecuencia'] ?? '',
+                              evento['recibirRecordatorio'] ?? '',
+                              index,
+                              controller,
+                            );
+                          },
+                        );
+                      },
                     );
                   }
-
-                  return ListView.builder(
-                    itemCount: eventos.length,
-                    itemBuilder: (context, index) {
-                      final evento = eventos[index];
-                      final nombre = evento['nombre'] ?? '';
-                      final hora = evento['hora'] ?? '';
-                      final lugar = evento['lugar'] ?? '';
-                      final veterinario = evento['veterinario'] ?? '';
-                      final mascota = evento['mascota'] ?? '';
-                      final anticipacion = evento['anticipacion'] ?? '';
-                      final frecuencia = evento['frecuencia'] ?? '';
-                      final recibirRecordatorio = evento['recibirRecordatorio'] ?? 'No Recibir';
-
-
-                      return EventCard(
-                        nombre: nombre,
-                        hora: hora,
-                        lugar: lugar,
-                        veterinario: veterinario,
-                        mascota: mascota,
-                        color: controller.obtenerColorEvento(nombre),
-                        icono: controller.obtenerIconoEvento(nombre),
-                        onTap: () {
-                          _showEventDetails(context, nombre, hora, lugar, veterinario, mascota, anticipacion, frecuencia, recibirRecordatorio, index, controller);
-                        },
-                      );
-                    },
-                  );
                 }),
               ),
             ),
+
+
           ],
         ),
       ),
@@ -196,10 +347,9 @@ class CalendarScreen extends StatelessWidget {
             case 0:
               break;
             case 1:
-              Navigator.pushNamed(context, AppRoutes.map);
               break;
             case 2:
-              Navigator.pushNamed(context, AppRoutes.homeOwner);
+              Navigator.pushNamed(context, AppRoutes.recommendations);
               break;
             case 3:
               break;
@@ -231,7 +381,7 @@ class CalendarScreen extends StatelessWidget {
     );
   }
 
-  void _showEventDetails(BuildContext context, String nombre, String hora, String lugar, String veterinario, String mascota, String anticipacion, String frecuencia, String recibirRecordatorio, int index, CalendarController controller) {
+  void _showEventDetails(BuildContext context, String nombre, String hora, String lugar, String veterinario, String mascota, String anticipacion, String frecuencia, String recibirRecordatorio, int index, CalendarController controller, {DateTime? fechaReal}) {
     final color = _determineEventColor(nombre);
 
     showModalBottomSheet(
@@ -266,7 +416,6 @@ class CalendarScreen extends StatelessWidget {
                       builder: (context) => AlertDialog(
                         title: const Text('¿Eliminar evento?'),
                         content: const Text('¿Seguro que deseas eliminar este evento?'),
-                        backgroundColor: Colors.white,
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context, false),
@@ -281,9 +430,20 @@ class CalendarScreen extends StatelessWidget {
                     );
 
                     if (confirmar == true) {
-                      controller.eliminarEvento(controller.focusedDay.value, index);
-                      controller.focusedDay.refresh(); // 🔥 Esto fuerza a refrescar el Obx y se actualiza la lista
-                      Navigator.pop(context); // Cerrar el BottomSheet
+                      if (fechaReal != null) {
+                        // Si pasaron fecha real (modo eventos)
+                        final eventosDelDia = controller.obtenerEventosPorDia(fechaReal);
+                        final eventoIndex = eventosDelDia.indexWhere((evento) => evento['nombre'] == nombre && evento['hora'] == hora);
+                        if (eventoIndex != -1) {
+                          controller.eliminarEvento(fechaReal, eventoIndex);
+                        }
+                      } else {
+                        // Vista calendario normal
+                        controller.eliminarEvento(controller.focusedDay.value, index);
+                      }
+
+                      controller.focusedDay.refresh();
+                      Navigator.pop(context);
                       Get.snackbar(
                         'Evento eliminado',
                         'Se eliminó correctamente.',
@@ -291,6 +451,7 @@ class CalendarScreen extends StatelessWidget {
                         colorText: Colors.black,
                       );
                     }
+
                   },
                   icon: const Icon(Icons.delete_outline, color: Colors.white),
                 ),
