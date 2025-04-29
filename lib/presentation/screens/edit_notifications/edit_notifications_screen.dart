@@ -196,27 +196,30 @@ class EditNotificationsScreen extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 15),
-        _buildColorTile(
+
+        Obx(() => _buildColorTile(
           context: context,
           label: 'Color de fondo del calendario',
           color: controller.colorCalendario.value,
           onTap: () {
             _mostrarColorPicker(context, (color) => controller.colorCalendario.value = color);
           },
-        ),
+        )),
+
         const SizedBox(height: 15),
         Row(
           children: [
             Expanded(
-              child: _buildColorTile(
+              child: Obx(() => _buildColorTile(
                 context: context,
                 label: 'Color de días cargados',
                 color: controller.colorDiasCargados.value,
                 onTap: () {
                   _mostrarColorPicker(context, (color) => controller.colorDiasCargados.value = color);
                 },
-              ),
+              )),
             ),
+
             IconButton(
               icon: const Icon(Icons.info_outline),
               onPressed: () {
@@ -593,3 +596,4 @@ Future<bool> _confirmarSalida(BuildContext context, EditNotificationsController 
   return true;
 }
 }
+
