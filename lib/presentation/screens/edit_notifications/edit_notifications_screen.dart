@@ -18,7 +18,7 @@ class EditNotificationsScreen extends StatelessWidget {
         body: SafeArea(
           child: Column(
             children: [
-              _buildHeader(context, controller), // 🔥 Ahora el header recibe controller
+              _buildHeader(context, controller), // Ahora el header recibe controller
               const SizedBox(height: 10),
               Expanded(
                 child: Padding(
@@ -97,16 +97,16 @@ class EditNotificationsScreen extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 15),
-        // 🔥 Primero "¿Dónde recibir recordatorios?"
+        // Primero "¿Dónde recibir recordatorios?"
         Obx(() => _buildDropdown(
-          label: '¿Dónde recibir recomendaciones?',
+          label: '¿Dónde desea recibir recomendaciones del vetenerianario?',
           value: controller.recibirRecomendaciones.value,
           items: ['Solo en la app', 'Solo en el celular', 'En app y celular', 'No recibir'],
           onChanged: (v) => controller.recibirRecomendaciones.value = v!,
         )),
         const SizedBox(height: 10),
 
-        // 🔥 Solo si NO elige "No recibir", mostramos los otros dos campos
+        //  Solo si NO elige "No recibir", mostramos los otros dos campos
         Obx(() {
           if (controller.recibirRecomendaciones.value == 'No recibir') {
             return const SizedBox.shrink();
