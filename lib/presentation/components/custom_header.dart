@@ -48,7 +48,7 @@ class CustomHeader extends StatelessWidget {
           ),
           Row(
             children: [
-              if (!isHistoryMode)
+              if (!isOwnerMode && !isHistoryMode)
                 IconButton(
                   icon: Icon(
                     _getEditIcon(),

@@ -75,18 +75,16 @@ class HomeOwnerScreen extends StatelessWidget {
           ),
         ),
         bottomNavigationBar: CustomNavBar(
-          currentIndex: 2,
+          currentIndex: 1,
           onTap: (index) {
             switch (index) {
               case 0:
                 Navigator.pushNamed(context, AppRoutes.calendar);
                 break;
               case 1:
-                Navigator.pushNamed(context, AppRoutes.map);
                 break;
               case 2:
-                break;
-              case 3:
+                Navigator.pushNamed(context, AppRoutes.ownerUpdate);
                 break;
             }
           },

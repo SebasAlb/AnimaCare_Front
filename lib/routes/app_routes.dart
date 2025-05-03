@@ -8,7 +8,6 @@ import 'package:animacare_front/presentation/screens/recommendations/recommendat
 import 'package:animacare_front/presentation/screens/calendar/calendar_screen.dart';
 import 'package:animacare_front/presentation/screens/edit_notifications/edit_notifications_screen.dart';
 import 'package:animacare_front/presentation/screens/add_event/add_event_screen.dart';
-import 'package:animacare_front/presentation/screens/map/map_screen.dart';
 import 'package:animacare_front/presentation/screens/medical_history/medical_history_screen.dart';
 
 
@@ -49,10 +48,6 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const EditNotificationsScreen());
       case addEvent:
         return MaterialPageRoute(builder: (_) => const AddEventScreen());
-
-
-      case map:
-        return MaterialPageRoute(builder: (_) => MapScreen());
 
       default:
         return MaterialPageRoute(

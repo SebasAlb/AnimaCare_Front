@@ -347,12 +347,10 @@ class CalendarScreen extends StatelessWidget {
             case 0:
               break;
             case 1:
-              Navigator.pushNamed(context, AppRoutes.map); 
+              Navigator.pushNamed(context, AppRoutes.homeOwner);
               break;
             case 2:
-              Navigator.pushNamed(context, AppRoutes.homeOwner);  // Redirige al HomeOwnerScreen
-              break;
-            case 3:
+              Navigator.pushNamed(context, AppRoutes.ownerUpdate);
               break;
           }
         },

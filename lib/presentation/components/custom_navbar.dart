@@ -43,17 +43,13 @@ class CustomNavBar extends StatelessWidget {
             label: 'Calendario',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.map_outlined, size: 28),
-            label: 'Mapa',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.home, size: 28),
             label: 'Inicio',
           ),
-          /*BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(Icons.person, size: 28),
             label: 'Perfil',
-          ),*/
+          ),
         ],
       ),
     );

@@ -1,3 +1,5 @@
+import 'package:animacare_front/presentation/components/custom_navbar.dart';
+import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'owner_update_controller.dart';
@@ -10,119 +12,101 @@ class UserOwnerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(OwnerUpdateController());
 
-    return WillPopScope(
-      onWillPop: () => _confirmarSalida(context, controller),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context, controller),
-              const SizedBox(height: 10),
-              Expanded( // 🔥 Solución: usar Expanded para que lo que viene abajo pueda scrollar y no desborde
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircleAvatar(
-                        radius: 60,
-                        backgroundColor: AppColors.cardBackground,
-                        child: Icon(Icons.person, size: 80, color: AppColors.header),
-                      ),
-                      const SizedBox(height: 24),
-                      _buildTextField(
-                        label: 'Nombre',
-                        hint: 'Ingrese su nombre',
-                        controller: controller.nameController,
-                        icon: Icons.person,
-                      ),
-                      const SizedBox(height: 20),
-                      _buildTextField(
-                        label: 'Apellido',
-                        hint: 'Ingrese su apellido',
-                        controller: controller.lastNameController,
-                        icon: Icons.person_outline,
-                      ),
-                      const SizedBox(height: 20),
-                      _buildTextField(
-                        label: 'Correo Electrónico',
-                        hint: 'Ingrese su correo electrónico',
-                        controller: controller.emailController,
-                        icon: Icons.email,
-                        type: TextInputType.emailAddress,
-                      ),
-                      const SizedBox(height: 20),
-                      GestureDetector(
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Función de cambiar contraseña aún no implementada'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        },
-                        child: const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Cambiar Contraseña',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded( // 🔥 Solución: usar Expanded para que lo que viene abajo pueda scrollar y no desborde
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircleAvatar(
+                      radius: 60,
+                      backgroundColor: AppColors.cardBackground,
+                      child: Icon(Icons.person, size: 80, color: AppColors.header),
+                    ),
+                    const SizedBox(height: 24),
+                    _buildTextField(
+                      label: 'Nombre',
+                      hint: 'Ingrese su nombre',
+                      controller: controller.nameController,
+                      icon: Icons.person,
+                    ),
+                    const SizedBox(height: 20),
+                    _buildTextField(
+                      label: 'Apellido',
+                      hint: 'Ingrese su apellido',
+                      controller: controller.lastNameController,
+                      icon: Icons.person_outline,
+                    ),
+                    const SizedBox(height: 20),
+                    _buildTextField(
+                      label: 'Correo Electrónico',
+                      hint: 'Ingrese su correo electrónico',
+                      controller: controller.emailController,
+                      icon: Icons.email,
+                      type: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Función de cambiar contraseña aún no implementada'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      },
+                      child: const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Cambiar Contraseña',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 30),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.header,
-                          minimumSize: const Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: controller.saveUserInfo,
-                        child: const Text(
-                          'Guardar',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                    const SizedBox(height: 30),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.header,
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                    ],
-                  ),
+                      onPressed: controller.saveUserInfo,
+                      child: const Text(
+                        'Guardar',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, OwnerUpdateController controller) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: const BoxDecoration(color: AppColors.header),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.primaryWhite),
-            onPressed: () async {
-              final salir = await _confirmarSalida(context, controller);
-              if (salir) Navigator.pop(context);
-            },
-          ),
-          const Text(
-            'Información de Usuario',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: AppColors.primaryWhite,
-            ),
-          ),
-          const SizedBox(width: 48),
-        ],
+      bottomNavigationBar: CustomNavBar(
+        currentIndex: 2,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushNamed(context, AppRoutes.calendar);
+              break;
+            case 1:
+              Navigator.pushNamed(context, AppRoutes.homeOwner);
+              break;
+            case 2:
+              break;
+          }
+        },
       ),
     );
   }
