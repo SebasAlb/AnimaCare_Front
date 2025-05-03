@@ -6,12 +6,24 @@ import 'package:animacare_front/presentation/theme/colors.dart'; // << Importaci
 class MonthPickerSheet extends StatelessWidget {
   final CalendarController controller;
 
-  const MonthPickerSheet({Key? key, required this.controller}) : super(key: key);
+  const MonthPickerSheet({Key? key, required this.controller})
+      : super(key: key);
 
   String _monthName(int month) {
     const months = [
-      '', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      '',
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre'
     ];
     return months[month];
   }
@@ -33,7 +45,8 @@ class MonthPickerSheet extends StatelessWidget {
             backgroundColor: AppColors.formatButtonBackground,
             foregroundColor: AppColors.formatButtonForeground,
             textStyle: const TextStyle(fontWeight: FontWeight.bold),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
           onPressed: () {
             controller.cambiarMes(index + 1);
@@ -62,7 +75,8 @@ class YearPickerSheet extends StatelessWidget {
           title: Text(
             '$year',
             style: const TextStyle(
-              color: AppColors.formatButtonForeground, // Coloreamos también los años
+              color: AppColors
+                  .formatButtonForeground, // Coloreamos también los años
               fontWeight: FontWeight.bold,
             ),
           ),

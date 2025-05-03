@@ -33,7 +33,7 @@ class HomeOwnerScreen extends StatelessWidget {
                 isOwnerMode: true,
               ),
               const SizedBox(height: 20),
-              
+
               // Botón de agregar
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -60,16 +60,17 @@ class HomeOwnerScreen extends StatelessWidget {
 
               Expanded(
                 child: Obx(() => ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: controller.pets.length,
-                  itemBuilder: (context, index) {
-                    final pet = controller.pets[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: _buildPetCard(context, pet['name']!, pet['description']!),
-                    );
-                  },
-                )),
+                      padding: const EdgeInsets.all(16),
+                      itemCount: controller.pets.length,
+                      itemBuilder: (context, index) {
+                        final pet = controller.pets[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _buildPetCard(
+                              context, pet['name']!, pet['description']!),
+                        );
+                      },
+                    )),
               ),
             ],
           ),

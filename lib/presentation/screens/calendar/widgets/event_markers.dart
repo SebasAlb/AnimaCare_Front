@@ -19,9 +19,11 @@ class EventMarkers extends StatelessWidget {
 
       if (nombre.contains('baño')) {
         color = AppColors.eventBath;
-      } else if (nombre.contains('veterinario') || nombre.contains('consulta')) {
+      } else if (nombre.contains('veterinario') ||
+          nombre.contains('consulta')) {
         color = AppColors.eventVetConsult;
-      } else if (nombre.contains('medicina') || nombre.contains('medicamento')) {
+      } else if (nombre.contains('medicina') ||
+          nombre.contains('medicamento')) {
         color = AppColors.eventMedicine;
       } else if (nombre.contains('vacuna')) {
         color = AppColors.eventVaccine;

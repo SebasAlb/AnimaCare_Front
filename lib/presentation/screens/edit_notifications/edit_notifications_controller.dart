@@ -12,7 +12,10 @@ class EditNotificationsController extends GetxController {
   final categorias = <String, Map<String, dynamic>>{
     'Baño': {'color': Colors.blue, 'icon': Icons.shower},
     'Veterinario': {'color': Colors.green, 'icon': Icons.local_hospital},
-    'Medicina': {'color': Colors.yellow.shade700, 'icon': Icons.medical_services},
+    'Medicina': {
+      'color': Colors.yellow.shade700,
+      'icon': Icons.medical_services
+    },
     'Vacuna': {'color': Colors.lightBlueAccent, 'icon': Icons.vaccines},
   }.obs;
 

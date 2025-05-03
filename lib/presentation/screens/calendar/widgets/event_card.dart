@@ -52,10 +52,12 @@ class EventCard extends StatelessWidget {
             Expanded(
               flex: 4,
               child: Align(
-                alignment: Alignment.center, // << Esto centra el texto dentro de su Expanded
+                alignment: Alignment
+                    .center, // << Esto centra el texto dentro de su Expanded
                 child: Text(
                   nombre,
-                  textAlign: TextAlign.center, // << Además, centra el texto dentro del espacio del Text
+                  textAlign: TextAlign
+                      .center, // << Además, centra el texto dentro del espacio del Text
                   style: const TextStyle(
                     color: AppColors.primaryWhite,
                     fontWeight: FontWeight.bold,
@@ -68,8 +70,6 @@ class EventCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-
-
 
             // Nombre de la mascota (40%) + icono
             Expanded(

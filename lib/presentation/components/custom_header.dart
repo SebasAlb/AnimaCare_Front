@@ -10,7 +10,6 @@ class CustomHeader extends StatelessWidget {
   final bool isRecommendationMode;
   final bool isHistoryMode;
 
-
   const CustomHeader({
     super.key,
     required this.petName,
@@ -58,10 +57,7 @@ class CustomHeader extends StatelessWidget {
                 ),
               if (!isOwnerMode && !isHistoryMode) // Solo si el ícono existe
                 IconButton(
-                  icon: Icon(
-                    _getSettingsIcon(),
-                    color: Colors.white
-                  ),
+                  icon: Icon(_getSettingsIcon(), color: Colors.white),
                   onPressed: onViewRecord,
                 ),
             ],
@@ -74,13 +70,11 @@ class CustomHeader extends StatelessWidget {
   IconData _getEditIcon() {
     if (isRecommendationMode) return Icons.edit;
     if (isCalendarMode) return Icons.add;
-    if(isOwnerMode) return Icons.edit;
+    if (isOwnerMode) return Icons.edit;
     return Icons.edit;
   }
 
   IconData _getSettingsIcon() {
     return isCalendarMode ? Icons.settings : Icons.medical_information;
   }
-
 }
-

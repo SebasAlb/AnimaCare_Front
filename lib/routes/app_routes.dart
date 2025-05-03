@@ -10,7 +10,6 @@ import 'package:animacare_front/presentation/screens/edit_notifications/edit_not
 import 'package:animacare_front/presentation/screens/add_event/add_event_screen.dart';
 import 'package:animacare_front/presentation/screens/medical_history/medical_history_screen.dart';
 
-
 class AppRoutes {
   static const String login = '/login';
   static const String signup = '/signup';
@@ -23,7 +22,6 @@ class AppRoutes {
   static const String addEvent = '/add-event';
   static const String map = '/map';
   static const String medicalhistory = '/medicalhistory';
-
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -45,7 +43,8 @@ class AppRoutes {
       case calendar:
         return MaterialPageRoute(builder: (_) => const CalendarScreen());
       case editNotifications:
-        return MaterialPageRoute(builder: (_) => const EditNotificationsScreen());
+        return MaterialPageRoute(
+            builder: (_) => const EditNotificationsScreen());
       case addEvent:
         return MaterialPageRoute(builder: (_) => const AddEventScreen());
 

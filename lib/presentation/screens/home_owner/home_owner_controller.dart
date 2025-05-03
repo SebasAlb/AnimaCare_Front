@@ -12,7 +12,10 @@ class HomeOwnerController extends GetxController {
 
   void loadPets() {
     pets.value = [
-      {'name': 'Gato 1', 'description': 'Este es un ejemplo de mascota en el listado'},
+      {
+        'name': 'Gato 1',
+        'description': 'Este es un ejemplo de mascota en el listado'
+      },
       {'name': 'Gato 2', 'description': 'Otro gato feliz registrado'},
       {'name': 'Perro 1', 'description': 'Un perro muy juguetón'},
     ];
@@ -28,7 +31,7 @@ class HomeOwnerController extends GetxController {
     Get.snackbar('Editar Perfil', 'Funcionalidad no implementada aún.');
   }
 
-  void goToDetailsPet(){
+  void goToDetailsPet() {
     Get.toNamed('/recommendations');
   }
 }

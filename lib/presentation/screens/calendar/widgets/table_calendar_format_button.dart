@@ -7,7 +7,8 @@ import 'package:animacare_front/presentation/theme/colors.dart'; // << Importaci
 class TableCalendarFormatButton extends StatelessWidget {
   final CalendarController controller;
 
-  const TableCalendarFormatButton({Key? key, required this.controller}) : super(key: key);
+  const TableCalendarFormatButton({Key? key, required this.controller})
+      : super(key: key);
 
   String _getFormatName(CalendarFormat format) {
     switch (format) {
@@ -39,7 +40,8 @@ class TableCalendarFormatButton extends StatelessWidget {
             backgroundColor: Colors.white,
             foregroundColor: const Color(0xFF3E0B53),
             textStyle: const TextStyle(fontWeight: FontWeight.bold),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
           onPressed: _toggleFormat,
           child: Text(_getFormatName(controller.calendarFormat.value)),

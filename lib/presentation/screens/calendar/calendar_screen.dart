@@ -36,9 +36,6 @@ class CalendarScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            
-
-
             // Header personalizado (Mes y Año)
             Obx(() {
               if (controller.modoEventos.value) {
@@ -46,7 +43,8 @@ class CalendarScreen extends StatelessWidget {
               }
 
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 10.0),
                 color: AppColors.header,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -84,7 +82,6 @@ class CalendarScreen extends StatelessWidget {
               );
             }),
 
-
             // Calendario
             Obx(() {
               if (controller.modoEventos.value) {
@@ -112,17 +109,19 @@ class CalendarScreen extends StatelessWidget {
                     onPageChanged: (focusedDay) {
                       controller.focusedDay.value = focusedDay;
                     },
-                    selectedDayPredicate: (day) => isSameDay(controller.focusedDay.value, day),
+                    selectedDayPredicate: (day) =>
+                        isSameDay(controller.focusedDay.value, day),
                     eventLoader: (day) => controller.obtenerEventosPorDia(day),
                     headerVisible: false,
-
                     calendarBuilders: CalendarBuilders(
-                      defaultBuilder: (context, day, focusedDay) => CalendarDayItem(
+                      defaultBuilder: (context, day, focusedDay) =>
+                          CalendarDayItem(
                         day: day,
                         isSelected: false,
                         isOverloaded: controller.isDayLoaded(day),
                       ),
-                      selectedBuilder: (context, day, focusedDay) => CalendarDayItem(
+                      selectedBuilder: (context, day, focusedDay) =>
+                          CalendarDayItem(
                         day: day,
                         isSelected: true,
                         isOverloaded: controller.isDayLoaded(day),
@@ -132,22 +131,24 @@ class CalendarScreen extends StatelessWidget {
                         return EventMarkers(eventos: eventList);
                       },
                     ),
-                    
                   ),
                 ),
               );
             }),
 
-
             // Label del día seleccionado
             Obx(() {
-              final eventosEnFecha = controller.obtenerEventosPorDia(controller.focusedDay.value).length;
+              final eventosEnFecha = controller
+                  .obtenerEventosPorDia(controller.focusedDay.value)
+                  .length;
 
               return GestureDetector(
                 onTap: controller.toggleModoEventos,
                 child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   decoration: BoxDecoration(
                     color: AppColors.labelBackground,
                     borderRadius: BorderRadius.circular(8),
@@ -166,7 +167,9 @@ class CalendarScreen extends StatelessWidget {
                         ),
                       ),
                       Icon(
-                        controller.modoEventos.value ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+                        controller.modoEventos.value
+                            ? Icons.keyboard_arrow_down
+                            : Icons.keyboard_arrow_up,
                         color: Colors.white,
                       )
                     ],
@@ -175,13 +178,13 @@ class CalendarScreen extends StatelessWidget {
               );
             }),
 
-            
             Obx(() {
               if (!controller.modoEventos.value) {
                 return const SizedBox(); // 🔥 Si no estamos en modo eventos, NO mostrar el buscador
               }
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Buscar eventos...',
@@ -193,7 +196,8 @@ class CalendarScreen extends StatelessWidget {
                     prefixIcon: const Icon(Icons.search),
                   ),
                   onChanged: (value) {
-                    controller.searchQuery.value = value; // 🔥 Actualiza el valor del filtro
+                    controller.searchQuery.value =
+                        value; // 🔥 Actualiza el valor del filtro
                   },
                 ),
               );
@@ -209,11 +213,13 @@ class CalendarScreen extends StatelessWidget {
 
                     if (eventosFiltrados.isEmpty) {
                       return const Center(
-                        child: Text('No hay eventos que coincidan.', style: TextStyle(color: AppColors.primaryWhite)),
+                        child: Text('No hay eventos que coincidan.',
+                            style: TextStyle(color: AppColors.primaryWhite)),
                       );
                     }
 
-                    DateTime? ultimaFechaMostrada; // 🔥 Declarar fuera del ListView para controlarlo en todo el recorrido
+                    DateTime?
+                        ultimaFechaMostrada; // 🔥 Declarar fuera del ListView para controlarlo en todo el recorrido
 
                     return ListView.builder(
                       itemCount: eventosFiltrados.length,
@@ -224,7 +230,8 @@ class CalendarScreen extends StatelessWidget {
 
                         // 🔥 Verificar si hay que mostrar la fecha o no
                         bool mostrarFecha = false;
-                        if (ultimaFechaMostrada == null || !isSameDay(ultimaFechaMostrada, fecha)) {
+                        if (ultimaFechaMostrada == null ||
+                            !isSameDay(ultimaFechaMostrada, fecha)) {
                           mostrarFecha = true;
                           ultimaFechaMostrada = fecha;
                         }
@@ -236,11 +243,14 @@ class CalendarScreen extends StatelessWidget {
                               GestureDetector(
                                 onTap: () {
                                   controller.focusedDay.value = fecha;
-                                  controller.toggleModoEventos(); // 🔥 Volver a modo calendario
+                                  controller
+                                      .toggleModoEventos(); // 🔥 Volver a modo calendario
                                 },
                                 child: Container(
-                                  margin: const EdgeInsets.symmetric(vertical: 8.0),
-                                  padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 6.0, horizontal: 12.0),
                                   decoration: BoxDecoration(
                                     color: AppColors.labelBackground,
                                     borderRadius: BorderRadius.circular(8),
@@ -254,15 +264,16 @@ class CalendarScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
-
                             EventCard(
                               nombre: evento['nombre'] ?? '',
                               hora: evento['hora'] ?? '',
                               lugar: evento['lugar'] ?? '',
                               veterinario: evento['veterinario'] ?? '',
                               mascota: evento['mascota'] ?? '',
-                              color: controller.obtenerColorEvento(evento['nombre'] ?? ''),
-                              icono: controller.obtenerIconoEvento(evento['nombre'] ?? ''),
+                              color: controller
+                                  .obtenerColorEvento(evento['nombre'] ?? ''),
+                              icono: controller
+                                  .obtenerIconoEvento(evento['nombre'] ?? ''),
                               onTap: () {
                                 _showEventDetails(
                                   context,
@@ -285,18 +296,17 @@ class CalendarScreen extends StatelessWidget {
                         );
                       },
                     );
-
-
-
                   } else {
                     // 🔥 Código original de eventos por día (cuando modoEventos = false)
-                    final eventos = controller.obtenerEventosPorDia(controller.focusedDay.value);
+                    final eventos = controller
+                        .obtenerEventosPorDia(controller.focusedDay.value);
 
                     if (eventos.isEmpty) {
                       return const Center(
                         child: Text(
                           'No hay recordatorios para este día',
-                          style: TextStyle(color: AppColors.primaryWhite, fontSize: 16),
+                          style: TextStyle(
+                              color: AppColors.primaryWhite, fontSize: 16),
                         ),
                       );
                     }
@@ -311,8 +321,10 @@ class CalendarScreen extends StatelessWidget {
                           lugar: evento['lugar'] ?? '',
                           veterinario: evento['veterinario'] ?? '',
                           mascota: evento['mascota'] ?? '',
-                          color: controller.obtenerColorEvento(evento['nombre'] ?? ''),
-                          icono: controller.obtenerIconoEvento(evento['nombre'] ?? ''),
+                          color: controller
+                              .obtenerColorEvento(evento['nombre'] ?? ''),
+                          icono: controller
+                              .obtenerIconoEvento(evento['nombre'] ?? ''),
                           onTap: () {
                             _showEventDetails(
                               context,
@@ -335,8 +347,6 @@ class CalendarScreen extends StatelessWidget {
                 }),
               ),
             ),
-
-
           ],
         ),
       ),
@@ -360,8 +370,19 @@ class CalendarScreen extends StatelessWidget {
 
   String _monthName(int month) {
     const months = [
-      '', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      '',
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre'
     ];
     return months[month];
   }
@@ -380,7 +401,19 @@ class CalendarScreen extends StatelessWidget {
     );
   }
 
-  void _showEventDetails(BuildContext context, String nombre, String hora, String lugar, String veterinario, String mascota, String anticipacion, String frecuencia, String recibirRecordatorio, int index, CalendarController controller, {DateTime? fechaReal}) {
+  void _showEventDetails(
+      BuildContext context,
+      String nombre,
+      String hora,
+      String lugar,
+      String veterinario,
+      String mascota,
+      String anticipacion,
+      String frecuencia,
+      String recibirRecordatorio,
+      int index,
+      CalendarController controller,
+      {DateTime? fechaReal}) {
     final color = _determineEventColor(nombre);
 
     showModalBottomSheet(
@@ -414,7 +447,8 @@ class CalendarScreen extends StatelessWidget {
                       context: context,
                       builder: (context) => AlertDialog(
                         title: const Text('¿Eliminar evento?'),
-                        content: const Text('¿Seguro que deseas eliminar este evento?'),
+                        content: const Text(
+                            '¿Seguro que deseas eliminar este evento?'),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context, false),
@@ -422,7 +456,8 @@ class CalendarScreen extends StatelessWidget {
                           ),
                           TextButton(
                             onPressed: () => Navigator.pop(context, true),
-                            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+                            child: const Text('Eliminar',
+                                style: TextStyle(color: Colors.red)),
                           ),
                         ],
                       ),
@@ -431,14 +466,18 @@ class CalendarScreen extends StatelessWidget {
                     if (confirmar == true) {
                       if (fechaReal != null) {
                         // Si pasaron fecha real (modo eventos)
-                        final eventosDelDia = controller.obtenerEventosPorDia(fechaReal);
-                        final eventoIndex = eventosDelDia.indexWhere((evento) => evento['nombre'] == nombre && evento['hora'] == hora);
+                        final eventosDelDia =
+                            controller.obtenerEventosPorDia(fechaReal);
+                        final eventoIndex = eventosDelDia.indexWhere((evento) =>
+                            evento['nombre'] == nombre &&
+                            evento['hora'] == hora);
                         if (eventoIndex != -1) {
                           controller.eliminarEvento(fechaReal, eventoIndex);
                         }
                       } else {
                         // Vista calendario normal
-                        controller.eliminarEvento(controller.focusedDay.value, index);
+                        controller.eliminarEvento(
+                            controller.focusedDay.value, index);
                       }
 
                       controller.focusedDay.refresh();
@@ -450,13 +489,11 @@ class CalendarScreen extends StatelessWidget {
                         colorText: Colors.black,
                       );
                     }
-
                   },
                   icon: const Icon(Icons.delete_outline, color: Colors.white),
                 ),
               ],
             ),
-
             const SizedBox(height: 10),
             _buildDetailRow(Icons.access_time, hora),
             const SizedBox(height: 10),
@@ -473,8 +510,6 @@ class CalendarScreen extends StatelessWidget {
               const SizedBox(height: 10),
               _buildDetailRow(Icons.repeat, frecuencia),
             ]
-
-
           ],
         ),
       ),
@@ -484,8 +519,10 @@ class CalendarScreen extends StatelessWidget {
   Color _determineEventColor(String nombre) {
     final lower = nombre.toLowerCase();
     if (lower.contains('baño')) return AppColors.eventBath;
-    if (lower.contains('veterinario') || lower.contains('consulta')) return AppColors.eventVetConsult;
-    if (lower.contains('medicina') || lower.contains('medicamento')) return AppColors.eventMedicine;
+    if (lower.contains('veterinario') || lower.contains('consulta'))
+      return AppColors.eventVetConsult;
+    if (lower.contains('medicina') || lower.contains('medicamento'))
+      return AppColors.eventMedicine;
     if (lower.contains('vacuna')) return AppColors.eventVaccine;
     return AppColors.eventOther;
   }
@@ -496,7 +533,9 @@ class CalendarScreen extends StatelessWidget {
         Icon(icon, color: AppColors.primaryWhite),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(text, style: const TextStyle(color: AppColors.primaryWhite, fontSize: 16)),
+          child: Text(text,
+              style:
+                  const TextStyle(color: AppColors.primaryWhite, fontSize: 16)),
         ),
       ],
     );

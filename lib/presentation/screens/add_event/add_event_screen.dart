@@ -5,7 +5,6 @@ import 'package:animacare_front/presentation/theme/colors.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:animacare_front/presentation/screens/calendar/calendar_controller.dart';
 
-
 class AddEventScreen extends StatelessWidget {
   const AddEventScreen({super.key});
 
@@ -16,19 +15,22 @@ class AddEventScreen extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         final hayCambios = controller.nombreEvento.value.isNotEmpty ||
-                          controller.mascotaSeleccionada.value.isNotEmpty ||
-                          (controller.tipoLugar.value == 'manual' && controller.lugarEvento.value.isNotEmpty) ||
-                          (controller.tipoLugar.value == 'veterinaria' && controller.veterinariaSeleccionada.value.isNotEmpty) ||
-                          controller.fechaEvento.value != null ||
-                          controller.horaEvento.value != null ||
-                          controller.categoriaEvento.value.isNotEmpty;
+            controller.mascotaSeleccionada.value.isNotEmpty ||
+            (controller.tipoLugar.value == 'manual' &&
+                controller.lugarEvento.value.isNotEmpty) ||
+            (controller.tipoLugar.value == 'veterinaria' &&
+                controller.veterinariaSeleccionada.value.isNotEmpty) ||
+            controller.fechaEvento.value != null ||
+            controller.horaEvento.value != null ||
+            controller.categoriaEvento.value.isNotEmpty;
 
         if (hayCambios) {
           final salir = await showDialog<bool>(
             context: context,
             builder: (_) => AlertDialog(
               title: const Text('¿Descartar cambios?'),
-              content: const Text('Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
+              content: const Text(
+                  'Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
@@ -59,45 +61,55 @@ class AddEventScreen extends StatelessWidget {
                     children: [
                       _buildInputField(
                         label: 'Asignar un nombre al evento',
-                        onChanged: (value) => controller.nombreEvento.value = value,
+                        onChanged: (value) =>
+                            controller.nombreEvento.value = value,
                       ),
                       const SizedBox(height: 20),
                       Obx(() => _buildDropdown(
-                        label: 'Seleccionar Mascota',
-                        value: controller.mascotaSeleccionada.value.isEmpty
-                            ? null
-                            : controller.mascotaSeleccionada.value,
-                        items: controller.mascotas,
-                        onChanged: (v) => controller.mascotaSeleccionada.value = v ?? '',
-                      )),
+                            label: 'Seleccionar Mascota',
+                            value: controller.mascotaSeleccionada.value.isEmpty
+                                ? null
+                                : controller.mascotaSeleccionada.value,
+                            items: controller.mascotas,
+                            onChanged: (v) =>
+                                controller.mascotaSeleccionada.value = v ?? '',
+                          )),
                       const SizedBox(height: 20),
                       _buildLugarSection(controller),
                       const SizedBox(height: 20),
                       _buildFechaHoraRow(context, controller),
                       const SizedBox(height: 20),
                       Obx(() => _buildDropdownCategoria(
-                        label: 'Categoría',
-                        value: controller.categoriaEvento.value.isEmpty
-                            ? null
-                            : controller.categoriaEvento.value,
-                        items: controller.categorias,
-                        onChanged: (v) => controller.categoriaEvento.value = v ?? '',
-                      )),
+                            label: 'Categoría',
+                            value: controller.categoriaEvento.value.isEmpty
+                                ? null
+                                : controller.categoriaEvento.value,
+                            items: controller.categorias,
+                            onChanged: (v) =>
+                                controller.categoriaEvento.value = v ?? '',
+                          )),
                       const SizedBox(height: 40),
 
                       // Recibir Recordatorio en:
                       Obx(() => _buildDropdown(
-                        label: 'Recibir Recordatorio en:',
-                        value: controller.recibirRecordatorio.value,
-                        items: ['Solo en la app', 'Solo en el celular', 'En app y celular', 'No recibir'],
-                        onChanged: (v) => controller.recibirRecordatorio.value = v ?? 'Solo en la app',
-                      )),
+                            label: 'Recibir Recordatorio en:',
+                            value: controller.recibirRecordatorio.value,
+                            items: [
+                              'Solo en la app',
+                              'Solo en el celular',
+                              'En app y celular',
+                              'No recibir'
+                            ],
+                            onChanged: (v) => controller.recibirRecordatorio
+                                .value = v ?? 'Solo en la app',
+                          )),
 
                       const SizedBox(height: 20),
 
                       // Si el usuario no pone "No recibir", mostramos la fila con Frecuencia y Anticipación
                       Obx(() {
-                        if (controller.recibirRecordatorio.value == 'No recibir') {
+                        if (controller.recibirRecordatorio.value ==
+                            'No recibir') {
                           return const SizedBox.shrink(); // No mostrar nada
                         } else {
                           return Row(
@@ -106,8 +118,13 @@ class AddEventScreen extends StatelessWidget {
                                 child: _buildDropdown(
                                   label: 'Frecuencia',
                                   value: controller.frecuencia.value,
-                                  items: ['Cada 6 horas', 'Cada 12 horas', 'Cada 24 horas'],
-                                  onChanged: (v) => controller.frecuencia.value = v ?? 'Cada 6 horas',
+                                  items: [
+                                    'Cada 6 horas',
+                                    'Cada 12 horas',
+                                    'Cada 24 horas'
+                                  ],
+                                  onChanged: (v) => controller
+                                      .frecuencia.value = v ?? 'Cada 6 horas',
                                 ),
                               ),
                               const SizedBox(width: 10),
@@ -115,8 +132,13 @@ class AddEventScreen extends StatelessWidget {
                                 child: _buildDropdown(
                                   label: 'Anticipación',
                                   value: controller.anticipacion.value,
-                                  items: ['1 día antes', '2 días antes', '3 días antes'],
-                                  onChanged: (v) => controller.anticipacion.value = v ?? '1 día antes',
+                                  items: [
+                                    '1 día antes',
+                                    '2 días antes',
+                                    '3 días antes'
+                                  ],
+                                  onChanged: (v) => controller
+                                      .anticipacion.value = v ?? '1 día antes',
                                 ),
                               ),
                             ],
@@ -152,19 +174,22 @@ class AddEventScreen extends StatelessWidget {
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () async {
               final hayCambios = controller.nombreEvento.value.isNotEmpty ||
-                                controller.mascotaSeleccionada.value.isNotEmpty ||
-                                (controller.tipoLugar.value == 'manual' && controller.lugarEvento.value.isNotEmpty) ||
-                                (controller.tipoLugar.value == 'veterinaria' && controller.veterinariaSeleccionada.value.isNotEmpty) ||
-                                controller.fechaEvento.value != null ||
-                                controller.horaEvento.value != null ||
-                                controller.categoriaEvento.value.isNotEmpty;
+                  controller.mascotaSeleccionada.value.isNotEmpty ||
+                  (controller.tipoLugar.value == 'manual' &&
+                      controller.lugarEvento.value.isNotEmpty) ||
+                  (controller.tipoLugar.value == 'veterinaria' &&
+                      controller.veterinariaSeleccionada.value.isNotEmpty) ||
+                  controller.fechaEvento.value != null ||
+                  controller.horaEvento.value != null ||
+                  controller.categoriaEvento.value.isNotEmpty;
 
               if (hayCambios) {
                 final salir = await showDialog<bool>(
                   context: context,
                   builder: (_) => AlertDialog(
                     title: const Text('¿Descartar cambios?'),
-                    content: const Text('Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
+                    content: const Text(
+                        'Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
@@ -207,7 +232,11 @@ class AddEventScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
+        Text(label,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.white)),
         const SizedBox(height: 8),
         TextField(
           decoration: InputDecoration(
@@ -231,7 +260,11 @@ class AddEventScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
+        Text(label,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.white)),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -262,27 +295,33 @@ class AddEventScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Lugar del Evento', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
+        const Text('Lugar del Evento',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.white)),
         Obx(() => Row(
-          children: [
-            Expanded(
-              child: RadioListTile<String>(
-                title: const Text('Escribir Manualmente', style: TextStyle(color: Colors.white)),
-                value: 'manual',
-                groupValue: controller.tipoLugar.value,
-                onChanged: (v) => controller.tipoLugar.value = v!,
-              ),
-            ),
-            Expanded(
-              child: RadioListTile<String>(
-                title: const Text('Veterinarias Guardadas', style: TextStyle(color: Colors.white)),
-                value: 'veterinaria',
-                groupValue: controller.tipoLugar.value,
-                onChanged: (v) => controller.tipoLugar.value = v!,
-              ),
-            ),
-          ],
-        )),
+              children: [
+                Expanded(
+                  child: RadioListTile<String>(
+                    title: const Text('Escribir Manualmente',
+                        style: TextStyle(color: Colors.white)),
+                    value: 'manual',
+                    groupValue: controller.tipoLugar.value,
+                    onChanged: (v) => controller.tipoLugar.value = v!,
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<String>(
+                    title: const Text('Veterinarias Guardadas',
+                        style: TextStyle(color: Colors.white)),
+                    value: 'veterinaria',
+                    groupValue: controller.tipoLugar.value,
+                    onChanged: (v) => controller.tipoLugar.value = v!,
+                  ),
+                ),
+              ],
+            )),
         const SizedBox(height: 10),
         Obx(() {
           if (controller.tipoLugar.value == 'manual') {
@@ -297,7 +336,8 @@ class AddEventScreen extends StatelessWidget {
                   ? null
                   : controller.veterinariaSeleccionada.value,
               items: controller.veterinarias,
-              onChanged: (v) => controller.veterinariaSeleccionada.value = v ?? '',
+              onChanged: (v) =>
+                  controller.veterinariaSeleccionada.value = v ?? '',
             );
           }
         }),
@@ -306,7 +346,8 @@ class AddEventScreen extends StatelessWidget {
   }
 
   // Fecha y Hora Row
-  Widget _buildFechaHoraRow(BuildContext context, AddEventController controller) {
+  Widget _buildFechaHoraRow(
+      BuildContext context, AddEventController controller) {
     return Row(
       children: [
         Expanded(child: _buildFecha(context, controller)),
@@ -318,92 +359,95 @@ class AddEventScreen extends StatelessWidget {
 
   Widget _buildFecha(BuildContext context, AddEventController controller) {
     return Obx(() => GestureDetector(
-      onTap: () async {
-        final picked = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime.now(),
-          lastDate: DateTime(2030),
-        );
-        if (picked != null) {
-          controller.fechaEvento.value = picked;
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          controller.fechaEvento.value != null
-              ? '${controller.fechaEvento.value!.day}/${controller.fechaEvento.value!.month}/${controller.fechaEvento.value!.year}'
-              : 'Seleccionar Fecha',
-          style: const TextStyle(color: Colors.black),
-        ),
-      ),
-    ));
-  }
-
-  Widget _buildHora(BuildContext context, AddEventController controller) {
-  final TextEditingController horaController = TextEditingController(
-    text: controller.horaEvento.value != null ? controller.horaEvento.value!.format(context) : '',
-  );
-
-  return Obx(() => GestureDetector(
-    onTap: () async {
-      final picked = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-      );
-      if (picked != null) {
-        final ahora = TimeOfDay.now();
-        final hoy = DateTime.now();
-
-        final selectedDate = controller.fechaEvento.value ?? hoy;
-        final isToday = selectedDate.day == hoy.day &&
-                        selectedDate.month == hoy.month &&
-                        selectedDate.year == hoy.year;
-
-        // Validamos: si es hoy, no permitir horas pasadas
-        if (isToday &&
-            (picked.hour < ahora.hour || (picked.hour == ahora.hour && picked.minute < ahora.minute))) {
-          Get.snackbar(
-            'Hora no válida',
-            'No puedes seleccionar una hora pasada.',
-            backgroundColor: Colors.white,
-            colorText: Colors.black,
-          );
-        } else {
-          controller.horaEvento.value = picked;
-          horaController.text = picked.format(context);
-        }
-      }
-    },
-    child: Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.access_time, color: Colors.black),
-          const SizedBox(width: 10),
-          Expanded(
+          onTap: () async {
+            final picked = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime.now(),
+              lastDate: DateTime(2030),
+            );
+            if (picked != null) {
+              controller.fechaEvento.value = picked;
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Text(
-              controller.horaEvento.value != null
-                  ? controller.horaEvento.value!.format(context)
-                  : 'Seleccionar Hora',
+              controller.fechaEvento.value != null
+                  ? '${controller.fechaEvento.value!.day}/${controller.fechaEvento.value!.month}/${controller.fechaEvento.value!.year}'
+                  : 'Seleccionar Fecha',
               style: const TextStyle(color: Colors.black),
             ),
           ),
-        ],
-      ),
-    ),
-  ));
-}
+        ));
+  }
 
+  Widget _buildHora(BuildContext context, AddEventController controller) {
+    final TextEditingController horaController = TextEditingController(
+      text: controller.horaEvento.value != null
+          ? controller.horaEvento.value!.format(context)
+          : '',
+    );
+
+    return Obx(() => GestureDetector(
+          onTap: () async {
+            final picked = await showTimePicker(
+              context: context,
+              initialTime: TimeOfDay.now(),
+            );
+            if (picked != null) {
+              final ahora = TimeOfDay.now();
+              final hoy = DateTime.now();
+
+              final selectedDate = controller.fechaEvento.value ?? hoy;
+              final isToday = selectedDate.day == hoy.day &&
+                  selectedDate.month == hoy.month &&
+                  selectedDate.year == hoy.year;
+
+              // Validamos: si es hoy, no permitir horas pasadas
+              if (isToday &&
+                  (picked.hour < ahora.hour ||
+                      (picked.hour == ahora.hour &&
+                          picked.minute < ahora.minute))) {
+                Get.snackbar(
+                  'Hora no válida',
+                  'No puedes seleccionar una hora pasada.',
+                  backgroundColor: Colors.white,
+                  colorText: Colors.black,
+                );
+              } else {
+                controller.horaEvento.value = picked;
+                horaController.text = picked.format(context);
+              }
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.access_time, color: Colors.black),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    controller.horaEvento.value != null
+                        ? controller.horaEvento.value!.format(context)
+                        : 'Seleccionar Hora',
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
+  }
 
   // Dropdown Categorías con Ícono y Color
   Widget _buildDropdownCategoria({
@@ -415,7 +459,11 @@ class AddEventScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
+        Text(label,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.white)),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -471,14 +519,16 @@ class AddEventScreen extends StatelessWidget {
   }
 
   // Botón Guardar
-  Widget _buildGuardarButton(BuildContext context, AddEventController controller) {
+  Widget _buildGuardarButton(
+      BuildContext context, AddEventController controller) {
     return Center(
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.header,
           foregroundColor: AppColors.primaryWhite,
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         onPressed: () => _validarGuardar(context, controller),
@@ -489,12 +539,15 @@ class AddEventScreen extends StatelessWidget {
 
   void _validarGuardar(BuildContext context, AddEventController controller) {
     if (controller.nombreEvento.value.isEmpty ||
-        (controller.tipoLugar.value == 'manual' && controller.lugarEvento.value.isEmpty) ||
-        (controller.tipoLugar.value == 'veterinaria' && controller.veterinariaSeleccionada.value.isEmpty) ||
+        (controller.tipoLugar.value == 'manual' &&
+            controller.lugarEvento.value.isEmpty) ||
+        (controller.tipoLugar.value == 'veterinaria' &&
+            controller.veterinariaSeleccionada.value.isEmpty) ||
         controller.fechaEvento.value == null ||
         controller.horaEvento.value == null ||
         controller.categoriaEvento.value.isEmpty) {
-      Get.snackbar('Error', 'Por favor completa todos los campos.', backgroundColor: Colors.white, colorText: Colors.black);
+      Get.snackbar('Error', 'Por favor completa todos los campos.',
+          backgroundColor: Colors.white, colorText: Colors.black);
     } else {
       _confirmarGuardado(context, controller);
     }
@@ -534,7 +587,7 @@ class AddEventScreen extends StatelessWidget {
               // );
 
               // Limpiar el formulario
-              controller.resetForm(); 
+              controller.resetForm();
 
               // Redirigir a CalendarScreen
               Get.offAllNamed(AppRoutes.calendar);
@@ -552,5 +605,5 @@ class AddEventScreen extends StatelessWidget {
         ],
       ),
     );
-}
+  }
 }

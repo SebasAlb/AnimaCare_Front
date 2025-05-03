@@ -7,7 +7,7 @@ class CalendarController extends GetxController {
   final calendarFormat = CalendarFormat.month.obs;
 
   final modoEventos = false.obs; //  Modo Eventos o Modo Calendario
-  final searchQuery = ''.obs;  //  Texto para buscar eventos
+  final searchQuery = ''.obs; //  Texto para buscar eventos
 
   final eventos = <DateTime, List<Map<String, String>>>{
     DateTime.utc(2025, 4, 5): [
@@ -95,19 +95,23 @@ class CalendarController extends GetxController {
   }
 
   void cambiarMes(int mes) {
-    focusedDay.value = DateTime(focusedDay.value.year, mes, focusedDay.value.day);
+    focusedDay.value =
+        DateTime(focusedDay.value.year, mes, focusedDay.value.day);
   }
 
   void cambiarAnio(int anio) {
-    focusedDay.value = DateTime(anio, focusedDay.value.month, focusedDay.value.day);
+    focusedDay.value =
+        DateTime(anio, focusedDay.value.month, focusedDay.value.day);
   }
 
   /// Obtiene el color basado en el nombre del evento
   Color obtenerColorEvento(String nombre) {
     final lower = nombre.toLowerCase();
     if (lower.contains('baño')) return Colors.blue;
-    if (lower.contains('veterinario') || lower.contains('consulta')) return Colors.green;
-    if (lower.contains('medicina') || lower.contains('medicamento')) return Colors.yellow.shade700;
+    if (lower.contains('veterinario') || lower.contains('consulta'))
+      return Colors.green;
+    if (lower.contains('medicina') || lower.contains('medicamento'))
+      return Colors.yellow.shade700;
     if (lower.contains('vacuna')) return Colors.lightBlueAccent;
     return Colors.purple;
   }
@@ -116,8 +120,10 @@ class CalendarController extends GetxController {
   IconData obtenerIconoEvento(String nombre) {
     final lower = nombre.toLowerCase();
     if (lower.contains('baño')) return Icons.shower;
-    if (lower.contains('veterinario') || lower.contains('consulta')) return Icons.local_hospital;
-    if (lower.contains('medicina') || lower.contains('medicamento')) return Icons.medical_services;
+    if (lower.contains('veterinario') || lower.contains('consulta'))
+      return Icons.local_hospital;
+    if (lower.contains('medicina') || lower.contains('medicamento'))
+      return Icons.medical_services;
     if (lower.contains('vacuna')) return Icons.vaccines;
     return Icons.pets;
   }
@@ -170,13 +176,11 @@ class CalendarController extends GetxController {
 
     // Si entramos en modo eventos, aseguramos que el formato sea 2 semanas
     if (modoEventos.value) {
-      calendarFormat.value = CalendarFormat.twoWeeks;  // Cambiar a 2 semanas
+      calendarFormat.value = CalendarFormat.twoWeeks; // Cambiar a 2 semanas
     }
 
     // El formato no cambia al salir del modo eventos, se mantiene en 2 semanas
   }
-
-
 
   void filtrarEventos(String query) {
     searchQuery.value = query;
@@ -208,5 +212,4 @@ class CalendarController extends GetxController {
 
     return resultados;
   }
-
 }

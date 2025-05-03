@@ -38,23 +38,32 @@ class RecommendationsScreen extends StatelessWidget {
                     Column(
                       children: [
                         // Tipo de Mascota ocupa toda la fila
-                        _buildDataTile('Tipo de Mascota', controller.petType.value),
+                        _buildDataTile(
+                            'Tipo de Mascota', controller.petType.value),
                         const SizedBox(height: 10),
                         // Género, Raza en dos columnas
                         Row(
                           children: [
-                            Expanded(child: _buildDataTile('Género', controller.petGender.value)),
+                            Expanded(
+                                child: _buildDataTile(
+                                    'Género', controller.petGender.value)),
                             const SizedBox(width: 10),
-                            Expanded(child: _buildDataTile('Raza', controller.petBreed.value)),
+                            Expanded(
+                                child: _buildDataTile(
+                                    'Raza', controller.petBreed.value)),
                           ],
                         ),
                         const SizedBox(height: 10),
                         // Edad ocupa una sola columna
                         Row(
                           children: [
-                            Expanded(child: _buildDataTile('Edad', controller.petAge.value)),
+                            Expanded(
+                                child: _buildDataTile(
+                                    'Edad', controller.petAge.value)),
                             const SizedBox(width: 10),
-                            const Expanded(child: SizedBox()), // Espacio vacío para balancear
+                            const Expanded(
+                                child:
+                                    SizedBox()), // Espacio vacío para balancear
                           ],
                         ),
                       ],
@@ -75,21 +84,21 @@ class RecommendationsScreen extends StatelessWidget {
                     // Listado de recomendaciones
                     Expanded(
                       child: Obx(() => ListView.builder(
-                        itemCount: controller.recommendations.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            color: const Color(0xFF301B92),
-                            margin: const EdgeInsets.symmetric(vertical: 8),
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Text(
-                                controller.recommendations[index],
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          );
-                        },
-                      )),
+                            itemCount: controller.recommendations.length,
+                            itemBuilder: (context, index) {
+                              return Card(
+                                color: const Color(0xFF301B92),
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Text(
+                                    controller.recommendations[index],
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              );
+                            },
+                          )),
                     ),
                   ],
                 ),
@@ -128,7 +137,9 @@ class RecommendationsScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          Text(label,
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           Text(value, style: const TextStyle(color: Colors.grey, fontSize: 16)),
         ],
       ),

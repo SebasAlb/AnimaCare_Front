@@ -17,7 +17,8 @@ class UserOwnerScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded( // 🔥 Solución: usar Expanded para que lo que viene abajo pueda scrollar y no desborde
+            Expanded(
+              // 🔥 Solución: usar Expanded para que lo que viene abajo pueda scrollar y no desborde
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -26,7 +27,8 @@ class UserOwnerScreen extends StatelessWidget {
                     const CircleAvatar(
                       radius: 60,
                       backgroundColor: AppColors.cardBackground,
-                      child: Icon(Icons.person, size: 80, color: AppColors.header),
+                      child:
+                          Icon(Icons.person, size: 80, color: AppColors.header),
                     ),
                     const SizedBox(height: 24),
                     _buildTextField(
@@ -55,7 +57,8 @@ class UserOwnerScreen extends StatelessWidget {
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Función de cambiar contraseña aún no implementada'),
+                            content: Text(
+                                'Función de cambiar contraseña aún no implementada'),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -111,7 +114,8 @@ class UserOwnerScreen extends StatelessWidget {
     );
   }
 
-  Future<bool> _confirmarSalida(BuildContext context, OwnerUpdateController controller) async {
+  Future<bool> _confirmarSalida(
+      BuildContext context, OwnerUpdateController controller) async {
     final hayCambios = controller.nameController.text.isNotEmpty ||
         controller.lastNameController.text.isNotEmpty ||
         controller.emailController.text.isNotEmpty;
@@ -121,7 +125,8 @@ class UserOwnerScreen extends StatelessWidget {
         context: context,
         builder: (_) => AlertDialog(
           title: const Text('¿Descartar cambios?'),
-          content: const Text('Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
+          content: const Text(
+              'Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
           backgroundColor: Colors.white,
           actions: [
             TextButton(

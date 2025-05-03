@@ -29,7 +29,8 @@ class AddEditPetScreen extends StatelessWidget {
                             const CircleAvatar(
                               radius: 60,
                               backgroundColor: AppColors.cardBackground,
-                              child: Icon(Icons.pets, size: 80, color: AppColors.header),
+                              child: Icon(Icons.pets,
+                                  size: 80, color: AppColors.header),
                             ),
                             const SizedBox(height: 24),
                             _buildTextField(
@@ -79,7 +80,8 @@ class AddEditPetScreen extends StatelessWidget {
                               onPressed: controller.registerPet,
                               child: const Text(
                                 'Registrar Mascota',
-                                style: TextStyle(fontSize: 16, color: Colors.white),
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
                               ),
                             ),
                           ],
@@ -205,7 +207,8 @@ class AddEditPetScreen extends StatelessWidget {
     );
   }
 
-  Future<bool> _confirmarSalida(BuildContext context, AddEditPetController controller) async {
+  Future<bool> _confirmarSalida(
+      BuildContext context, AddEditPetController controller) async {
     final hayCambios = controller.nameController.text.isNotEmpty ||
         controller.breedController.text.isNotEmpty ||
         controller.ageController.text.isNotEmpty ||
@@ -217,7 +220,8 @@ class AddEditPetScreen extends StatelessWidget {
         context: context,
         builder: (_) => AlertDialog(
           title: const Text('¿Descartar cambios?'),
-          content: const Text('Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
+          content: const Text(
+              'Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
           backgroundColor: Colors.white,
           actions: [
             TextButton(

@@ -19,7 +19,8 @@ class CalendarDayItem extends StatelessWidget {
     Color textColor;
 
     if (isSelected) {
-      backgroundColor = isOverloaded ? AppColors.markerBorder : AppColors.selectedDay;
+      backgroundColor =
+          isOverloaded ? AppColors.markerBorder : AppColors.selectedDay;
       textColor = AppColors.primaryWhite;
     } else if (isOverloaded) {
       backgroundColor = AppColors.transparent;

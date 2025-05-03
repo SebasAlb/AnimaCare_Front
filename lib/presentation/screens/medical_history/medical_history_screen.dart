@@ -54,20 +54,20 @@ class MedicalHistoryScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Obx(() => ListView(
-                          children: [
-                            _buildEditableDataTile(
-                              label: 'Vacunas',
-                              value: controller.vaccines.value,
-                              onEdit: controller.updateVaccines,
-                            ),
-                            const SizedBox(height: 10),
-                            _buildEditableDataTile(
-                              label: 'Desparasitaciones',
-                              value: controller.dewormings.value,
-                              onEdit: controller.updateDewormings,
-                            ),
-                          ],
-                        )),
+                              children: [
+                                _buildEditableDataTile(
+                                  label: 'Vacunas',
+                                  value: controller.vaccines.value,
+                                  onEdit: controller.updateVaccines,
+                                ),
+                                const SizedBox(height: 10),
+                                _buildEditableDataTile(
+                                  label: 'Desparasitaciones',
+                                  value: controller.dewormings.value,
+                                  onEdit: controller.updateDewormings,
+                                ),
+                              ],
+                            )),
                       ),
                     ),
                   ],
@@ -96,7 +96,10 @@ class MedicalHistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEditableDataTile({required String label, required String value, required Function(String) onEdit}) {
+  Widget _buildEditableDataTile(
+      {required String label,
+      required String value,
+      required Function(String) onEdit}) {
     return GestureDetector(
       onTap: () => _showEditDialog(label, value, onEdit),
       child: Container(
@@ -109,7 +112,9 @@ class MedicalHistoryScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(label,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             Flexible(
               child: Text(
                 value,
@@ -123,7 +128,8 @@ class MedicalHistoryScreen extends StatelessWidget {
     );
   }
 
-  void _showEditDialog(String title, String currentValue, Function(String) onSave) {
+  void _showEditDialog(
+      String title, String currentValue, Function(String) onSave) {
     final controller = TextEditingController(text: currentValue);
 
     Get.dialog(
@@ -150,5 +156,3 @@ class MedicalHistoryScreen extends StatelessWidget {
     );
   }
 }
-
-

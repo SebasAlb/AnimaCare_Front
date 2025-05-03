@@ -15,7 +15,11 @@ class SignupController extends GetxController {
     final password = passwordController.text.trim();
     final confirmPassword = confirmPasswordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty || firstName.isEmpty || lastName.isEmpty || confirmPassword.isEmpty) {
+    if (email.isEmpty ||
+        password.isEmpty ||
+        firstName.isEmpty ||
+        lastName.isEmpty ||
+        confirmPassword.isEmpty) {
       Get.snackbar(
         'Error',
         'Por favor, completa todos los campos.',

@@ -40,9 +40,10 @@ class SignupScreen extends StatelessWidget {
                     alignment: Alignment.topLeft,
                     child: TextButton.icon(
                       onPressed: controller.goBack,
-                      icon: const Icon(Icons.arrow_back, color: Color(0xFF301B92)),
-                      label: const Text('Volver', style: TextStyle(color: Color(
-                          0xFF301B92))),
+                      icon: const Icon(Icons.arrow_back,
+                          color: Color(0xFF301B92)),
+                      label: const Text('Volver',
+                          style: TextStyle(color: Color(0xFF301B92))),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -99,10 +100,12 @@ class SignupScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF301B92),
                       minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: controller.signup,
-                    child: const Text('Registrarse', style: TextStyle(fontSize: 16, color: Colors.white)),
+                    child: const Text('Registrarse',
+                        style: TextStyle(fontSize: 16, color: Colors.white)),
                   ),
                 ],
               ),
@@ -126,7 +129,8 @@ class SignupScreen extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF301B92)),
+          style: const TextStyle(
+              fontWeight: FontWeight.bold, color: Color(0xFF301B92)),
         ),
         const SizedBox(height: 8),
         TextField(

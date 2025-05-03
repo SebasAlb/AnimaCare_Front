@@ -24,7 +24,8 @@ class LoginScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: const Color(0xFF4DD0E2), // Fondo azul claro
         body: Center(
-          child: SingleChildScrollView( // Evitar overflow
+          child: SingleChildScrollView(
+            // Evitar overflow
             padding: const EdgeInsets.all(20),
             child: Container(
               padding: const EdgeInsets.all(20),
