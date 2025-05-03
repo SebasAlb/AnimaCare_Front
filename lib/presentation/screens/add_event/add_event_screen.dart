@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'add_event_controller.dart';
+import 'package:animacare_front/presentation/screens/add_event/add_event_controller.dart';
 import 'package:animacare_front/presentation/theme/colors.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:animacare_front/presentation/screens/calendar/calendar_controller.dart';
@@ -10,11 +10,11 @@ class AddEventScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(AddEventController());
+    final AddEventController controller = Get.put(AddEventController());
 
     return WillPopScope(
       onWillPop: () async {
-        final hayCambios = controller.nombreEvento.value.isNotEmpty ||
+        final bool hayCambios = controller.nombreEvento.value.isNotEmpty ||
             controller.mascotaSeleccionada.value.isNotEmpty ||
             (controller.tipoLugar.value == 'manual' &&
                 controller.lugarEvento.value.isNotEmpty) ||
@@ -25,13 +25,13 @@ class AddEventScreen extends StatelessWidget {
             controller.categoriaEvento.value.isNotEmpty;
 
         if (hayCambios) {
-          final salir = await showDialog<bool>(
+          final bool? salir = await showDialog<bool>(
             context: context,
             builder: (_) => AlertDialog(
               title: const Text('¿Descartar cambios?'),
               content: const Text(
-                  'Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
-              actions: [
+                  'Tienes cambios sin guardar. ¿Seguro que quieres salir?',),
+              actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
                   child: const Text('Cancelar'),
@@ -51,14 +51,14 @@ class AddEventScreen extends StatelessWidget {
         backgroundColor: AppColors.background,
         body: SafeArea(
           child: Column(
-            children: [
+            children: <Widget>[
               _buildHeader(context),
               const SizedBox(height: 10),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: ListView(
-                    children: [
+                    children: <Widget>[
                       _buildInputField(
                         label: 'Asignar un nombre al evento',
                         onChanged: (value) =>
@@ -73,7 +73,7 @@ class AddEventScreen extends StatelessWidget {
                             items: controller.mascotas,
                             onChanged: (v) =>
                                 controller.mascotaSeleccionada.value = v ?? '',
-                          )),
+                          ),),
                       const SizedBox(height: 20),
                       _buildLugarSection(controller),
                       const SizedBox(height: 20),
@@ -87,22 +87,22 @@ class AddEventScreen extends StatelessWidget {
                             items: controller.categorias,
                             onChanged: (v) =>
                                 controller.categoriaEvento.value = v ?? '',
-                          )),
+                          ),),
                       const SizedBox(height: 40),
 
                       // Recibir Recordatorio en:
                       Obx(() => _buildDropdown(
                             label: 'Recibir Recordatorio en:',
                             value: controller.recibirRecordatorio.value,
-                            items: [
+                            items: <String>[
                               'Solo en la app',
                               'Solo en el celular',
                               'En app y celular',
-                              'No recibir'
+                              'No recibir',
                             ],
                             onChanged: (v) => controller.recibirRecordatorio
                                 .value = v ?? 'Solo en la app',
-                          )),
+                          ),),
 
                       const SizedBox(height: 20),
 
@@ -113,15 +113,15 @@ class AddEventScreen extends StatelessWidget {
                           return const SizedBox.shrink(); // No mostrar nada
                         } else {
                           return Row(
-                            children: [
+                            children: <Widget>[
                               Expanded(
                                 child: _buildDropdown(
                                   label: 'Frecuencia',
                                   value: controller.frecuencia.value,
-                                  items: [
+                                  items: <String>[
                                     'Cada 6 horas',
                                     'Cada 12 horas',
-                                    'Cada 24 horas'
+                                    'Cada 24 horas',
                                   ],
                                   onChanged: (v) => controller
                                       .frecuencia.value = v ?? 'Cada 6 horas',
@@ -132,10 +132,10 @@ class AddEventScreen extends StatelessWidget {
                                 child: _buildDropdown(
                                   label: 'Anticipación',
                                   value: controller.anticipacion.value,
-                                  items: [
+                                  items: <String>[
                                     '1 día antes',
                                     '2 días antes',
-                                    '3 días antes'
+                                    '3 días antes',
                                   ],
                                   onChanged: (v) => controller
                                       .anticipacion.value = v ?? '1 día antes',
@@ -162,18 +162,18 @@ class AddEventScreen extends StatelessWidget {
 
   // Header
   Widget _buildHeader(BuildContext context) {
-    final controller = Get.find<AddEventController>();
+    final AddEventController controller = Get.find<AddEventController>();
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: const BoxDecoration(color: AppColors.header),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
+        children: <Widget>[
           IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () async {
-              final hayCambios = controller.nombreEvento.value.isNotEmpty ||
+              final bool hayCambios = controller.nombreEvento.value.isNotEmpty ||
                   controller.mascotaSeleccionada.value.isNotEmpty ||
                   (controller.tipoLugar.value == 'manual' &&
                       controller.lugarEvento.value.isNotEmpty) ||
@@ -184,13 +184,13 @@ class AddEventScreen extends StatelessWidget {
                   controller.categoriaEvento.value.isNotEmpty;
 
               if (hayCambios) {
-                final salir = await showDialog<bool>(
+                final bool? salir = await showDialog<bool>(
                   context: context,
                   builder: (_) => AlertDialog(
                     title: const Text('¿Descartar cambios?'),
                     content: const Text(
-                        'Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
-                    actions: [
+                        'Tienes cambios sin guardar. ¿Seguro que quieres salir?',),
+                    actions: <Widget>[
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
                         child: const Text('Cancelar'),
@@ -228,15 +228,14 @@ class AddEventScreen extends StatelessWidget {
   Widget _buildInputField({
     required String label,
     required ValueChanged<String> onChanged,
-  }) {
-    return Column(
+  }) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(label,
             style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: Colors.white)),
+                color: Colors.white,),),
         const SizedBox(height: 8),
         TextField(
           decoration: InputDecoration(
@@ -248,7 +247,6 @@ class AddEventScreen extends StatelessWidget {
         ),
       ],
     );
-  }
 
   // Dropdown genérico
   Widget _buildDropdown({
@@ -256,15 +254,14 @@ class AddEventScreen extends StatelessWidget {
     required String? value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
-  }) {
-    return Column(
+  }) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(label,
             style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: Colors.white)),
+                color: Colors.white,),),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -277,57 +274,53 @@ class AddEventScreen extends StatelessWidget {
             hint: const Text('Seleccionar'),
             isExpanded: true,
             underline: Container(),
-            items: items.map((item) {
-              return DropdownMenuItem(
+            items: items.map((String item) => DropdownMenuItem(
                 value: item,
                 child: Text(item),
-              );
-            }).toList(),
+              ),).toList(),
             onChanged: onChanged,
           ),
         ),
       ],
     );
-  }
 
   // Lugar Section
-  Widget _buildLugarSection(AddEventController controller) {
-    return Column(
+  Widget _buildLugarSection(AddEventController controller) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         const Text('Lugar del Evento',
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: Colors.white)),
+                color: Colors.white,),),
         Obx(() => Row(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: RadioListTile<String>(
                     title: const Text('Escribir Manualmente',
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: Colors.white),),
                     value: 'manual',
                     groupValue: controller.tipoLugar.value,
-                    onChanged: (v) => controller.tipoLugar.value = v!,
+                    onChanged: (String? v) => controller.tipoLugar.value = v!,
                   ),
                 ),
                 Expanded(
                   child: RadioListTile<String>(
                     title: const Text('Veterinarias Guardadas',
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: Colors.white),),
                     value: 'veterinaria',
                     groupValue: controller.tipoLugar.value,
-                    onChanged: (v) => controller.tipoLugar.value = v!,
+                    onChanged: (String? v) => controller.tipoLugar.value = v!,
                   ),
                 ),
               ],
-            )),
+            ),),
         const SizedBox(height: 10),
         Obx(() {
           if (controller.tipoLugar.value == 'manual') {
             return _buildInputField(
               label: 'Escribir lugar',
-              onChanged: (v) => controller.lugarEvento.value = v,
+              onChanged: (String v) => controller.lugarEvento.value = v,
             );
           } else {
             return _buildDropdown(
@@ -336,31 +329,27 @@ class AddEventScreen extends StatelessWidget {
                   ? null
                   : controller.veterinariaSeleccionada.value,
               items: controller.veterinarias,
-              onChanged: (v) =>
+              onChanged: (String? v) =>
                   controller.veterinariaSeleccionada.value = v ?? '',
             );
           }
         }),
       ],
     );
-  }
 
   // Fecha y Hora Row
   Widget _buildFechaHoraRow(
-      BuildContext context, AddEventController controller) {
-    return Row(
-      children: [
+      BuildContext context, AddEventController controller,) => Row(
+      children: <Widget>[
         Expanded(child: _buildFecha(context, controller)),
         const SizedBox(width: 10),
         Expanded(child: _buildHora(context, controller)),
       ],
     );
-  }
 
-  Widget _buildFecha(BuildContext context, AddEventController controller) {
-    return Obx(() => GestureDetector(
+  Widget _buildFecha(BuildContext context, AddEventController controller) => Obx(() => GestureDetector(
           onTap: () async {
-            final picked = await showDatePicker(
+            final DateTime? picked = await showDatePicker(
               context: context,
               initialDate: DateTime.now(),
               firstDate: DateTime.now(),
@@ -383,8 +372,7 @@ class AddEventScreen extends StatelessWidget {
               style: const TextStyle(color: Colors.black),
             ),
           ),
-        ));
-  }
+        ),);
 
   Widget _buildHora(BuildContext context, AddEventController controller) {
     final TextEditingController horaController = TextEditingController(
@@ -395,16 +383,16 @@ class AddEventScreen extends StatelessWidget {
 
     return Obx(() => GestureDetector(
           onTap: () async {
-            final picked = await showTimePicker(
+            final TimeOfDay? picked = await showTimePicker(
               context: context,
               initialTime: TimeOfDay.now(),
             );
             if (picked != null) {
-              final ahora = TimeOfDay.now();
-              final hoy = DateTime.now();
+              final TimeOfDay ahora = TimeOfDay.now();
+              final DateTime hoy = DateTime.now();
 
-              final selectedDate = controller.fechaEvento.value ?? hoy;
-              final isToday = selectedDate.day == hoy.day &&
+              final DateTime selectedDate = controller.fechaEvento.value ?? hoy;
+              final bool isToday = selectedDate.day == hoy.day &&
                   selectedDate.month == hoy.month &&
                   selectedDate.year == hoy.year;
 
@@ -432,7 +420,7 @@ class AddEventScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
-              children: [
+              children: <Widget>[
                 const Icon(Icons.access_time, color: Colors.black),
                 const SizedBox(width: 10),
                 Expanded(
@@ -446,7 +434,7 @@ class AddEventScreen extends StatelessWidget {
               ],
             ),
           ),
-        ));
+        ),);
   }
 
   // Dropdown Categorías con Ícono y Color
@@ -455,15 +443,14 @@ class AddEventScreen extends StatelessWidget {
     required String? value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
-  }) {
-    return Column(
+  }) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(label,
             style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: Colors.white)),
+                color: Colors.white,),),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -476,7 +463,7 @@ class AddEventScreen extends StatelessWidget {
             hint: const Text('Seleccionar'),
             isExpanded: true,
             underline: Container(),
-            items: items.map((item) {
+            items: items.map((String item) {
               IconData icon;
               Color color;
               switch (item.toLowerCase()) {
@@ -503,7 +490,7 @@ class AddEventScreen extends StatelessWidget {
               return DropdownMenuItem(
                 value: item,
                 child: Row(
-                  children: [
+                  children: <Widget>[
                     Icon(icon, color: color),
                     const SizedBox(width: 8),
                     Text(item),
@@ -516,12 +503,10 @@ class AddEventScreen extends StatelessWidget {
         ),
       ],
     );
-  }
 
   // Botón Guardar
   Widget _buildGuardarButton(
-      BuildContext context, AddEventController controller) {
-    return Center(
+      BuildContext context, AddEventController controller,) => Center(
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.header,
@@ -535,7 +520,6 @@ class AddEventScreen extends StatelessWidget {
         child: const Text('Agregar Evento'),
       ),
     );
-  }
 
   void _validarGuardar(BuildContext context, AddEventController controller) {
     if (controller.nombreEvento.value.isEmpty ||
@@ -547,7 +531,7 @@ class AddEventScreen extends StatelessWidget {
         controller.horaEvento.value == null ||
         controller.categoriaEvento.value.isEmpty) {
       Get.snackbar('Error', 'Por favor completa todos los campos.',
-          backgroundColor: Colors.white, colorText: Colors.black);
+          backgroundColor: Colors.white, colorText: Colors.black,);
     } else {
       _confirmarGuardado(context, controller);
     }
@@ -559,7 +543,7 @@ class AddEventScreen extends StatelessWidget {
       builder: (_) => AlertDialog(
         title: const Text('Confirmar Evento'),
         content: const Text('¿Deseas agregar este evento?'),
-        actions: [
+        actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancelar'),

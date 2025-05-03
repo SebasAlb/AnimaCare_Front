@@ -1,17 +1,17 @@
-import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/theme/colors.dart'; // << Importación corregida
+import 'package:flutter/material.dart';
 
 class CalendarDayItem extends StatelessWidget {
-  final DateTime day;
-  final bool isSelected;
-  final bool isOverloaded;
 
   const CalendarDayItem({
-    Key? key,
+    super.key,
     required this.day,
     required this.isSelected,
     required this.isOverloaded,
-  }) : super(key: key);
+  });
+  final DateTime day;
+  final bool isSelected;
+  final bool isOverloaded;
 
   @override
   Widget build(BuildContext context) {

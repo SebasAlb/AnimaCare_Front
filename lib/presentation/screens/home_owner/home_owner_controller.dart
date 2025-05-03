@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 
 class HomeOwnerController extends GetxController {
   // Aquí puedes tener las mascotas cargadas desde tu API o servicio
-  var pets = <Map<String, String>>[].obs;
+  RxList<Map<String, String>> pets = <Map<String, String>>[].obs;
 
   @override
   void onInit() {
@@ -11,13 +11,13 @@ class HomeOwnerController extends GetxController {
   }
 
   void loadPets() {
-    pets.value = [
-      {
+    pets.value = <Map<String, String>>[
+      <String, String>{
         'name': 'Gato 1',
-        'description': 'Este es un ejemplo de mascota en el listado'
+        'description': 'Este es un ejemplo de mascota en el listado',
       },
-      {'name': 'Gato 2', 'description': 'Otro gato feliz registrado'},
-      {'name': 'Perro 1', 'description': 'Un perro muy juguetón'},
+      <String, String>{'name': 'Gato 2', 'description': 'Otro gato feliz registrado'},
+      <String, String>{'name': 'Perro 1', 'description': 'Un perro muy juguetón'},
     ];
   }
 

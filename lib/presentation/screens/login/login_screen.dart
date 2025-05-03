@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'login_controller.dart';
+import 'package:animacare_front/presentation/screens/login/login_controller.dart';
 import 'package:animacare_front/presentation/components/exit_dialog.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -8,14 +8,14 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(LoginController());
-    final size = MediaQuery.of(context).size;
+    final LoginController controller = Get.put(LoginController());
+    final Size size = MediaQuery.of(context).size;
 
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
         if (!didPop) {
-          bool shouldExit = await ExitDialog.show();
+          final bool shouldExit = await ExitDialog.show();
           if (shouldExit) {
             Get.back();
           }
@@ -32,7 +32,7 @@ class LoginScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white, // Caja blanca moderna
                 borderRadius: BorderRadius.circular(30),
-                boxShadow: [
+                boxShadow: <BoxShadow>const <BoxShadow>[
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 10,
@@ -42,7 +42,7 @@ class LoginScreen extends StatelessWidget {
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
                   const Text(
                     'Inicio de Sesión',
                     style: TextStyle(
@@ -116,10 +116,9 @@ class LoginScreen extends StatelessWidget {
     TextInputType type = TextInputType.text,
     bool obscureText = false,
     required TextEditingController controller,
-  }) {
-    return Column(
+  }) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           label,
           style: const TextStyle(
@@ -145,5 +144,4 @@ class LoginScreen extends StatelessWidget {
         ),
       ],
     );
-  }
 }

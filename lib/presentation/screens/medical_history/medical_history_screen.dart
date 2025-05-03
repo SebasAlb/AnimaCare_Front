@@ -3,22 +3,22 @@ import 'package:get/get.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/routes/app_routes.dart';
-import './medical_history_controller.dart';
+import 'package:animacare_front/presentation/screens/medical_history/medical_history_controller.dart';
 
 class MedicalHistoryScreen extends StatelessWidget {
   const MedicalHistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(MedicalHistoryController());
+    final MedicalHistoryController controller = Get.put(MedicalHistoryController());
 
     return Scaffold(
       backgroundColor: const Color(0xFF4DD0E2),
       body: SafeArea(
         child: Column(
-          children: [
+          children: <Widget>[
             CustomHeader(
-              petName: "Gato 1",
+              petName: 'Gato 1',
               onEdit: () {
                 Navigator.pushNamed(context, AppRoutes.ownerUpdate);
               },
@@ -32,7 +32,7 @@ class MedicalHistoryScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  children: [
+                  children: <Widget>[
                     const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -54,7 +54,7 @@ class MedicalHistoryScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Obx(() => ListView(
-                              children: [
+                              children: <Widget>[
                                 _buildEditableDataTile(
                                   label: 'Vacunas',
                                   value: controller.vaccines.value,
@@ -67,7 +67,7 @@ class MedicalHistoryScreen extends StatelessWidget {
                                   onEdit: controller.updateDewormings,
                                 ),
                               ],
-                            )),
+                            ),),
                       ),
                     ),
                   ],
@@ -99,8 +99,7 @@ class MedicalHistoryScreen extends StatelessWidget {
   Widget _buildEditableDataTile(
       {required String label,
       required String value,
-      required Function(String) onEdit}) {
-    return GestureDetector(
+      required Function(String) onEdit,}) => GestureDetector(
       onTap: () => _showEditDialog(label, value, onEdit),
       child: Container(
         padding: const EdgeInsets.all(12),
@@ -111,10 +110,10 @@ class MedicalHistoryScreen extends StatelessWidget {
         constraints: const BoxConstraints(minHeight: 60),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          children: <Widget>[
             Text(label,
                 style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
             Flexible(
               child: Text(
                 value,
@@ -126,11 +125,10 @@ class MedicalHistoryScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 
   void _showEditDialog(
-      String title, String currentValue, Function(String) onSave) {
-    final controller = TextEditingController(text: currentValue);
+      String title, String currentValue, Function(String) onSave,) {
+    final TextEditingController controller = TextEditingController(text: currentValue);
 
     Get.dialog(
       AlertDialog(
@@ -139,9 +137,9 @@ class MedicalHistoryScreen extends StatelessWidget {
           controller: controller,
           decoration: const InputDecoration(hintText: 'Ingrese nuevo valor'),
         ),
-        actions: [
+        actions: <Widget>[
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: Get.back,
             child: const Text('Cancelar'),
           ),
           TextButton(

@@ -1,22 +1,22 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class EditNotificationsController extends GetxController {
-  final anticipacion = '1 día antes'.obs;
-  final frecuencia = 'Cada 6 horas'.obs;
-  final recibirRecomendaciones = 'Solo en la app'.obs;
+  final RxString anticipacion = '1 día antes'.obs;
+  final RxString frecuencia = 'Cada 6 horas'.obs;
+  final RxString recibirRecomendaciones = 'Solo en la app'.obs;
 
-  final colorCalendario = const Color(0xFFFFFFFF).obs;
-  final colorDiasCargados = const Color(0xFFFFA726).obs;
+  final Rx<Color> colorCalendario = const Color(0xFFFFFFFF).obs;
+  final Rx<Color> colorDiasCargados = const Color(0xFFFFA726).obs;
 
-  final categorias = <String, Map<String, dynamic>>{
-    'Baño': {'color': Colors.blue, 'icon': Icons.shower},
-    'Veterinario': {'color': Colors.green, 'icon': Icons.local_hospital},
-    'Medicina': {
+  final RxMap<String, Map<String, dynamic>> categorias = <String, Map<String, dynamic>>{
+    'Baño': <String, >{'color': Colors.blue, 'icon': Icons.shower},
+    'Veterinario': <String, >{'color': Colors.green, 'icon': Icons.local_hospital},
+    'Medicina': <String, >{
       'color': Colors.yellow.shade700,
-      'icon': Icons.medical_services
+      'icon': Icons.medical_services,
     },
-    'Vacuna': {'color': Colors.lightBlueAccent, 'icon': Icons.vaccines},
+    'Vacuna': <String, >{'color': Colors.lightBlueAccent, 'icon': Icons.vaccines},
   }.obs;
 
   void actualizarColorCategoria(String categoria, Color nuevoColor) {
@@ -35,7 +35,7 @@ class EditNotificationsController extends GetxController {
 
   void actualizarNombreCategoria(String viejoNombre, String nuevoNombre) {
     if (categorias.containsKey(viejoNombre)) {
-      final datos = categorias.remove(viejoNombre);
+      final Map<String, dynamic>? datos = categorias.remove(viejoNombre);
       categorias[nuevoNombre] = datos!;
       categorias.refresh();
     }
@@ -47,7 +47,7 @@ class EditNotificationsController extends GetxController {
   }
 
   void agregarCategoria(String nombre, Color color, IconData icono) {
-    categorias[nombre] = {'color': color, 'icon': icono};
+    categorias[nombre] = <String, >{'color': color, 'icon': icono};
     categorias.refresh();
   }
 }

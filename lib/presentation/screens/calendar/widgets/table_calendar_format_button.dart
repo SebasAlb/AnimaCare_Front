@@ -1,14 +1,12 @@
+import 'package:animacare_front/presentation/screens/calendar/calendar_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../calendar_controller.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:animacare_front/presentation/theme/colors.dart'; // << Importación correcta
 
 class TableCalendarFormatButton extends StatelessWidget {
-  final CalendarController controller;
 
-  const TableCalendarFormatButton({Key? key, required this.controller})
-      : super(key: key);
+  const TableCalendarFormatButton({super.key, required this.controller});
+  final CalendarController controller;
 
   String _getFormatName(CalendarFormat format) {
     switch (format) {
@@ -34,8 +32,7 @@ class TableCalendarFormatButton extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Obx(() => ElevatedButton(
+  Widget build(BuildContext context) => Obx(() => ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
             foregroundColor: const Color(0xFF3E0B53),
@@ -45,6 +42,5 @@ class TableCalendarFormatButton extends StatelessWidget {
           ),
           onPressed: _toggleFormat,
           child: Text(_getFormatName(controller.calendarFormat.value)),
-        ));
-  }
+        ),);
 }

@@ -2,7 +2,7 @@ import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'owner_update_controller.dart';
+import 'package:animacare_front/presentation/screens/owner_update/owner_update_controller.dart';
 import 'package:animacare_front/presentation/theme/colors.dart';
 
 class UserOwnerScreen extends StatelessWidget {
@@ -10,20 +10,20 @@ class UserOwnerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(OwnerUpdateController());
+    final OwnerUpdateController controller = Get.put(OwnerUpdateController());
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
-          children: [
+          children: <Widget>[
             Expanded(
               // 🔥 Solución: usar Expanded para que lo que viene abajo pueda scrollar y no desborde
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
+                  children: <Widget>[
                     const CircleAvatar(
                       radius: 60,
                       backgroundColor: AppColors.cardBackground,
@@ -58,7 +58,7 @@ class UserOwnerScreen extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                                'Función de cambiar contraseña aún no implementada'),
+                                'Función de cambiar contraseña aún no implementada',),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -115,20 +115,20 @@ class UserOwnerScreen extends StatelessWidget {
   }
 
   Future<bool> _confirmarSalida(
-      BuildContext context, OwnerUpdateController controller) async {
-    final hayCambios = controller.nameController.text.isNotEmpty ||
+      BuildContext context, OwnerUpdateController controller,) async {
+    final bool hayCambios = controller.nameController.text.isNotEmpty ||
         controller.lastNameController.text.isNotEmpty ||
         controller.emailController.text.isNotEmpty;
 
     if (hayCambios) {
-      final salir = await showDialog<bool>(
+      final bool? salir = await showDialog<bool>(
         context: context,
         builder: (_) => AlertDialog(
           title: const Text('¿Descartar cambios?'),
           content: const Text(
-              'Tienes cambios sin guardar. ¿Seguro que quieres salir?'),
+              'Tienes cambios sin guardar. ¿Seguro que quieres salir?',),
           backgroundColor: Colors.white,
-          actions: [
+          actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: const Text('Cancelar'),
@@ -153,10 +153,9 @@ class UserOwnerScreen extends StatelessWidget {
     required IconData icon,
     TextInputType type = TextInputType.text,
     bool obscureText = false,
-  }) {
-    return Column(
+  }) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           label,
           style: const TextStyle(
@@ -182,5 +181,4 @@ class UserOwnerScreen extends StatelessWidget {
         ),
       ],
     );
-  }
 }

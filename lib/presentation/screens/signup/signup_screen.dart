@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'signup_controller.dart';
+import 'package:animacare_front/presentation/screens/signup/signup_controller.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SignupController());
+    final SignupController controller = Get.put(SignupController());
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
@@ -25,7 +25,7 @@ class SignupScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
-                boxShadow: [
+                boxShadow: <BoxShadow>const <BoxShadow>[
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 10,
@@ -35,15 +35,15 @@ class SignupScreen extends StatelessWidget {
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
                   Align(
                     alignment: Alignment.topLeft,
                     child: TextButton.icon(
                       onPressed: controller.goBack,
                       icon: const Icon(Icons.arrow_back,
-                          color: Color(0xFF301B92)),
+                          color: Color(0xFF301B92),),
                       label: const Text('Volver',
-                          style: TextStyle(color: Color(0xFF301B92))),
+                          style: TextStyle(color: Color(0xFF301B92)),),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -101,11 +101,11 @@ class SignupScreen extends StatelessWidget {
                       backgroundColor: const Color(0xFF301B92),
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(12),),
                     ),
                     onPressed: controller.signup,
                     child: const Text('Registrarse',
-                        style: TextStyle(fontSize: 16, color: Colors.white)),
+                        style: TextStyle(fontSize: 16, color: Colors.white),),
                   ),
                 ],
               ),
@@ -123,14 +123,13 @@ class SignupScreen extends StatelessWidget {
     TextInputType type = TextInputType.text,
     bool obscureText = false,
     required TextEditingController controller,
-  }) {
-    return Column(
+  }) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           label,
           style: const TextStyle(
-              fontWeight: FontWeight.bold, color: Color(0xFF301B92)),
+              fontWeight: FontWeight.bold, color: Color(0xFF301B92),),
         ),
         const SizedBox(height: 8),
         TextField(
@@ -150,5 +149,4 @@ class SignupScreen extends StatelessWidget {
         ),
       ],
     );
-  }
 }

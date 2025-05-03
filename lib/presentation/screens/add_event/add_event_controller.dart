@@ -1,24 +1,24 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AddEventController extends GetxController {
-  final nombreEvento = ''.obs;
-  final mascotaSeleccionada = ''.obs;
-  final tipoLugar = 'manual'.obs;
-  final lugarEvento = ''.obs;
-  final veterinariaSeleccionada = ''.obs;
-  final fechaEvento = Rxn<DateTime>(); // Puede ser nulo
-  final horaEvento = Rxn<TimeOfDay>(); // Puede ser nulo
-  final categoriaEvento = ''.obs;
+  final RxString nombreEvento = ''.obs;
+  final RxString mascotaSeleccionada = ''.obs;
+  final RxString tipoLugar = 'manual'.obs;
+  final RxString lugarEvento = ''.obs;
+  final RxString veterinariaSeleccionada = ''.obs;
+  final Rxn<DateTime> fechaEvento = Rxn<DateTime>(); // Puede ser nulo
+  final Rxn<TimeOfDay> horaEvento = Rxn<TimeOfDay>(); // Puede ser nulo
+  final RxString categoriaEvento = ''.obs;
 
-  final categorias = ['Baño', 'Veterinario', 'Medicina', 'Vacuna'].obs;
-  final veterinarias =
-      ['Veterinaria Paws', 'Centro AnimalCare', 'PetClinic Plus'].obs;
-  final mascotas = ['Firulais', 'Mishi', 'Kira', 'Luna'].obs;
+  final RxList<String> categorias = <String>['Baño', 'Veterinario', 'Medicina', 'Vacuna'].obs;
+  final RxList<String> veterinarias =
+      <String>['Veterinaria Paws', 'Centro AnimalCare', 'PetClinic Plus'].obs;
+  final RxList<String> mascotas = <String>['Firulais', 'Mishi', 'Kira', 'Luna'].obs;
 
-  final anticipacion = '1 día antes'.obs;
-  final frecuencia = 'Cada 6 horas'.obs;
-  final recibirRecordatorio = 'Solo en la app'.obs;
+  final RxString anticipacion = '1 día antes'.obs;
+  final RxString frecuencia = 'Cada 6 horas'.obs;
+  final RxString recibirRecordatorio = 'Solo en la app'.obs;
 
   void resetForm() {
     nombreEvento.value = '';

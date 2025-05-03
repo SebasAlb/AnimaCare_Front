@@ -6,6 +6,7 @@ class OwnerUpdateController extends GetxController {
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
 
+  @override
   void dispose() {
     nameController.dispose();
     lastNameController.dispose();

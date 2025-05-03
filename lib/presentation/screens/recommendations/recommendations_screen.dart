@@ -2,7 +2,7 @@ import 'package:animacare_front/presentation/theme/colors.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'recommendations_controller.dart';
+import 'package:animacare_front/presentation/screens/recommendations/recommendations_controller.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
 
@@ -11,13 +11,13 @@ class RecommendationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(RecommendationsController());
+    final RecommendationsController controller = Get.put(RecommendationsController());
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
-          children: [
+          children: <Widget>[
             CustomHeader(
               petName: 'Gato 1',
               onEdit: () {
@@ -33,37 +33,37 @@ class RecommendationsScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  children: [
+                  children: <Widget>[
                     // Datos de la mascota
                     Column(
-                      children: [
+                      children: <Widget>[
                         // Tipo de Mascota ocupa toda la fila
                         _buildDataTile(
-                            'Tipo de Mascota', controller.petType.value),
+                            'Tipo de Mascota', controller.petType.value,),
                         const SizedBox(height: 10),
                         // Género, Raza en dos columnas
                         Row(
-                          children: [
+                          children: <Widget>[
                             Expanded(
                                 child: _buildDataTile(
-                                    'Género', controller.petGender.value)),
+                                    'Género', controller.petGender.value,),),
                             const SizedBox(width: 10),
                             Expanded(
                                 child: _buildDataTile(
-                                    'Raza', controller.petBreed.value)),
+                                    'Raza', controller.petBreed.value,),),
                           ],
                         ),
                         const SizedBox(height: 10),
                         // Edad ocupa una sola columna
                         Row(
-                          children: [
+                          children: <Widget>[
                             Expanded(
                                 child: _buildDataTile(
-                                    'Edad', controller.petAge.value)),
+                                    'Edad', controller.petAge.value,),),
                             const SizedBox(width: 10),
                             const Expanded(
                                 child:
-                                    SizedBox()), // Espacio vacío para balancear
+                                    SizedBox(),), // Espacio vacío para balancear
                           ],
                         ),
                       ],
@@ -85,8 +85,7 @@ class RecommendationsScreen extends StatelessWidget {
                     Expanded(
                       child: Obx(() => ListView.builder(
                             itemCount: controller.recommendations.length,
-                            itemBuilder: (context, index) {
-                              return Card(
+                            itemBuilder: (context, index) => Card(
                                 color: const Color(0xFF301B92),
                                 margin: const EdgeInsets.symmetric(vertical: 8),
                                 child: Padding(
@@ -96,9 +95,8 @@ class RecommendationsScreen extends StatelessWidget {
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                 ),
-                              );
-                            },
-                          )),
+                              ),
+                          ),),
                     ),
                   ],
                 ),
@@ -126,8 +124,7 @@ class RecommendationsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDataTile(String label, String value) {
-    return Container(
+  Widget _buildDataTile(String label, String value) => Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -136,13 +133,12 @@ class RecommendationsScreen extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: 50), // Alto mínimo
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
+        children: <Widget>[
           Text(label,
               style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
           Text(value, style: const TextStyle(color: Colors.grey, fontSize: 16)),
         ],
       ),
     );
-  }
 }

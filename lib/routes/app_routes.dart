@@ -1,14 +1,14 @@
 import 'package:animacare_front/presentation/screens/add_edit_pets/add_edit_pets_screen.dart';
-import 'package:animacare_front/presentation/screens/home_owner/home_owner_screen.dart';
-import 'package:animacare_front/presentation/screens/owner_update/owner_update_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:animacare_front/presentation/screens/login/login_screen.dart';
-import 'package:animacare_front/presentation/screens/signup/signup_screen.dart';
-import 'package:animacare_front/presentation/screens/recommendations/recommendations_screen.dart';
+import 'package:animacare_front/presentation/screens/add_event/add_event_screen.dart';
 import 'package:animacare_front/presentation/screens/calendar/calendar_screen.dart';
 import 'package:animacare_front/presentation/screens/edit_notifications/edit_notifications_screen.dart';
-import 'package:animacare_front/presentation/screens/add_event/add_event_screen.dart';
+import 'package:animacare_front/presentation/screens/home_owner/home_owner_screen.dart';
+import 'package:animacare_front/presentation/screens/login/login_screen.dart';
 import 'package:animacare_front/presentation/screens/medical_history/medical_history_screen.dart';
+import 'package:animacare_front/presentation/screens/owner_update/owner_update_screen.dart';
+import 'package:animacare_front/presentation/screens/recommendations/recommendations_screen.dart';
+import 'package:animacare_front/presentation/screens/signup/signup_screen.dart';
+import 'package:flutter/material.dart';
 
 class AppRoutes {
   static const String login = '/login';
@@ -44,7 +44,7 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const CalendarScreen());
       case editNotifications:
         return MaterialPageRoute(
-            builder: (_) => const EditNotificationsScreen());
+            builder: (_) => const EditNotificationsScreen(),);
       case addEvent:
         return MaterialPageRoute(builder: (_) => const AddEventScreen());
 

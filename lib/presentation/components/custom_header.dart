@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class CustomHeader extends StatelessWidget {
-  final String petName;
-  final VoidCallback onEdit;
-  final VoidCallback onViewRecord;
-  final bool isCalendarMode;
-  final bool isOwnerMode;
-  final bool isRecommendationMode;
-  final bool isHistoryMode;
 
   const CustomHeader({
     super.key,
@@ -20,19 +12,25 @@ class CustomHeader extends StatelessWidget {
     this.isRecommendationMode = false,
     this.isHistoryMode = false,
   });
+  final String petName;
+  final VoidCallback onEdit;
+  final VoidCallback onViewRecord;
+  final bool isCalendarMode;
+  final bool isOwnerMode;
+  final bool isRecommendationMode;
+  final bool isHistoryMode;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: const Color(0xFF35919E),
+      decoration: const BoxDecoration(
+        color: Color(0xFF35919E),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
+        children: <Widget>[
           Row(
-            children: [
+            children: <Widget>[
               const CircleAvatar(radius: 20),
               const SizedBox(width: 10),
               Text(
@@ -46,7 +44,7 @@ class CustomHeader extends StatelessWidget {
             ],
           ),
           Row(
-            children: [
+            children: <Widget>[
               if (!isOwnerMode && !isHistoryMode)
                 IconButton(
                   icon: Icon(
@@ -65,7 +63,6 @@ class CustomHeader extends StatelessWidget {
         ],
       ),
     );
-  }
 
   IconData _getEditIcon() {
     if (isRecommendationMode) return Icons.edit;
@@ -74,7 +71,5 @@ class CustomHeader extends StatelessWidget {
     return Icons.edit;
   }
 
-  IconData _getSettingsIcon() {
-    return isCalendarMode ? Icons.settings : Icons.medical_information;
-  }
+  IconData _getSettingsIcon() => isCalendarMode ? Icons.settings : Icons.medical_information;
 }

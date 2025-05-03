@@ -3,25 +3,23 @@ import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'home_owner_controller.dart';
+import 'package:animacare_front/presentation/screens/home_owner/home_owner_controller.dart';
 import 'package:animacare_front/presentation/components/exit_dialog.dart';
 
 class HomeOwnerScreen extends StatelessWidget {
-  const HomeOwnerScreen({Key? key}) : super(key: key);
+  const HomeOwnerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(HomeOwnerController());
+    final HomeOwnerController controller = Get.put(HomeOwnerController());
 
     return WillPopScope(
-      onWillPop: () async {
-        return await ExitDialog.show();
-      },
+      onWillPop: () async => await ExitDialog.show(),
       child: Scaffold(
         backgroundColor: const Color(0xFF4DD0E2),
         body: SafeArea(
           child: Column(
-            children: [
+            children: <Widget>[
               CustomHeader(
                 petName: 'Sebastian',
                 onEdit: () {
@@ -63,14 +61,14 @@ class HomeOwnerScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       itemCount: controller.pets.length,
                       itemBuilder: (context, index) {
-                        final pet = controller.pets[index];
+                        final Map<String, String> pet = controller.pets[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: _buildPetCard(
-                              context, pet['name']!, pet['description']!),
+                              context, pet['name']!, pet['description']!,),
                         );
                       },
-                    )),
+                    ),),
               ),
             ],
           ),
@@ -95,17 +93,15 @@ class HomeOwnerScreen extends StatelessWidget {
   }
 
   Widget _buildPetCard(BuildContext context, String name, String description) {
-    final controller = Get.put(HomeOwnerController());
+    final HomeOwnerController controller = Get.put(HomeOwnerController());
     return InkWell(
-      onTap: () {
-        controller.goToDetailsPet();
-      },
+      onTap: controller.goToDetailsPet,
       borderRadius: BorderRadius.circular(12),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.deepPurple[900],
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
+          boxShadow: <BoxShadow>const <BoxShadow>[
             BoxShadow(
               color: Colors.black26,
               blurRadius: 5,
@@ -115,7 +111,7 @@ class HomeOwnerScreen extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(16),
         child: Row(
-          children: [
+          children: <Widget>[
             const CircleAvatar(
               backgroundColor: Colors.white,
               child: Icon(Icons.pets, color: Colors.grey),
@@ -124,19 +120,19 @@ class HomeOwnerScreen extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   Text(name,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                      )),
+                      ),),
                   const SizedBox(height: 4),
                   Text(description,
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.white,
-                      )),
+                      ),),
                 ],
               ),
             ),

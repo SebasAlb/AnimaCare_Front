@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/theme/colors.dart'; // << Importación corregida
 
 class EventMarkers extends StatelessWidget {
-  final List<Map<String, String>> eventos;
 
   const EventMarkers({
-    Key? key,
+    super.key,
     required this.eventos,
-  }) : super(key: key);
+  });
+  final List<Map<String, String>> eventos;
 
   @override
   Widget build(BuildContext context) {
     if (eventos.isEmpty) return const SizedBox.shrink();
 
-    List<Widget> markers = eventos.take(4).map((evento) {
-      final nombre = (evento['nombre'] ?? '').toLowerCase();
+    final List<Widget> markers = eventos.take(4).map((evento) {
+      final String nombre = (evento['nombre'] ?? '').toLowerCase();
       Color color;
 
       if (nombre.contains('baño')) {

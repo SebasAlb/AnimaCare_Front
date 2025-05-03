@@ -1,7 +1,19 @@
-import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/theme/colors.dart'; // << Importación corregida
+import 'package:flutter/material.dart';
 
 class EventCard extends StatelessWidget {
+
+  const EventCard({
+    super.key,
+    required this.nombre,
+    required this.hora,
+    required this.lugar,
+    required this.veterinario,
+    required this.color,
+    required this.icono,
+    required this.onTap,
+    required this.mascota,
+  });
   final String nombre;
   final String hora;
   final String lugar;
@@ -11,27 +23,14 @@ class EventCard extends StatelessWidget {
   final IconData icono;
   final VoidCallback onTap;
 
-  const EventCard({
-    Key? key,
-    required this.nombre,
-    required this.hora,
-    required this.lugar,
-    required this.veterinario,
-    required this.color,
-    required this.icono,
-    required this.onTap,
-    required this.mascota,
-  }) : super(key: key);
-
   @override
-  Widget build(BuildContext context) {
-    return Card(
+  Widget build(BuildContext context) => Card(
       color: color,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
         onTap: onTap,
         title: Row(
-          children: [
+          children: <Widget>[
             // Hora (20%)
             Expanded(
               flex: 3,
@@ -52,8 +51,6 @@ class EventCard extends StatelessWidget {
             Expanded(
               flex: 4,
               child: Align(
-                alignment: Alignment
-                    .center, // << Esto centra el texto dentro de su Expanded
                 child: Text(
                   nombre,
                   textAlign: TextAlign
@@ -76,8 +73,8 @@ class EventCard extends StatelessWidget {
               flex: 4,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(Icons.pets, color: AppColors.primaryWhite, size: 18),
+                children: <Widget>[
+                  const Icon(Icons.pets, color: AppColors.primaryWhite, size: 18),
                   const SizedBox(width: 4),
                   Text(
                     mascota,
@@ -96,5 +93,4 @@ class EventCard extends StatelessWidget {
         ),
       ),
     );
-  }
 }

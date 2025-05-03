@@ -1,6 +1,6 @@
+import 'package:animacare_front/routes/app_routes.dart'; // Aquí tienes las rutas que vas a usar
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'routes/app_routes.dart'; // Aquí tienes las rutas que vas a usar
 
 void main() {
   runApp(const MyApp());
@@ -10,8 +10,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
+  Widget build(BuildContext context) => GetMaterialApp(
       title: 'AnimaCare',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -21,5 +20,4 @@ class MyApp extends StatelessWidget {
       initialRoute: AppRoutes.login,
       onGenerateRoute: AppRoutes.generateRoute,
     );
-  }
 }

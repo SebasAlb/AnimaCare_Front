@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   void login() {
-    final email = emailController.text.trim();
-    final password = passwordController.text.trim();
+    final String email = emailController.text.trim();
+    final String password = passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
       Get.snackbar(
@@ -17,7 +17,6 @@ class LoginController extends GetxController {
         colorText: Colors.black,
         borderRadius: 12,
         icon: const Icon(Icons.error, color: Colors.red),
-        duration: const Duration(seconds: 3),
         isDismissible: true,
       );
 
@@ -32,7 +31,6 @@ class LoginController extends GetxController {
         colorText: Colors.black,
         borderRadius: 12,
         icon: const Icon(Icons.check_circle, color: Colors.green),
-        duration: const Duration(seconds: 3),
         isDismissible: true,
       );
       resetFields();

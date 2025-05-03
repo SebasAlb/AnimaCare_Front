@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'calendar_controller.dart';
-import 'widgets/event_card.dart';
-import 'widgets/calendar_day_item.dart';
-import 'widgets/event_markers.dart';
-import 'widgets/month_year_picker.dart';
-import 'widgets/table_calendar_format_button.dart';
+import 'package:animacare_front/presentation/screens/calendar/calendar_controller.dart';
+import 'package:animacare_front/presentation/screens/calendar/widgets/event_card.dart';
+import 'package:animacare_front/presentation/screens/calendar/widgets/calendar_day_item.dart';
+import 'package:animacare_front/presentation/screens/calendar/widgets/event_markers.dart';
+import 'package:animacare_front/presentation/screens/calendar/widgets/month_year_picker.dart';
+import 'package:animacare_front/presentation/screens/calendar/widgets/table_calendar_format_button.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/routes/app_routes.dart';
@@ -17,13 +17,13 @@ class CalendarScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(CalendarController());
+    final CalendarController controller = Get.put(CalendarController());
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
-          children: [
+          children: <Widget>[
             CustomHeader(
               petName: 'Mi Calendario',
               onEdit: () {
@@ -44,13 +44,13 @@ class CalendarScreen extends StatelessWidget {
 
               return Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0, vertical: 10.0),
+                    horizontal: 20.0, vertical: 10.0,),
                 color: AppColors.header,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: <Widget>[
                     Row(
-                      children: [
+                      children: <Widget>[
                         GestureDetector(
                           onTap: () => _openMonthPicker(context, controller),
                           child: Text(
@@ -96,7 +96,7 @@ class CalendarScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: TableCalendar(
-                    firstDay: DateTime.utc(2020, 1, 1),
+                    firstDay: DateTime.utc(2020),
                     lastDay: DateTime.utc(2030, 12, 31),
                     focusedDay: controller.focusedDay.value,
                     calendarFormat: controller.calendarFormat.value,
@@ -111,7 +111,7 @@ class CalendarScreen extends StatelessWidget {
                     },
                     selectedDayPredicate: (day) =>
                         isSameDay(controller.focusedDay.value, day),
-                    eventLoader: (day) => controller.obtenerEventosPorDia(day),
+                    eventLoader: controller.obtenerEventosPorDia,
                     headerVisible: false,
                     calendarBuilders: CalendarBuilders(
                       defaultBuilder: (context, day, focusedDay) =>
@@ -127,7 +127,7 @@ class CalendarScreen extends StatelessWidget {
                         isOverloaded: controller.isDayLoaded(day),
                       ),
                       markerBuilder: (context, date, events) {
-                        final eventList = events.cast<Map<String, String>>();
+                        final List<Map<String, String>> eventList = events.cast<Map<String, String>>();
                         return EventMarkers(eventos: eventList);
                       },
                     ),
@@ -138,7 +138,7 @@ class CalendarScreen extends StatelessWidget {
 
             // Label del día seleccionado
             Obx(() {
-              final eventosEnFecha = controller
+              final int eventosEnFecha = controller
                   .obtenerEventosPorDia(controller.focusedDay.value)
                   .length;
 
@@ -155,7 +155,7 @@ class CalendarScreen extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                    children: <Widget>[
                       Text(
                         controller.modoEventos.value
                             ? 'Eventos'
@@ -171,7 +171,7 @@ class CalendarScreen extends StatelessWidget {
                             ? Icons.keyboard_arrow_down
                             : Icons.keyboard_arrow_up,
                         color: Colors.white,
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -209,12 +209,12 @@ class CalendarScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Obx(() {
                   if (controller.modoEventos.value) {
-                    final eventosFiltrados = controller.eventosFiltrados;
+                    final List<Map<String, dynamic>> eventosFiltrados = controller.eventosFiltrados;
 
                     if (eventosFiltrados.isEmpty) {
                       return const Center(
                         child: Text('No hay eventos que coincidan.',
-                            style: TextStyle(color: AppColors.primaryWhite)),
+                            style: TextStyle(color: AppColors.primaryWhite),),
                       );
                     }
 
@@ -224,9 +224,9 @@ class CalendarScreen extends StatelessWidget {
                     return ListView.builder(
                       itemCount: eventosFiltrados.length,
                       itemBuilder: (context, index) {
-                        final item = eventosFiltrados[index];
-                        final evento = item['evento'] as Map<String, String>;
-                        final fecha = item['fecha'] as DateTime;
+                        final Map<String, dynamic> item = eventosFiltrados[index];
+                        final Map<String, String> evento = item['evento'] as Map<String, String>;
+                        final DateTime fecha = item['fecha'] as DateTime;
 
                         // 🔥 Verificar si hay que mostrar la fecha o no
                         bool mostrarFecha = false;
@@ -238,7 +238,7 @@ class CalendarScreen extends StatelessWidget {
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                          children: <Widget>[
                             if (mostrarFecha)
                               GestureDetector(
                                 onTap: () {
@@ -250,7 +250,7 @@ class CalendarScreen extends StatelessWidget {
                                   margin:
                                       const EdgeInsets.symmetric(vertical: 8.0),
                                   padding: const EdgeInsets.symmetric(
-                                      vertical: 6.0, horizontal: 12.0),
+                                      vertical: 6.0, horizontal: 12.0,),
                                   decoration: BoxDecoration(
                                     color: AppColors.labelBackground,
                                     borderRadius: BorderRadius.circular(8),
@@ -298,7 +298,7 @@ class CalendarScreen extends StatelessWidget {
                     );
                   } else {
                     // 🔥 Código original de eventos por día (cuando modoEventos = false)
-                    final eventos = controller
+                    final List<Map<String, String>> eventos = controller
                         .obtenerEventosPorDia(controller.focusedDay.value);
 
                     if (eventos.isEmpty) {
@@ -306,7 +306,7 @@ class CalendarScreen extends StatelessWidget {
                         child: Text(
                           'No hay recordatorios para este día',
                           style: TextStyle(
-                              color: AppColors.primaryWhite, fontSize: 16),
+                              color: AppColors.primaryWhite, fontSize: 16,),
                         ),
                       );
                     }
@@ -314,7 +314,7 @@ class CalendarScreen extends StatelessWidget {
                     return ListView.builder(
                       itemCount: eventos.length,
                       itemBuilder: (context, index) {
-                        final evento = eventos[index];
+                        final Map<String, String> evento = eventos[index];
                         return EventCard(
                           nombre: evento['nombre'] ?? '',
                           hora: evento['hora'] ?? '',
@@ -369,7 +369,7 @@ class CalendarScreen extends StatelessWidget {
   }
 
   String _monthName(int month) {
-    const months = [
+    const List<String> months = <String>[
       '',
       'Enero',
       'Febrero',
@@ -382,7 +382,7 @@ class CalendarScreen extends StatelessWidget {
       'Septiembre',
       'Octubre',
       'Noviembre',
-      'Diciembre'
+      'Diciembre',
     ];
     return months[month];
   }
@@ -413,8 +413,8 @@ class CalendarScreen extends StatelessWidget {
       String recibirRecordatorio,
       int index,
       CalendarController controller,
-      {DateTime? fechaReal}) {
-    final color = _determineEventColor(nombre);
+      {DateTime? fechaReal,}) {
+    final Color color = _determineEventColor(nombre);
 
     showModalBottomSheet(
       context: context,
@@ -428,9 +428,9 @@ class CalendarScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             Row(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: Text(
                     nombre,
@@ -443,13 +443,13 @@ class CalendarScreen extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () async {
-                    final confirmar = await showDialog<bool>(
+                    final bool? confirmar = await showDialog<bool>(
                       context: context,
                       builder: (context) => AlertDialog(
                         title: const Text('¿Eliminar evento?'),
                         content: const Text(
-                            '¿Seguro que deseas eliminar este evento?'),
-                        actions: [
+                            '¿Seguro que deseas eliminar este evento?',),
+                        actions: <Widget>[
                           TextButton(
                             onPressed: () => Navigator.pop(context, false),
                             child: const Text('Cancelar'),
@@ -457,7 +457,7 @@ class CalendarScreen extends StatelessWidget {
                           TextButton(
                             onPressed: () => Navigator.pop(context, true),
                             child: const Text('Eliminar',
-                                style: TextStyle(color: Colors.red)),
+                                style: TextStyle(color: Colors.red),),
                           ),
                         ],
                       ),
@@ -466,18 +466,18 @@ class CalendarScreen extends StatelessWidget {
                     if (confirmar == true) {
                       if (fechaReal != null) {
                         // Si pasaron fecha real (modo eventos)
-                        final eventosDelDia =
+                        final List<Map<String, String>> eventosDelDia =
                             controller.obtenerEventosPorDia(fechaReal);
-                        final eventoIndex = eventosDelDia.indexWhere((evento) =>
+                        final int eventoIndex = eventosDelDia.indexWhere((evento) =>
                             evento['nombre'] == nombre &&
-                            evento['hora'] == hora);
+                            evento['hora'] == hora,);
                         if (eventoIndex != -1) {
                           controller.eliminarEvento(fechaReal, eventoIndex);
                         }
                       } else {
                         // Vista calendario normal
                         controller.eliminarEvento(
-                            controller.focusedDay.value, index);
+                            controller.focusedDay.value, index,);
                       }
 
                       controller.focusedDay.refresh();
@@ -504,12 +504,12 @@ class CalendarScreen extends StatelessWidget {
             _buildDetailRow(Icons.pets, mascota),
             const SizedBox(height: 10),
             _buildDetailRow(Icons.notifications_active, recibirRecordatorio),
-            if (recibirRecordatorio != 'No recibir') ...[
+            if (recibirRecordatorio != 'No recibir') ...<Widget>[
               const SizedBox(height: 10),
               _buildDetailRow(Icons.alarm, anticipacion),
               const SizedBox(height: 10),
               _buildDetailRow(Icons.repeat, frecuencia),
-            ]
+            ],
           ],
         ),
       ),
@@ -517,27 +517,27 @@ class CalendarScreen extends StatelessWidget {
   }
 
   Color _determineEventColor(String nombre) {
-    final lower = nombre.toLowerCase();
+    final String lower = nombre.toLowerCase();
     if (lower.contains('baño')) return AppColors.eventBath;
-    if (lower.contains('veterinario') || lower.contains('consulta'))
+    if (lower.contains('veterinario') || lower.contains('consulta')) {
       return AppColors.eventVetConsult;
-    if (lower.contains('medicina') || lower.contains('medicamento'))
+    }
+    if (lower.contains('medicina') || lower.contains('medicamento')) {
       return AppColors.eventMedicine;
+    }
     if (lower.contains('vacuna')) return AppColors.eventVaccine;
     return AppColors.eventOther;
   }
 
-  Widget _buildDetailRow(IconData icon, String text) {
-    return Row(
-      children: [
+  Widget _buildDetailRow(IconData icon, String text) => Row(
+      children: <Widget>[
         Icon(icon, color: AppColors.primaryWhite),
         const SizedBox(width: 8),
         Expanded(
           child: Text(text,
               style:
-                  const TextStyle(color: AppColors.primaryWhite, fontSize: 16)),
+                  const TextStyle(color: AppColors.primaryWhite, fontSize: 16),),
         ),
       ],
     );
-  }
 }

@@ -37,7 +37,8 @@ limpio, consistente y fácil de mantener.
     ```bash
     dart format .
 
-2. Ejecutar análisis estático para encontrar errores y advertencias:
+2. Ejecutar análisis estático para encontrar errores y advertencias, Antes de hacer un commit:
 
     ```bash
     dart analyze
+   dart fix --apply

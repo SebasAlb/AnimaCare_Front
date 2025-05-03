@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 
 class CustomNavBar extends StatelessWidget {
-  final int currentIndex;
-  final Function(int) onTap;
 
   const CustomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
   });
+  final int currentIndex;
+  final Function(int) onTap;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       decoration: const BoxDecoration(
         color: Colors.white,
-        boxShadow: [
+        boxShadow: <BoxShadow>[
           BoxShadow(
             color: Colors.black12,
             blurRadius: 10,
@@ -37,7 +36,7 @@ class CustomNavBar extends StatelessWidget {
         currentIndex: currentIndex,
         type: BottomNavigationBarType.fixed,
         onTap: onTap,
-        items: const [
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today, size: 28),
             label: 'Calendario',
@@ -53,5 +52,4 @@ class CustomNavBar extends StatelessWidget {
         ],
       ),
     );
-  }
 }
