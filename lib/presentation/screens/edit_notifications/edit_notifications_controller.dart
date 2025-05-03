@@ -14,7 +14,7 @@ class EditNotificationsController extends GetxController {
     'Baño': <String, dynamic>{'color': Colors.blue, 'icon': Icons.shower},
     'Veterinario': <String, dynamic>{
       'color': Colors.green,
-      'icon': Icons.local_hospital
+      'icon': Icons.local_hospital,
     },
     'Medicina': <String, dynamic>{
       'color': Colors.yellow.shade700,
@@ -22,7 +22,7 @@ class EditNotificationsController extends GetxController {
     },
     'Vacuna': <String, dynamic>{
       'color': Colors.lightBlueAccent,
-      'icon': Icons.vaccines
+      'icon': Icons.vaccines,
     },
   }.obs;
 

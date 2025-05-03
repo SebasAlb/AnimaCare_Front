@@ -32,7 +32,7 @@ class LoginScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white, // Caja blanca moderna
                 borderRadius: BorderRadius.circular(30),
-                boxShadow: const [
+                boxShadow: const <BoxShadow>[
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 10,

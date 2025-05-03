@@ -74,7 +74,7 @@ class EventCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     const Icon(Icons.pets,
-                        color: AppColors.primaryWhite, size: 18),
+                        color: AppColors.primaryWhite, size: 18,),
                     const SizedBox(width: 4),
                     Text(
                       mascota,

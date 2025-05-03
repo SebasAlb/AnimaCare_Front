@@ -153,7 +153,7 @@ class RecommendationsScreen extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             Text(value,
-                style: const TextStyle(color: Colors.grey, fontSize: 16)),
+                style: const TextStyle(color: Colors.grey, fontSize: 16),),
           ],
         ),
       );

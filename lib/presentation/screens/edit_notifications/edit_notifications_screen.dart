@@ -130,7 +130,7 @@ class EditNotificationsScreen extends StatelessWidget {
                     items: <String>[
                       '1 día antes',
                       '2 días antes',
-                      '3 días antes'
+                      '3 días antes',
                     ],
                     onChanged: (String? v) =>
                         controller.anticipacion.value = v!,
@@ -142,7 +142,7 @@ class EditNotificationsScreen extends StatelessWidget {
                     items: <String>[
                       'Cada 6 horas',
                       'Cada 12 horas',
-                      'Cada 24 horas'
+                      'Cada 24 horas',
                     ],
                     onChanged: (String? v) => controller.frecuencia.value = v!,
                   ),

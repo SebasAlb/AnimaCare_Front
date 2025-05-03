@@ -14,7 +14,7 @@ class AddEditPetScreen extends StatelessWidget {
           body: SafeArea(
             child: Consumer<AddEditPetController>(
               builder: (BuildContext context, AddEditPetController controller,
-                      Widget? child) =>
+                      Widget? child,) =>
                   WillPopScope(
                 onWillPop: () => _confirmarSalida(context, controller),
                 child: Column(

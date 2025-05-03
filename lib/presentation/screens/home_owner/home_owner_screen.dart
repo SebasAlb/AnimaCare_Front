@@ -109,7 +109,7 @@ class HomeOwnerScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.deepPurple[900],
           borderRadius: BorderRadius.circular(12),
-          boxShadow: const [
+          boxShadow: const <BoxShadow>[
             BoxShadow(
               color: Colors.black26,
               blurRadius: 5,

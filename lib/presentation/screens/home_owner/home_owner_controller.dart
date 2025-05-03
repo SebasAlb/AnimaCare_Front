@@ -18,11 +18,11 @@ class HomeOwnerController extends GetxController {
       },
       <String, String>{
         'name': 'Gato 2',
-        'description': 'Otro gato feliz registrado'
+        'description': 'Otro gato feliz registrado',
       },
       <String, String>{
         'name': 'Perro 1',
-        'description': 'Un perro muy juguetón'
+        'description': 'Un perro muy juguetón',
       },
     ];
   }

@@ -5,14 +5,14 @@ import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'medical_history_controller.dart';
+import 'package:animacare_front/presentation/screens/medical_history/medical_history_controller.dart';
 
 class MedicalHistoryScreen extends StatelessWidget {
   const MedicalHistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(MedicalHistoryController());
+    final MedicalHistoryController controller = Get.put(MedicalHistoryController());
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -104,8 +104,7 @@ class MedicalHistoryScreen extends StatelessWidget {
     required String label,
     required List<String> items,
     required Color color,
-  }) {
-    return GestureDetector(
+  }) => GestureDetector(
       onTap: () => _showItemsDialog(context, label, items, color),
       child: Container(
         padding: const EdgeInsets.all(12),
@@ -122,14 +121,13 @@ class MedicalHistoryScreen extends StatelessWidget {
               style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppColors.primaryWhite,
-                  fontSize: 16),
+                  fontSize: 16,),
             ),
             const Icon(Icons.arrow_forward_ios, color: AppColors.primaryWhite),
           ],
         ),
       ),
     );
-  }
 
   void _showItemsDialog(
     BuildContext context,
@@ -139,8 +137,7 @@ class MedicalHistoryScreen extends StatelessWidget {
   ) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
           backgroundColor: AppColors.cardBackground,
           title: Text(
             title,
@@ -151,16 +148,14 @@ class MedicalHistoryScreen extends StatelessWidget {
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: items.length,
-              itemBuilder: (context, index) {
-                return ListTile(
+              itemBuilder: (BuildContext context, int index) => ListTile(
                   leading:
                       const Icon(Icons.medical_services, color: Colors.grey),
                   title: Text(
                     items[index],
                     style: const TextStyle(color: Colors.black),
                   ),
-                );
-              },
+                ),
             ),
           ),
           actions: <Widget>[
@@ -169,8 +164,7 @@ class MedicalHistoryScreen extends StatelessWidget {
               child: const Text('Cerrar'),
             ),
           ],
-        );
-      },
+        ),
     );
   }
 }
