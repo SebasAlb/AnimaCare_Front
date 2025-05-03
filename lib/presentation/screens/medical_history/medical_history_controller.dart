@@ -1,15 +1,15 @@
 import 'package:get/get.dart';
 
 class MedicalHistoryController extends GetxController {
-  RxString petName = 'Nombre Mascota'.obs;
-  RxString vaccines = 'Vacuna de la rabia aplicada.'.obs;
-  RxString dewormings = 'Última desparasitación hace 3 meses.'.obs;
+  RxString petName = 'Gato 1'.obs;
 
-  void updateVaccines(String newValue) {
-    vaccines.value = newValue;
-  }
+  RxList<String> vaccines = <String>[
+    'Vacuna de la rabia aplicada.',
+    'Vacuna pentavalente aplicada.',
+  ].obs;
 
-  void updateDewormings(String newValue) {
-    dewormings.value = newValue;
-  }
+  RxList<String> dewormings = <String>[
+    'Desparasitación interna - Febrero',
+    'Desparasitación externa - Marzo',
+  ].obs;
 }

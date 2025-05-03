@@ -2,6 +2,7 @@ import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/presentation/components/exit_dialog.dart';
 import 'package:animacare_front/presentation/screens/home_owner/home_owner_controller.dart';
+import 'package:animacare_front/presentation/theme/colors.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +17,7 @@ class HomeOwnerScreen extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async => await ExitDialog.show(),
       child: Scaffold(
-        backgroundColor: const Color(0xFF4DD0E2),
+        backgroundColor: AppColors.background,
         body: SafeArea(
           child: Column(
             children: <Widget>[

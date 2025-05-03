@@ -1,25 +1,26 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
+import 'package:animacare_front/presentation/theme/colors.dart';
 import 'package:animacare_front/routes/app_routes.dart';
-import 'package:animacare_front/presentation/screens/medical_history/medical_history_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import 'medical_history_controller.dart';
 
 class MedicalHistoryScreen extends StatelessWidget {
   const MedicalHistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final MedicalHistoryController controller =
-        Get.put(MedicalHistoryController());
+    final controller = Get.put(MedicalHistoryController());
 
     return Scaffold(
-      backgroundColor: const Color(0xFF4DD0E2),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: <Widget>[
             CustomHeader(
-              petName: 'Gato 1',
+              petName: controller.petName.value,
               onEdit: () {
                 Navigator.pushNamed(context, AppRoutes.ownerUpdate);
               },
@@ -46,7 +47,6 @@ class MedicalHistoryScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    // Información médica
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.all(16),
@@ -54,22 +54,22 @@ class MedicalHistoryScreen extends StatelessWidget {
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Obx(
-                          () => ListView(
-                            children: <Widget>[
-                              _buildEditableDataTile(
-                                label: 'Vacunas',
-                                value: controller.vaccines.value,
-                                onEdit: controller.updateVaccines,
-                              ),
-                              const SizedBox(height: 10),
-                              _buildEditableDataTile(
-                                label: 'Desparasitaciones',
-                                value: controller.dewormings.value,
-                                onEdit: controller.updateDewormings,
-                              ),
-                            ],
-                          ),
+                        child: ListView(
+                          children: <Widget>[
+                            _buildCategoryTile(
+                              context,
+                              label: 'Vacunas',
+                              items: controller.vaccines,
+                              color: AppColors.eventVaccine,
+                            ),
+                            const SizedBox(height: 10),
+                            _buildCategoryTile(
+                              context,
+                              label: 'Desparasitaciones',
+                              items: controller.dewormings,
+                              color: AppColors.eventMedicine,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -99,69 +99,78 @@ class MedicalHistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEditableDataTile({
+  Widget _buildCategoryTile(
+    BuildContext context, {
     required String label,
-    required String value,
-    required Function(String) onEdit,
-  }) =>
-      GestureDetector(
-        onTap: () => _showEditDialog(label, value, onEdit),
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          constraints: const BoxConstraints(minHeight: 60),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                label,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              Flexible(
-                child: Text(
-                  value,
-                  style: const TextStyle(color: Colors.grey, fontSize: 16),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
+    required List<String> items,
+    required Color color,
+  }) {
+    return GestureDetector(
+      onTap: () => _showItemsDialog(context, label, items, color),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.header,
+          borderRadius: BorderRadius.circular(12),
         ),
-      );
-
-  void _showEditDialog(
-    String title,
-    String currentValue,
-    Function(String) onSave,
-  ) {
-    final TextEditingController controller =
-        TextEditingController(text: currentValue);
-
-    Get.dialog(
-      AlertDialog(
-        title: Text('Editar $title'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(hintText: 'Ingrese nuevo valor'),
+        constraints: const BoxConstraints(minHeight: 60),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              label,
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryWhite,
+                  fontSize: 16),
+            ),
+            const Icon(Icons.arrow_forward_ios, color: AppColors.primaryWhite),
+          ],
         ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: Get.back,
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () {
-              onSave(controller.text);
-              Get.back();
-            },
-            child: const Text('Guardar'),
-          ),
-        ],
       ),
+    );
+  }
+
+  void _showItemsDialog(
+    BuildContext context,
+    String title,
+    List<String> items,
+    Color color,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.cardBackground,
+          title: Text(
+            title,
+            style: TextStyle(color: color),
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading:
+                      const Icon(Icons.medical_services, color: Colors.grey),
+                  title: Text(
+                    items[index],
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cerrar'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
