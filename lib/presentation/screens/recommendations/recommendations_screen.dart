@@ -11,7 +11,8 @@ class RecommendationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final RecommendationsController controller = Get.put(RecommendationsController());
+    final RecommendationsController controller =
+        Get.put(RecommendationsController());
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -39,18 +40,26 @@ class RecommendationsScreen extends StatelessWidget {
                       children: <Widget>[
                         // Tipo de Mascota ocupa toda la fila
                         _buildDataTile(
-                            'Tipo de Mascota', controller.petType.value,),
+                          'Tipo de Mascota',
+                          controller.petType.value,
+                        ),
                         const SizedBox(height: 10),
                         // Género, Raza en dos columnas
                         Row(
                           children: <Widget>[
                             Expanded(
-                                child: _buildDataTile(
-                                    'Género', controller.petGender.value,),),
+                              child: _buildDataTile(
+                                'Género',
+                                controller.petGender.value,
+                              ),
+                            ),
                             const SizedBox(width: 10),
                             Expanded(
-                                child: _buildDataTile(
-                                    'Raza', controller.petBreed.value,),),
+                              child: _buildDataTile(
+                                'Raza',
+                                controller.petBreed.value,
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -58,12 +67,15 @@ class RecommendationsScreen extends StatelessWidget {
                         Row(
                           children: <Widget>[
                             Expanded(
-                                child: _buildDataTile(
-                                    'Edad', controller.petAge.value,),),
+                              child: _buildDataTile(
+                                'Edad',
+                                controller.petAge.value,
+                              ),
+                            ),
                             const SizedBox(width: 10),
                             const Expanded(
-                                child:
-                                    SizedBox(),), // Espacio vacío para balancear
+                              child: SizedBox(),
+                            ), // Espacio vacío para balancear
                           ],
                         ),
                       ],
@@ -83,20 +95,22 @@ class RecommendationsScreen extends StatelessWidget {
                     const SizedBox(height: 10),
                     // Listado de recomendaciones
                     Expanded(
-                      child: Obx(() => ListView.builder(
-                            itemCount: controller.recommendations.length,
-                            itemBuilder: (context, index) => Card(
-                                color: const Color(0xFF301B92),
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Text(
-                                    controller.recommendations[index],
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                ),
+                      child: Obx(
+                        () => ListView.builder(
+                          itemCount: controller.recommendations.length,
+                          itemBuilder: (context, index) => Card(
+                            color: const Color(0xFF301B92),
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Text(
+                                controller.recommendations[index],
+                                style: const TextStyle(color: Colors.white),
                               ),
-                          ),),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -125,20 +139,22 @@ class RecommendationsScreen extends StatelessWidget {
   }
 
   Widget _buildDataTile(String label, String value) => Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      constraints: const BoxConstraints(minHeight: 50), // Alto mínimo
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(label,
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
-          Text(value, style: const TextStyle(color: Colors.grey, fontSize: 16)),
-        ],
-      ),
-    );
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        constraints: const BoxConstraints(minHeight: 50), // Alto mínimo
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            Text(value,
+                style: const TextStyle(color: Colors.grey, fontSize: 16)),
+          ],
+        ),
+      );
 }

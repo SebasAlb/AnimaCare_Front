@@ -8,12 +8,14 @@ class AddEditPetScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
-      create: (_) => AddEditPetController(),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: SafeArea(
-          child: Consumer<AddEditPetController>(
-            builder: (BuildContext context, AddEditPetController controller, Widget? child) => WillPopScope(
+        create: (_) => AddEditPetController(),
+        child: Scaffold(
+          backgroundColor: AppColors.background,
+          body: SafeArea(
+            child: Consumer<AddEditPetController>(
+              builder: (BuildContext context, AddEditPetController controller,
+                      Widget? child) =>
+                  WillPopScope(
                 onWillPop: () => _confirmarSalida(context, controller),
                 child: Column(
                   children: <Widget>[
@@ -27,8 +29,11 @@ class AddEditPetScreen extends StatelessWidget {
                             const CircleAvatar(
                               radius: 60,
                               backgroundColor: AppColors.cardBackground,
-                              child: Icon(Icons.pets,
-                                  size: 80, color: AppColors.header,),
+                              child: Icon(
+                                Icons.pets,
+                                size: 80,
+                                color: AppColors.header,
+                              ),
                             ),
                             const SizedBox(height: 24),
                             _buildTextField(
@@ -79,7 +84,9 @@ class AddEditPetScreen extends StatelessWidget {
                               child: const Text(
                                 'Registrar Mascota',
                                 style: TextStyle(
-                                    fontSize: 16, color: Colors.white,),
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ],
@@ -89,36 +96,37 @@ class AddEditPetScreen extends StatelessWidget {
                   ],
                 ),
               ),
-          ),
-        ),
-      ),
-    );
-
-  Widget _buildHeader(BuildContext context, AddEditPetController controller) => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: const BoxDecoration(color: AppColors.header),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () async {
-              final bool salir = await _confirmarSalida(context, controller);
-              if (salir) Navigator.pop(context);
-            },
-          ),
-          const Text(
-            'Agregar/Editar Mascota',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: Colors.white,
             ),
           ),
-          const SizedBox(width: 48),
-        ],
-      ),
-    );
+        ),
+      );
+
+  Widget _buildHeader(BuildContext context, AddEditPetController controller) =>
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: const BoxDecoration(color: AppColors.header),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () async {
+                final bool salir = await _confirmarSalida(context, controller);
+                if (salir) Navigator.pop(context);
+              },
+            ),
+            const Text(
+              'Agregar/Editar Mascota',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 48),
+          ],
+        ),
+      );
 
   Widget _buildTextField({
     required String label,
@@ -126,77 +134,85 @@ class AddEditPetScreen extends StatelessWidget {
     required TextEditingController controller,
     required IconData icon,
     TextInputType type = TextInputType.text,
-  }) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          keyboardType: type,
-          decoration: InputDecoration(
-            hintText: hint,
-            prefixIcon: Icon(icon, color: AppColors.header),
-            filled: true,
-            fillColor: const Color(0xFFF0F4F8),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+  }) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
-        ),
-      ],
-    );
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            keyboardType: type,
+            decoration: InputDecoration(
+              hintText: hint,
+              prefixIcon: Icon(icon, color: AppColors.header),
+              filled: true,
+              fillColor: const Color(0xFFF0F4F8),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ],
+      );
 
   Widget _buildDropdown({
     required String label,
     required String value,
     required List<String> items,
     required Function(String) onChanged,
-  }) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+  }) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: DropdownButton<String>(
+              value: value.isEmpty ? null : value,
+              hint: const Text('Seleccionar'),
+              isExpanded: true,
+              underline: Container(),
+              items: items
+                  .map(
+                    (String item) => DropdownMenuItem(
+                      value: item,
+                      child: Text(item),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (String? newValue) {
+                if (newValue != null) {
+                  onChanged(newValue);
+                }
+              },
+            ),
           ),
-          child: DropdownButton<String>(
-            value: value.isEmpty ? null : value,
-            hint: const Text('Seleccionar'),
-            isExpanded: true,
-            underline: Container(),
-            items: items.map((String item) => DropdownMenuItem(
-                value: item,
-                child: Text(item),
-              ),).toList(),
-            onChanged: (String? newValue) {
-              if (newValue != null) {
-                onChanged(newValue);
-              }
-            },
-          ),
-        ),
-      ],
-    );
+        ],
+      );
 
   Future<bool> _confirmarSalida(
-      BuildContext context, AddEditPetController controller,) async {
+    BuildContext context,
+    AddEditPetController controller,
+  ) async {
     final bool hayCambios = controller.nameController.text.isNotEmpty ||
         controller.breedController.text.isNotEmpty ||
         controller.ageController.text.isNotEmpty ||
@@ -209,7 +225,8 @@ class AddEditPetScreen extends StatelessWidget {
         builder: (_) => AlertDialog(
           title: const Text('¿Descartar cambios?'),
           content: const Text(
-              'Tienes cambios sin guardar. ¿Seguro que quieres salir?',),
+            'Tienes cambios sin guardar. ¿Seguro que quieres salir?',
+          ),
           backgroundColor: Colors.white,
           actions: <Widget>[
             TextButton(

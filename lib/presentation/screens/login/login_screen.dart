@@ -1,7 +1,7 @@
+import 'package:animacare_front/presentation/components/exit_dialog.dart';
+import 'package:animacare_front/presentation/screens/login/login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:animacare_front/presentation/screens/login/login_controller.dart';
-import 'package:animacare_front/presentation/components/exit_dialog.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -32,7 +32,7 @@ class LoginScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white, // Caja blanca moderna
                 borderRadius: BorderRadius.circular(30),
-                boxShadow: <BoxShadow>const <BoxShadow>[
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 10,
@@ -116,32 +116,33 @@ class LoginScreen extends StatelessWidget {
     TextInputType type = TextInputType.text,
     bool obscureText = false,
     required TextEditingController controller,
-  }) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF301B92),
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          keyboardType: type,
-          obscureText: obscureText,
-          decoration: InputDecoration(
-            hintText: hint,
-            prefixIcon: Icon(icon, color: const Color(0xFF301B92)),
-            filled: true,
-            fillColor: const Color(0xFFF0F4F8),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+  }) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF301B92),
             ),
           ),
-        ),
-      ],
-    );
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            keyboardType: type,
+            obscureText: obscureText,
+            decoration: InputDecoration(
+              hintText: hint,
+              prefixIcon: Icon(icon, color: const Color(0xFF301B92)),
+              filled: true,
+              fillColor: const Color(0xFFF0F4F8),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ],
+      );
 }

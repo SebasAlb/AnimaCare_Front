@@ -1,10 +1,10 @@
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
+import 'package:animacare_front/presentation/components/exit_dialog.dart';
+import 'package:animacare_front/presentation/screens/home_owner/home_owner_controller.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:animacare_front/presentation/screens/home_owner/home_owner_controller.dart';
-import 'package:animacare_front/presentation/components/exit_dialog.dart';
 
 class HomeOwnerScreen extends StatelessWidget {
   const HomeOwnerScreen({super.key});
@@ -45,8 +45,10 @@ class HomeOwnerScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(14),
-                      backgroundColor: Colors.white, // Fondo blanco
-                      foregroundColor: Colors.deepPurple, // Icono color morado
+                      backgroundColor: Colors.white,
+                      // Fondo blanco
+                      foregroundColor: Colors.deepPurple,
+                      // Icono color morado
                       elevation: 5,
                     ),
                     child: const Icon(Icons.add, size: 28),
@@ -57,18 +59,23 @@ class HomeOwnerScreen extends StatelessWidget {
               const SizedBox(height: 10),
 
               Expanded(
-                child: Obx(() => ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: controller.pets.length,
-                      itemBuilder: (context, index) {
-                        final Map<String, String> pet = controller.pets[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: _buildPetCard(
-                              context, pet['name']!, pet['description']!,),
-                        );
-                      },
-                    ),),
+                child: Obx(
+                  () => ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: controller.pets.length,
+                    itemBuilder: (context, index) {
+                      final Map<String, String> pet = controller.pets[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _buildPetCard(
+                          context,
+                          pet['name']!,
+                          pet['description']!,
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
             ],
           ),
@@ -101,7 +108,7 @@ class HomeOwnerScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.deepPurple[900],
           borderRadius: BorderRadius.circular(12),
-          boxShadow: <BoxShadow>const <BoxShadow>[
+          boxShadow: const [
             BoxShadow(
               color: Colors.black26,
               blurRadius: 5,
@@ -121,18 +128,22 @@ class HomeOwnerScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),),
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(description,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                      ),),
+                  Text(
+                    description,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                  ),
                 ],
               ),
             ),

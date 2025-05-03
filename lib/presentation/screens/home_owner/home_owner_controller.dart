@@ -16,8 +16,14 @@ class HomeOwnerController extends GetxController {
         'name': 'Gato 1',
         'description': 'Este es un ejemplo de mascota en el listado',
       },
-      <String, String>{'name': 'Gato 2', 'description': 'Otro gato feliz registrado'},
-      <String, String>{'name': 'Perro 1', 'description': 'Un perro muy juguetón'},
+      <String, String>{
+        'name': 'Gato 2',
+        'description': 'Otro gato feliz registrado'
+      },
+      <String, String>{
+        'name': 'Perro 1',
+        'description': 'Un perro muy juguetón'
+      },
     ];
   }
 

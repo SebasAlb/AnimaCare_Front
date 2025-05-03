@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CustomHeader extends StatelessWidget {
-
   const CustomHeader({
     super.key,
     required this.petName,
@@ -22,47 +21,47 @@ class CustomHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: const BoxDecoration(
-        color: Color(0xFF35919E),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              const CircleAvatar(radius: 20),
-              const SizedBox(width: 10),
-              Text(
-                petName,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              if (!isOwnerMode && !isHistoryMode)
-                IconButton(
-                  icon: Icon(
-                    _getEditIcon(),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: const BoxDecoration(
+          color: Color(0xFF35919E),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                const CircleAvatar(radius: 20),
+                const SizedBox(width: 10),
+                Text(
+                  petName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
                     color: Colors.white,
                   ),
-                  onPressed: onEdit,
                 ),
-              if (!isOwnerMode && !isHistoryMode) // Solo si el ícono existe
-                IconButton(
-                  icon: Icon(_getSettingsIcon(), color: Colors.white),
-                  onPressed: onViewRecord,
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                if (!isOwnerMode && !isHistoryMode)
+                  IconButton(
+                    icon: Icon(
+                      _getEditIcon(),
+                      color: Colors.white,
+                    ),
+                    onPressed: onEdit,
+                  ),
+                if (!isOwnerMode && !isHistoryMode) // Solo si el ícono existe
+                  IconButton(
+                    icon: Icon(_getSettingsIcon(), color: Colors.white),
+                    onPressed: onViewRecord,
+                  ),
+              ],
+            ),
+          ],
+        ),
+      );
 
   IconData _getEditIcon() {
     if (isRecommendationMode) return Icons.edit;
@@ -71,5 +70,6 @@ class CustomHeader extends StatelessWidget {
     return Icons.edit;
   }
 
-  IconData _getSettingsIcon() => isCalendarMode ? Icons.settings : Icons.medical_information;
+  IconData _getSettingsIcon() =>
+      isCalendarMode ? Icons.settings : Icons.medical_information;
 }

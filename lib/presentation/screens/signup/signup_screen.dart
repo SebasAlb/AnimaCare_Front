@@ -1,6 +1,6 @@
+import 'package:animacare_front/presentation/screens/signup/signup_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:animacare_front/presentation/screens/signup/signup_controller.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
@@ -25,7 +25,7 @@ class SignupScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
-                boxShadow: <BoxShadow>const <BoxShadow>[
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 10,
@@ -40,10 +40,14 @@ class SignupScreen extends StatelessWidget {
                     alignment: Alignment.topLeft,
                     child: TextButton.icon(
                       onPressed: controller.goBack,
-                      icon: const Icon(Icons.arrow_back,
-                          color: Color(0xFF301B92),),
-                      label: const Text('Volver',
-                          style: TextStyle(color: Color(0xFF301B92)),),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Color(0xFF301B92),
+                      ),
+                      label: const Text(
+                        'Volver',
+                        style: TextStyle(color: Color(0xFF301B92)),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -101,11 +105,14 @@ class SignupScreen extends StatelessWidget {
                       backgroundColor: const Color(0xFF301B92),
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     onPressed: controller.signup,
-                    child: const Text('Registrarse',
-                        style: TextStyle(fontSize: 16, color: Colors.white),),
+                    child: const Text(
+                      'Registrarse',
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
                   ),
                 ],
               ),
@@ -123,30 +130,33 @@ class SignupScreen extends StatelessWidget {
     TextInputType type = TextInputType.text,
     bool obscureText = false,
     required TextEditingController controller,
-  }) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          label,
-          style: const TextStyle(
-              fontWeight: FontWeight.bold, color: Color(0xFF301B92),),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          keyboardType: type,
-          obscureText: obscureText,
-          decoration: InputDecoration(
-            hintText: hint,
-            prefixIcon: Icon(icon, color: const Color(0xFF301B92)),
-            filled: true,
-            fillColor: const Color(0xFFF0F4F8),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+  }) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF301B92),
             ),
           ),
-        ),
-      ],
-    );
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            keyboardType: type,
+            obscureText: obscureText,
+            decoration: InputDecoration(
+              hintText: hint,
+              prefixIcon: Icon(icon, color: const Color(0xFF301B92)),
+              filled: true,
+              fillColor: const Color(0xFFF0F4F8),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ],
+      );
 }

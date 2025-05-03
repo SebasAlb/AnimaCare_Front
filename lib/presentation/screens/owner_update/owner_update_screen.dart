@@ -58,7 +58,8 @@ class UserOwnerScreen extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                                'Función de cambiar contraseña aún no implementada',),
+                              'Función de cambiar contraseña aún no implementada',
+                            ),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -115,7 +116,9 @@ class UserOwnerScreen extends StatelessWidget {
   }
 
   Future<bool> _confirmarSalida(
-      BuildContext context, OwnerUpdateController controller,) async {
+    BuildContext context,
+    OwnerUpdateController controller,
+  ) async {
     final bool hayCambios = controller.nameController.text.isNotEmpty ||
         controller.lastNameController.text.isNotEmpty ||
         controller.emailController.text.isNotEmpty;
@@ -126,7 +129,8 @@ class UserOwnerScreen extends StatelessWidget {
         builder: (_) => AlertDialog(
           title: const Text('¿Descartar cambios?'),
           content: const Text(
-              'Tienes cambios sin guardar. ¿Seguro que quieres salir?',),
+            'Tienes cambios sin guardar. ¿Seguro que quieres salir?',
+          ),
           backgroundColor: Colors.white,
           actions: <Widget>[
             TextButton(
@@ -153,32 +157,33 @@ class UserOwnerScreen extends StatelessWidget {
     required IconData icon,
     TextInputType type = TextInputType.text,
     bool obscureText = false,
-  }) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          keyboardType: type,
-          obscureText: obscureText,
-          decoration: InputDecoration(
-            hintText: hint,
-            prefixIcon: Icon(icon, color: AppColors.header),
-            filled: true,
-            fillColor: const Color(0xFFF0F4F8),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+  }) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
-        ),
-      ],
-    );
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            keyboardType: type,
+            obscureText: obscureText,
+            decoration: InputDecoration(
+              hintText: hint,
+              prefixIcon: Icon(icon, color: AppColors.header),
+              filled: true,
+              fillColor: const Color(0xFFF0F4F8),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ],
+      );
 }

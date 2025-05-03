@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/theme/colors.dart'; // << Importación corregida
 
 class EventMarkers extends StatelessWidget {
-
   const EventMarkers({
     super.key,
     required this.eventos,

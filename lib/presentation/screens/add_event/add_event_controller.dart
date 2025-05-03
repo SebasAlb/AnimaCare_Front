@@ -11,10 +11,12 @@ class AddEventController extends GetxController {
   final Rxn<TimeOfDay> horaEvento = Rxn<TimeOfDay>(); // Puede ser nulo
   final RxString categoriaEvento = ''.obs;
 
-  final RxList<String> categorias = <String>['Baño', 'Veterinario', 'Medicina', 'Vacuna'].obs;
+  final RxList<String> categorias =
+      <String>['Baño', 'Veterinario', 'Medicina', 'Vacuna'].obs;
   final RxList<String> veterinarias =
       <String>['Veterinaria Paws', 'Centro AnimalCare', 'PetClinic Plus'].obs;
-  final RxList<String> mascotas = <String>['Firulais', 'Mishi', 'Kira', 'Luna'].obs;
+  final RxList<String> mascotas =
+      <String>['Firulais', 'Mishi', 'Kira', 'Luna'].obs;
 
   final RxString anticipacion = '1 día antes'.obs;
   final RxString frecuencia = 'Cada 6 horas'.obs;

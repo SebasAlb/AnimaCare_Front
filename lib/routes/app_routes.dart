@@ -44,7 +44,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const CalendarScreen());
       case editNotifications:
         return MaterialPageRoute(
-            builder: (_) => const EditNotificationsScreen(),);
+          builder: (_) => const EditNotificationsScreen(),
+        );
       case addEvent:
         return MaterialPageRoute(builder: (_) => const AddEventScreen());
 

@@ -10,7 +10,8 @@ class MedicalHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MedicalHistoryController controller = Get.put(MedicalHistoryController());
+    final MedicalHistoryController controller =
+        Get.put(MedicalHistoryController());
 
     return Scaffold(
       backgroundColor: const Color(0xFF4DD0E2),
@@ -53,21 +54,23 @@ class MedicalHistoryScreen extends StatelessWidget {
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Obx(() => ListView(
-                              children: <Widget>[
-                                _buildEditableDataTile(
-                                  label: 'Vacunas',
-                                  value: controller.vaccines.value,
-                                  onEdit: controller.updateVaccines,
-                                ),
-                                const SizedBox(height: 10),
-                                _buildEditableDataTile(
-                                  label: 'Desparasitaciones',
-                                  value: controller.dewormings.value,
-                                  onEdit: controller.updateDewormings,
-                                ),
-                              ],
-                            ),),
+                        child: Obx(
+                          () => ListView(
+                            children: <Widget>[
+                              _buildEditableDataTile(
+                                label: 'Vacunas',
+                                value: controller.vaccines.value,
+                                onEdit: controller.updateVaccines,
+                              ),
+                              const SizedBox(height: 10),
+                              _buildEditableDataTile(
+                                label: 'Desparasitaciones',
+                                value: controller.dewormings.value,
+                                onEdit: controller.updateDewormings,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -96,39 +99,47 @@ class MedicalHistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEditableDataTile(
-      {required String label,
-      required String value,
-      required Function(String) onEdit,}) => GestureDetector(
-      onTap: () => _showEditDialog(label, value, onEdit),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        constraints: const BoxConstraints(minHeight: 60),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(label,
+  Widget _buildEditableDataTile({
+    required String label,
+    required String value,
+    required Function(String) onEdit,
+  }) =>
+      GestureDetector(
+        onTap: () => _showEditDialog(label, value, onEdit),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          constraints: const BoxConstraints(minHeight: 60),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                label,
                 style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
-            Flexible(
-              child: Text(
-                value,
-                style: const TextStyle(color: Colors.grey, fontSize: 16),
-                overflow: TextOverflow.ellipsis,
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
-            ),
-          ],
+              Flexible(
+                child: Text(
+                  value,
+                  style: const TextStyle(color: Colors.grey, fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
 
   void _showEditDialog(
-      String title, String currentValue, Function(String) onSave,) {
-    final TextEditingController controller = TextEditingController(text: currentValue);
+    String title,
+    String currentValue,
+    Function(String) onSave,
+  ) {
+    final TextEditingController controller =
+        TextEditingController(text: currentValue);
 
     Get.dialog(
       AlertDialog(

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class TableCalendarFormatButton extends StatelessWidget {
-
   const TableCalendarFormatButton({super.key, required this.controller});
   final CalendarController controller;
 
@@ -32,7 +31,8 @@ class TableCalendarFormatButton extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => Obx(() => ElevatedButton(
+  Widget build(BuildContext context) => Obx(
+        () => ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
             foregroundColor: const Color(0xFF3E0B53),
@@ -42,5 +42,6 @@ class TableCalendarFormatButton extends StatelessWidget {
           ),
           onPressed: _toggleFormat,
           child: Text(_getFormatName(controller.calendarFormat.value)),
-        ),);
+        ),
+      );
 }

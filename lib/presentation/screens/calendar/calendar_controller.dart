@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarController extends GetxController {
@@ -9,7 +9,8 @@ class CalendarController extends GetxController {
   final RxBool modoEventos = false.obs; //  Modo Eventos o Modo Calendario
   final RxString searchQuery = ''.obs; //  Texto para buscar eventos
 
-  final RxMap<DateTime, List<Map<String, String>>> eventos = <DateTime, List<Map<String, String>>>{
+  final RxMap<DateTime, List<Map<String, String>>> eventos =
+      <DateTime, List<Map<String, String>>>{
     DateTime.utc(2025, 4, 5): <Map<String, String>>[
       <String, String>{
         'nombre': 'Vacuna antirrábica',
@@ -86,7 +87,8 @@ class CalendarController extends GetxController {
     ],
   }.obs;
 
-  List<Map<String, String>> obtenerEventosPorDia(DateTime dia) => eventos[dia] ?? <Map<String, String>>[];
+  List<Map<String, String>> obtenerEventosPorDia(DateTime dia) =>
+      eventos[dia] ?? <Map<String, String>>[];
 
   bool isDayLoaded(DateTime dia) => obtenerEventosPorDia(dia).length > 4;
 
@@ -199,7 +201,7 @@ class CalendarController extends GetxController {
             nombre.contains(searchQuery.value.toLowerCase()) ||
             veterinario.contains(searchQuery.value.toLowerCase()) ||
             mascota.contains(searchQuery.value.toLowerCase())) {
-          resultados.add(<String, >{
+          resultados.add(<String, dynamic>{
             'fecha': fecha,
             'evento': evento,
           });

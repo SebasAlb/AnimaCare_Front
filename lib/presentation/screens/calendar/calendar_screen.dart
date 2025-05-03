@@ -44,7 +44,9 @@ class CalendarScreen extends StatelessWidget {
 
               return Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0, vertical: 10.0,),
+                  horizontal: 20.0,
+                  vertical: 10.0,
+                ),
                 color: AppColors.header,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -127,7 +129,8 @@ class CalendarScreen extends StatelessWidget {
                         isOverloaded: controller.isDayLoaded(day),
                       ),
                       markerBuilder: (context, date, events) {
-                        final List<Map<String, String>> eventList = events.cast<Map<String, String>>();
+                        final List<Map<String, String>> eventList =
+                            events.cast<Map<String, String>>();
                         return EventMarkers(eventos: eventList);
                       },
                     ),
@@ -209,12 +212,15 @@ class CalendarScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Obx(() {
                   if (controller.modoEventos.value) {
-                    final List<Map<String, dynamic>> eventosFiltrados = controller.eventosFiltrados;
+                    final List<Map<String, dynamic>> eventosFiltrados =
+                        controller.eventosFiltrados;
 
                     if (eventosFiltrados.isEmpty) {
                       return const Center(
-                        child: Text('No hay eventos que coincidan.',
-                            style: TextStyle(color: AppColors.primaryWhite),),
+                        child: Text(
+                          'No hay eventos que coincidan.',
+                          style: TextStyle(color: AppColors.primaryWhite),
+                        ),
                       );
                     }
 
@@ -224,8 +230,10 @@ class CalendarScreen extends StatelessWidget {
                     return ListView.builder(
                       itemCount: eventosFiltrados.length,
                       itemBuilder: (context, index) {
-                        final Map<String, dynamic> item = eventosFiltrados[index];
-                        final Map<String, String> evento = item['evento'] as Map<String, String>;
+                        final Map<String, dynamic> item =
+                            eventosFiltrados[index];
+                        final Map<String, String> evento =
+                            item['evento'] as Map<String, String>;
                         final DateTime fecha = item['fecha'] as DateTime;
 
                         // 🔥 Verificar si hay que mostrar la fecha o no
@@ -250,7 +258,9 @@ class CalendarScreen extends StatelessWidget {
                                   margin:
                                       const EdgeInsets.symmetric(vertical: 8.0),
                                   padding: const EdgeInsets.symmetric(
-                                      vertical: 6.0, horizontal: 12.0,),
+                                    vertical: 6.0,
+                                    horizontal: 12.0,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: AppColors.labelBackground,
                                     borderRadius: BorderRadius.circular(8),
@@ -306,7 +316,9 @@ class CalendarScreen extends StatelessWidget {
                         child: Text(
                           'No hay recordatorios para este día',
                           style: TextStyle(
-                              color: AppColors.primaryWhite, fontSize: 16,),
+                            color: AppColors.primaryWhite,
+                            fontSize: 16,
+                          ),
                         ),
                       );
                     }
@@ -402,18 +414,19 @@ class CalendarScreen extends StatelessWidget {
   }
 
   void _showEventDetails(
-      BuildContext context,
-      String nombre,
-      String hora,
-      String lugar,
-      String veterinario,
-      String mascota,
-      String anticipacion,
-      String frecuencia,
-      String recibirRecordatorio,
-      int index,
-      CalendarController controller,
-      {DateTime? fechaReal,}) {
+    BuildContext context,
+    String nombre,
+    String hora,
+    String lugar,
+    String veterinario,
+    String mascota,
+    String anticipacion,
+    String frecuencia,
+    String recibirRecordatorio,
+    int index,
+    CalendarController controller, {
+    DateTime? fechaReal,
+  }) {
     final Color color = _determineEventColor(nombre);
 
     showModalBottomSheet(
@@ -448,7 +461,8 @@ class CalendarScreen extends StatelessWidget {
                       builder: (context) => AlertDialog(
                         title: const Text('¿Eliminar evento?'),
                         content: const Text(
-                            '¿Seguro que deseas eliminar este evento?',),
+                          '¿Seguro que deseas eliminar este evento?',
+                        ),
                         actions: <Widget>[
                           TextButton(
                             onPressed: () => Navigator.pop(context, false),
@@ -456,8 +470,10 @@ class CalendarScreen extends StatelessWidget {
                           ),
                           TextButton(
                             onPressed: () => Navigator.pop(context, true),
-                            child: const Text('Eliminar',
-                                style: TextStyle(color: Colors.red),),
+                            child: const Text(
+                              'Eliminar',
+                              style: TextStyle(color: Colors.red),
+                            ),
                           ),
                         ],
                       ),
@@ -468,16 +484,20 @@ class CalendarScreen extends StatelessWidget {
                         // Si pasaron fecha real (modo eventos)
                         final List<Map<String, String>> eventosDelDia =
                             controller.obtenerEventosPorDia(fechaReal);
-                        final int eventoIndex = eventosDelDia.indexWhere((evento) =>
-                            evento['nombre'] == nombre &&
-                            evento['hora'] == hora,);
+                        final int eventoIndex = eventosDelDia.indexWhere(
+                          (evento) =>
+                              evento['nombre'] == nombre &&
+                              evento['hora'] == hora,
+                        );
                         if (eventoIndex != -1) {
                           controller.eliminarEvento(fechaReal, eventoIndex);
                         }
                       } else {
                         // Vista calendario normal
                         controller.eliminarEvento(
-                            controller.focusedDay.value, index,);
+                          controller.focusedDay.value,
+                          index,
+                        );
                       }
 
                       controller.focusedDay.refresh();
@@ -530,14 +550,16 @@ class CalendarScreen extends StatelessWidget {
   }
 
   Widget _buildDetailRow(IconData icon, String text) => Row(
-      children: <Widget>[
-        Icon(icon, color: AppColors.primaryWhite),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(text,
+        children: <Widget>[
+          Icon(icon, color: AppColors.primaryWhite),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
               style:
-                  const TextStyle(color: AppColors.primaryWhite, fontSize: 16),),
-        ),
-      ],
-    );
+                  const TextStyle(color: AppColors.primaryWhite, fontSize: 16),
+            ),
+          ),
+        ],
+      );
 }

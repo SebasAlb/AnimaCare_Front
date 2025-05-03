@@ -9,7 +9,8 @@ class EditNotificationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final EditNotificationsController controller = Get.put(EditNotificationsController());
+    final EditNotificationsController controller =
+        Get.put(EditNotificationsController());
 
     return WillPopScope(
       onWillPop: () => _confirmarSalida(context, controller),
@@ -19,7 +20,9 @@ class EditNotificationsScreen extends StatelessWidget {
           child: Column(
             children: <Widget>[
               _buildHeader(
-                  context, controller,), // Ahora el header recibe controller
+                context,
+                controller,
+              ), // Ahora el header recibe controller
               const SizedBox(height: 10),
               Expanded(
                 child: Padding(
@@ -49,53 +52,57 @@ class EditNotificationsScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(
-      BuildContext context, EditNotificationsController controller,) => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: const BoxDecoration(color: AppColors.header),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.primaryWhite),
-            onPressed: () async {
-              final bool salir = await _confirmarSalida(context, controller);
-              if (salir) Navigator.pop(context);
-            },
-          ),
-          const Text(
-            'Ajustes de Calendario',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: AppColors.primaryWhite,
+    BuildContext context,
+    EditNotificationsController controller,
+  ) =>
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: const BoxDecoration(color: AppColors.header),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: AppColors.primaryWhite),
+              onPressed: () async {
+                final bool salir = await _confirmarSalida(context, controller);
+                if (salir) Navigator.pop(context);
+              },
             ),
-          ),
-          const SizedBox(width: 48),
-        ],
-      ),
-    );
+            const Text(
+              'Ajustes de Calendario',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: AppColors.primaryWhite,
+              ),
+            ),
+            const SizedBox(width: 48),
+          ],
+        ),
+      );
 
   Widget _buildSectionLabel(String titulo) => Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: BoxDecoration(
-        color: AppColors.header,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        titulo,
-        style: const TextStyle(
-          color: AppColors.primaryWhite,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        decoration: BoxDecoration(
+          color: AppColors.header,
+          borderRadius: BorderRadius.circular(8),
         ),
-      ),
-    );
+        child: Text(
+          titulo,
+          style: const TextStyle(
+            color: AppColors.primaryWhite,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
 
   Widget _buildDropdowns(EditNotificationsController controller) => Column(
-      children: <Widget>[
-        const SizedBox(height: 15),
-        // Primero "¿Dónde recibir recordatorios?"
-        Obx(() => _buildDropdown(
+        children: <Widget>[
+          const SizedBox(height: 15),
+          // Primero "¿Dónde recibir recordatorios?"
+          Obx(
+            () => _buildDropdown(
               label: '¿Dónde desea recibir recomendaciones del vetenerianario?',
               value: controller.recibirRecomendaciones.value,
               items: <String>[
@@ -104,163 +111,200 @@ class EditNotificationsScreen extends StatelessWidget {
                 'En app y celular',
                 'No recibir',
               ],
-              onChanged: (String? v) => controller.recibirRecomendaciones.value = v!,
-            ),),
-        const SizedBox(height: 10),
+              onChanged: (String? v) =>
+                  controller.recibirRecomendaciones.value = v!,
+            ),
+          ),
+          const SizedBox(height: 10),
 
-        //  Solo si NO elige "No recibir", mostramos los otros dos campos
-        Obx(() {
-          if (controller.recibirRecomendaciones.value == 'No recibir') {
-            return const SizedBox.shrink();
-          } else {
-            return Column(
-              children: <Widget>[
-                _buildDropdown(
-                  label: 'Anticipación del recordatorio',
-                  value: controller.anticipacion.value,
-                  items: <String>['1 día antes', '2 días antes', '3 días antes'],
-                  onChanged: (String? v) => controller.anticipacion.value = v!,
-                ),
-                const SizedBox(height: 20),
-                _buildDropdown(
-                  label: 'Frecuencia de recordatorio',
-                  value: controller.frecuencia.value,
-                  items: <String>['Cada 6 horas', 'Cada 12 horas', 'Cada 24 horas'],
-                  onChanged: (String? v) => controller.frecuencia.value = v!,
-                ),
-              ],
-            );
-          }
-        }),
-      ],
-    );
+          //  Solo si NO elige "No recibir", mostramos los otros dos campos
+          Obx(() {
+            if (controller.recibirRecomendaciones.value == 'No recibir') {
+              return const SizedBox.shrink();
+            } else {
+              return Column(
+                children: <Widget>[
+                  _buildDropdown(
+                    label: 'Anticipación del recordatorio',
+                    value: controller.anticipacion.value,
+                    items: <String>[
+                      '1 día antes',
+                      '2 días antes',
+                      '3 días antes'
+                    ],
+                    onChanged: (String? v) =>
+                        controller.anticipacion.value = v!,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildDropdown(
+                    label: 'Frecuencia de recordatorio',
+                    value: controller.frecuencia.value,
+                    items: <String>[
+                      'Cada 6 horas',
+                      'Cada 12 horas',
+                      'Cada 24 horas'
+                    ],
+                    onChanged: (String? v) => controller.frecuencia.value = v!,
+                  ),
+                ],
+              );
+            }
+          }),
+        ],
+      );
 
   Widget _buildDropdown({
     required String label,
     required String value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
-  }) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: AppColors.primaryWhite,
+  }) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: AppColors.primaryWhite,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: AppColors.primaryWhite,
-            borderRadius: BorderRadius.circular(12),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: AppColors.primaryWhite,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: DropdownButton<String>(
+              value: value,
+              isExpanded: true,
+              underline: Container(),
+              items: items
+                  .map(
+                    (String item) => DropdownMenuItem(
+                      value: item,
+                      child: Text(item),
+                    ),
+                  )
+                  .toList(),
+              onChanged: onChanged,
+            ),
           ),
-          child: DropdownButton<String>(
-            value: value,
-            isExpanded: true,
-            underline: Container(),
-            items: items.map((String item) => DropdownMenuItem(
-                value: item,
-                child: Text(item),
-              ),).toList(),
-            onChanged: onChanged,
-          ),
-        ),
-      ],
-    );
+        ],
+      );
 
   Widget _buildProbarNotificacionButton() => Center(
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.header,
-          foregroundColor: AppColors.primaryWhite,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.header,
+            foregroundColor: AppColors.primaryWhite,
+          ),
+          onPressed: () {
+            Get.snackbar(
+              'Notificación de prueba',
+              'Esta es una notificación de ejemplo.',
+              backgroundColor: AppColors.primaryWhite,
+              colorText: Colors.black,
+            );
+          },
+          child: const Text('Probar notificación'),
         ),
-        onPressed: () {
-          Get.snackbar(
-              'Notificación de prueba', 'Esta es una notificación de ejemplo.',
-              backgroundColor: AppColors.primaryWhite, colorText: Colors.black,);
-        },
-        child: const Text('Probar notificación'),
-      ),
-    );
+      );
 
   Widget _buildCalendarioColors(
-      BuildContext context, EditNotificationsController controller,) => Column(
-      children: <Widget>[
-        const SizedBox(height: 15),
-        Obx(() => _buildColorTile(
+    BuildContext context,
+    EditNotificationsController controller,
+  ) =>
+      Column(
+        children: <Widget>[
+          const SizedBox(height: 15),
+          Obx(
+            () => _buildColorTile(
               context: context,
               label: 'Color de fondo del calendario',
               color: controller.colorCalendario.value,
               onTap: () {
-                _mostrarColorPicker(context,
-                    (Color color) => controller.colorCalendario.value = color,);
+                _mostrarColorPicker(
+                  context,
+                  (Color color) => controller.colorCalendario.value = color,
+                );
               },
-            ),),
-        const SizedBox(height: 15),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Obx(() => _buildColorTile(
+            ),
+          ),
+          const SizedBox(height: 15),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Obx(
+                  () => _buildColorTile(
                     context: context,
                     label: 'Color de días cargados',
                     color: controller.colorDiasCargados.value,
                     onTap: () {
                       _mostrarColorPicker(
-                          context,
-                          (Color color) =>
-                              controller.colorDiasCargados.value = color,);
+                        context,
+                        (Color color) =>
+                            controller.colorDiasCargados.value = color,
+                      );
                     },
-                  ),),
-            ),
-            IconButton(
-              icon: const Icon(Icons.info_outline),
-              onPressed: () {
-                Get.defaultDialog(
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.info_outline),
+                onPressed: () {
+                  Get.defaultDialog(
                     title: 'Información',
-                    middleText: 'Días cargados son días con más de 4 eventos.',);
-              },
-            ),
-          ],
-        ),
-      ],
-    );
+                    middleText: 'Días cargados son días con más de 4 eventos.',
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
+      );
 
-  Widget _buildColorTile(
-      {required BuildContext context,
-      required String label,
-      required Color color,
-      required VoidCallback onTap,}) => GestureDetector(
-      onTap: onTap,
-      child: Card(
-        child: ListTile(
-          title: Text(label),
-          trailing: CircleAvatar(backgroundColor: color, radius: 14),
+  Widget _buildColorTile({
+    required BuildContext context,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) =>
+      GestureDetector(
+        onTap: onTap,
+        child: Card(
+          child: ListTile(
+            title: Text(label),
+            trailing: CircleAvatar(backgroundColor: color, radius: 14),
+          ),
         ),
-      ),
-    );
+      );
 
   Widget _buildCategoriasSection(
-      BuildContext context, EditNotificationsController controller,) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(child: _buildSectionLabel('Configurar Categorías')),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                _mostrarAgregarCategoria(context, controller);
-              },
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Obx(() => Column(
-              children: controller.categorias.entries.map((MapEntry<String, Map<String, dynamic>> e) {
+    BuildContext context,
+    EditNotificationsController controller,
+  ) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(child: _buildSectionLabel('Configurar Categorías')),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () {
+                  _mostrarAgregarCategoria(context, controller);
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Obx(
+            () => Column(
+              children: controller.categorias.entries
+                  .map((MapEntry<String, Map<String, dynamic>> e) {
                 final String nombre = e.key;
                 final color = e.value['color'];
                 final icono = e.value['icon'];
@@ -275,7 +319,10 @@ class EditNotificationsScreen extends StatelessWidget {
                     ),
                     title: GestureDetector(
                       onTap: () => _mostrarEditarNombreCategoria(
-                          context, controller, nombre,),
+                        context,
+                        controller,
+                        nombre,
+                      ),
                       child: Text(nombre),
                     ),
                     trailing: Row(
@@ -285,16 +332,23 @@ class EditNotificationsScreen extends StatelessWidget {
                           icon: const Icon(Icons.color_lens_outlined),
                           onPressed: () {
                             _mostrarColorPicker(
-                                context,
-                                (Color color) => controller.actualizarColorCategoria(
-                                    nombre, color,),);
+                              context,
+                              (Color color) =>
+                                  controller.actualizarColorCategoria(
+                                nombre,
+                                color,
+                              ),
+                            );
                           },
                         ),
                         IconButton(
                           icon: const Icon(Icons.delete_outline),
                           onPressed: () {
                             _mostrarConfirmarEliminar(
-                                context, controller, nombre,);
+                              context,
+                              controller,
+                              nombre,
+                            );
                           },
                         ),
                       ],
@@ -302,30 +356,38 @@ class EditNotificationsScreen extends StatelessWidget {
                   ),
                 );
               }).toList(),
-            ),),
-      ],
-    );
+            ),
+          ),
+        ],
+      );
 
   Widget _buildGuardarButton() => Center(
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.header,
-          foregroundColor: AppColors.primaryWhite,
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.header,
+            foregroundColor: AppColors.primaryWhite,
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            textStyle:
+                const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () {
+            Get.snackbar(
+              '¡Guardado!',
+              'Los cambios han sido aplicados.',
+              backgroundColor: AppColors.primaryWhite,
+              colorText: Colors.black,
+            );
+          },
+          child: const Text('Guardar Cambios'),
         ),
-        onPressed: () {
-          Get.snackbar('¡Guardado!', 'Los cambios han sido aplicados.',
-              backgroundColor: AppColors.primaryWhite, colorText: Colors.black,);
-        },
-        child: const Text('Guardar Cambios'),
-      ),
-    );
+      );
 
   void _mostrarColorPicker(
-      BuildContext context, Function(Color) onColorSelected,) {
+    BuildContext context,
+    Function(Color) onColorSelected,
+  ) {
     Color tempColor = Colors.blue;
 
     showDialog(
@@ -357,8 +419,11 @@ class EditNotificationsScreen extends StatelessWidget {
     );
   }
 
-  void _mostrarSeleccionarIcono(BuildContext context,
-      EditNotificationsController controller, String categoria,) {
+  void _mostrarSeleccionarIcono(
+    BuildContext context,
+    EditNotificationsController controller,
+    String categoria,
+  ) {
     IconData? selectedIcon;
 
     showDialog(
@@ -423,13 +488,19 @@ class EditNotificationsScreen extends StatelessWidget {
   }
 
   Widget _iconOption(
-      IconData icon, BuildContext context, Function(IconData) onSelected,) => IconButton(
-      icon: Icon(icon, size: 30),
-      onPressed: () => onSelected(icon),
-    );
+    IconData icon,
+    BuildContext context,
+    Function(IconData) onSelected,
+  ) =>
+      IconButton(
+        icon: Icon(icon, size: 30),
+        onPressed: () => onSelected(icon),
+      );
 
   void _mostrarAgregarCategoria(
-      BuildContext context, EditNotificationsController controller,) {
+    BuildContext context,
+    EditNotificationsController controller,
+  ) {
     final TextEditingController nombreController = TextEditingController();
     Color? selectedColor;
     IconData? selectedIcon;
@@ -464,16 +535,31 @@ class EditNotificationsScreen extends StatelessWidget {
                       title: const Text('Seleccionar Icono'),
                       content: Wrap(
                         children: <Widget>[
-                          _iconOption(Icons.shower, context,
-                              (icon) => Navigator.pop(context, icon),),
-                          _iconOption(Icons.local_hospital, context,
-                              (icon) => Navigator.pop(context, icon),),
-                          _iconOption(Icons.medical_services, context,
-                              (icon) => Navigator.pop(context, icon),),
-                          _iconOption(Icons.vaccines, context,
-                              (icon) => Navigator.pop(context, icon),),
-                          _iconOption(Icons.pets, context,
-                              (icon) => Navigator.pop(context, icon),),
+                          _iconOption(
+                            Icons.shower,
+                            context,
+                            (icon) => Navigator.pop(context, icon),
+                          ),
+                          _iconOption(
+                            Icons.local_hospital,
+                            context,
+                            (icon) => Navigator.pop(context, icon),
+                          ),
+                          _iconOption(
+                            Icons.medical_services,
+                            context,
+                            (icon) => Navigator.pop(context, icon),
+                          ),
+                          _iconOption(
+                            Icons.vaccines,
+                            context,
+                            (icon) => Navigator.pop(context, icon),
+                          ),
+                          _iconOption(
+                            Icons.pets,
+                            context,
+                            (icon) => Navigator.pop(context, icon),
+                          ),
                         ],
                       ),
                     ),
@@ -513,7 +599,10 @@ class EditNotificationsScreen extends StatelessWidget {
                   Get.snackbar('Error', 'Debes completar todos los campos.');
                 } else {
                   controller.agregarCategoria(
-                      nombre, selectedColor!, selectedIcon!,);
+                    nombre,
+                    selectedColor!,
+                    selectedIcon!,
+                  );
                   Navigator.pop(context);
                 }
               },
@@ -524,8 +613,11 @@ class EditNotificationsScreen extends StatelessWidget {
     );
   }
 
-  void _mostrarEditarNombreCategoria(BuildContext context,
-      EditNotificationsController controller, String oldName,) {
+  void _mostrarEditarNombreCategoria(
+    BuildContext context,
+    EditNotificationsController controller,
+    String oldName,
+  ) {
     final TextEditingController nombreController =
         TextEditingController(text: oldName);
 
@@ -557,8 +649,11 @@ class EditNotificationsScreen extends StatelessWidget {
     );
   }
 
-  void _mostrarConfirmarEliminar(BuildContext context,
-      EditNotificationsController controller, String categoria,) {
+  void _mostrarConfirmarEliminar(
+    BuildContext context,
+    EditNotificationsController controller,
+    String categoria,
+  ) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -582,7 +677,9 @@ class EditNotificationsScreen extends StatelessWidget {
   }
 
   Future<bool> _confirmarSalida(
-      BuildContext context, EditNotificationsController controller,) async {
+    BuildContext context,
+    EditNotificationsController controller,
+  ) async {
     final bool hayCambios = controller.anticipacion.value != '1 día antes' ||
         controller.frecuencia.value != 'Cada 6 horas' ||
         controller.recibirRecomendaciones.value != 'Solo en la app' ||
@@ -596,7 +693,8 @@ class EditNotificationsScreen extends StatelessWidget {
         builder: (_) => AlertDialog(
           title: const Text('¿Descartar cambios?'),
           content: const Text(
-              'Tienes cambios sin guardar. ¿Seguro que quieres salir?',),
+            'Tienes cambios sin guardar. ¿Seguro que quieres salir?',
+          ),
           backgroundColor: Colors.white,
           actions: <Widget>[
             TextButton(

@@ -2,7 +2,6 @@ import 'package:animacare_front/presentation/theme/colors.dart'; // << Importaci
 import 'package:flutter/material.dart';
 
 class CalendarDayItem extends StatelessWidget {
-
   const CalendarDayItem({
     super.key,
     required this.day,

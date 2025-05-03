@@ -9,14 +9,21 @@ class EditNotificationsController extends GetxController {
   final Rx<Color> colorCalendario = const Color(0xFFFFFFFF).obs;
   final Rx<Color> colorDiasCargados = const Color(0xFFFFA726).obs;
 
-  final RxMap<String, Map<String, dynamic>> categorias = <String, Map<String, dynamic>>{
-    'Baño': <String, >{'color': Colors.blue, 'icon': Icons.shower},
-    'Veterinario': <String, >{'color': Colors.green, 'icon': Icons.local_hospital},
-    'Medicina': <String, >{
+  final RxMap<String, Map<String, dynamic>> categorias =
+      <String, Map<String, dynamic>>{
+    'Baño': <String, dynamic>{'color': Colors.blue, 'icon': Icons.shower},
+    'Veterinario': <String, dynamic>{
+      'color': Colors.green,
+      'icon': Icons.local_hospital
+    },
+    'Medicina': <String, dynamic>{
       'color': Colors.yellow.shade700,
       'icon': Icons.medical_services,
     },
-    'Vacuna': <String, >{'color': Colors.lightBlueAccent, 'icon': Icons.vaccines},
+    'Vacuna': <String, dynamic>{
+      'color': Colors.lightBlueAccent,
+      'icon': Icons.vaccines
+    },
   }.obs;
 
   void actualizarColorCategoria(String categoria, Color nuevoColor) {
@@ -47,7 +54,7 @@ class EditNotificationsController extends GetxController {
   }
 
   void agregarCategoria(String nombre, Color color, IconData icono) {
-    categorias[nombre] = <String, >{'color': color, 'icon': icono};
+    categorias[nombre] = <String, dynamic>{'color': color, 'icon': icono};
     categorias.refresh();
   }
 }
