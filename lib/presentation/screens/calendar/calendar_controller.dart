@@ -7,7 +7,7 @@ class CalendarController {
   bool modoCalendario = true;
 
   final List<Map<String, dynamic>> eventos = <Map<String, dynamic>>[
-    <String, >{
+    <String, dynamic>{
       'titulo': 'Vacuna contra la rabia',
       'hora': '11:44',
       'mascota': 'Firulais',
@@ -16,7 +16,7 @@ class CalendarController {
       'tipo': 'Cita',
       'esCita': true,
     },
-    <String, >{
+    <String, dynamic>{
       'titulo': 'Control general',
       'hora': '15:30',
       'mascota': 'Pelusa',
@@ -25,7 +25,7 @@ class CalendarController {
       'tipo': 'Cita',
       'esCita': true,
     },
-    <String, >{
+    <String, dynamic>{
       'titulo': 'Charla de adopción',
       'hora': '12:00',
       'mascota': 'General',
@@ -34,7 +34,7 @@ class CalendarController {
       'tipo': 'Charla',
       'esCita': false,
     },
-    <String, >{
+    <String, dynamic>{
       'titulo': 'Revisión dental',
       'hora': '09:00',
       'mascota': 'Kira',
@@ -43,7 +43,7 @@ class CalendarController {
       'tipo': 'Cita',
       'esCita': true,
     },
-    <String, >{
+    <String, dynamic>{
       'titulo': 'Conferencia bienestar animal',
       'hora': '17:00',
       'mascota': 'Todos',

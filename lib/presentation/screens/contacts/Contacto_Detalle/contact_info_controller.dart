@@ -6,15 +6,15 @@ class ContactInfoController {
   final String correo = 'lucia@vetcare.ec';
 
   final List<Map<String, dynamic>> infoExtra = <Map<String, dynamic>>[
-    <String, >{
+    <String, dynamic>{
       'icon': Icons.place,
       'text': 'Quito - Av. Siempreviva y Amazonas',
     },
-    <String, >{
+    <String, dynamic>{
       'icon': Icons.pets,
       'text': 'Consulta general, vacunas y cirugía menor',
     },
-    <String, >{
+    <String, dynamic>{
       'icon': Icons.school,
       'text': '10 años de experiencia profesional',
     },
