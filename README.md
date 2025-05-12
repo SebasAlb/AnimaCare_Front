@@ -34,11 +34,11 @@ limpio, consistente y fácil de mantener.
 
 1. Formatear todo el código automáticamente:
 
-    ```bash
-    dart format .
+   ```bash
+   dart format .
 
 2. Ejecutar análisis estático para encontrar errores y advertencias, Antes de hacer un commit:
 
-    ```bash
-    dart analyze
+   ```bash
+   dart analyze
    dart fix --apply

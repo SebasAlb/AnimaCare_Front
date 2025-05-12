@@ -1,53 +1,69 @@
-import 'package:animacare_front/presentation/screens/add_edit_pets/add_edit_pets_screen.dart';
-import 'package:animacare_front/presentation/screens/add_event/add_event_screen.dart';
 import 'package:animacare_front/presentation/screens/calendar/calendar_screen.dart';
+import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_screen.dart';
+import 'package:animacare_front/presentation/screens/contacts/Contact_Principal/contacts_screen.dart';
+import 'package:animacare_front/presentation/screens/contacts/Contacto_Detalle/contact_info_screen.dart';
 import 'package:animacare_front/presentation/screens/edit_notifications/edit_notifications_screen.dart';
-import 'package:animacare_front/presentation/screens/home_owner/home_owner_screen.dart';
+import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agregar_mascota_screen.dart';
+import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detalle_mascota_screen.dart';
+import 'package:animacare_front/presentation/screens/home/Mascota_Principal/home_screen.dart';
 import 'package:animacare_front/presentation/screens/login/login_screen.dart';
-import 'package:animacare_front/presentation/screens/medical_history/medical_history_screen.dart';
-import 'package:animacare_front/presentation/screens/owner_update/owner_update_screen.dart';
-import 'package:animacare_front/presentation/screens/recommendations/recommendations_screen.dart';
+import 'package:animacare_front/presentation/screens/settings/Conf_Principal/conf_principal_screen.dart';
+import 'package:animacare_front/presentation/screens/settings/Editar_Perfil/editar_perfil_screen.dart';
 import 'package:animacare_front/presentation/screens/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppRoutes {
   static const String login = '/login';
   static const String signup = '/signup';
-  static const String recommendations = '/recommendations';
+
   static const String homeOwner = '/homeowner';
-  static const String ownerUpdate = '/ownerupdate';
-  static const String addEditPet = './addeditpet';
+  static const String homeDetails = './details_pet';
+  static const String homeAdd = './addpet';
+
+  static const String contactsP = '/contacts';
+  static const String contactInfo = '/contact_info';
+  static const String agendarCita = '/agendar_cita';
+
   static const String calendar = '/calendar';
-  static const String editNotifications = '/edit-notifications';
-  static const String addEvent = '/add-event';
-  static const String map = '/map';
-  static const String medicalhistory = '/medicalhistory';
+
+  static const String settingsP = '/settings';
+  static const String settingsEdit = '/settings/edit';
+
+  static const String editNotifications = '/edit_notifications';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
-      case homeOwner:
-        return MaterialPageRoute(builder: (_) => const HomeOwnerScreen());
-      case ownerUpdate:
-        return MaterialPageRoute(builder: (_) => const UserOwnerScreen());
       case signup:
         return MaterialPageRoute(builder: (_) => const SignupScreen());
-      case recommendations:
-        return MaterialPageRoute(builder: (_) => const RecommendationsScreen());
-      case medicalhistory:
-        return MaterialPageRoute(builder: (_) => const MedicalHistoryScreen());
 
-      case addEditPet:
-        return MaterialPageRoute(builder: (_) => const AddEditPetScreen());
+      case homeOwner:
+        return MaterialPageRoute(builder: (_) => const HomeScreen());
+      case homeDetails:
+        return MaterialPageRoute(builder: (_) => const DetalleMascotaScreen());
+      case homeAdd:
+        return MaterialPageRoute(builder: (_) => const AgregarMascotaScreen());
+
+      case contactsP:
+        return MaterialPageRoute(builder: (_) => const ContactsScreen());
+      case contactInfo:
+        return MaterialPageRoute(builder: (_) => const ContactInfoScreen());
+      case agendarCita:
+        return MaterialPageRoute(builder: (_) => const AgendarCitaScreen());
+
       case calendar:
         return MaterialPageRoute(builder: (_) => const CalendarScreen());
+
+      case settingsP:
+        return MaterialPageRoute(builder: (_) => const SettingsScreen());
+      case settingsEdit:
+        return MaterialPageRoute(builder: (_) => const EditarPerfilScreen());
+
       case editNotifications:
         return MaterialPageRoute(
           builder: (_) => const EditNotificationsScreen(),
         );
-      case addEvent:
-        return MaterialPageRoute(builder: (_) => const AddEventScreen());
 
       default:
         return MaterialPageRoute(

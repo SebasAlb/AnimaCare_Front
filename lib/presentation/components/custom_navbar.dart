@@ -37,16 +37,20 @@ class CustomNavBar extends StatelessWidget {
           onTap: onTap,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today, size: 28),
-              label: 'Calendario',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.home, size: 28),
               label: 'Inicio',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person, size: 28),
-              label: 'Perfil',
+              label: 'Contactos',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_today, size: 28),
+              label: 'Calendario',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings, size: 28),
+              label: 'Configuraciones',
             ),
           ],
         ),
