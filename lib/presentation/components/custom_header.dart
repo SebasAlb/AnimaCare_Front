@@ -3,10 +3,16 @@ import 'package:flutter/material.dart';
 class CustomHeader extends StatefulWidget {
   const CustomHeader({
     super.key,
-    required this.petName,
+    this.petName = '',
+    this.nameScreen = '',
+    this.isSecondaryScreen = false,
+    this.onBack,
   });
 
   final String petName;
+  final String nameScreen;
+  final bool isSecondaryScreen;
+  final VoidCallback? onBack;
 
   @override
   State<CustomHeader> createState() => _CustomHeaderState();
@@ -15,23 +21,23 @@ class CustomHeader extends StatefulWidget {
 class _CustomHeaderState extends State<CustomHeader> {
   bool notificacionesRevisadas = false;
 
-  final List<Map<String, String>> notificaciones = <Map<String, String>>[
-    <String, String>{
+  final List<Map<String, String>> notificaciones = [
+    {
       'hora': '09:00 AM',
       'descripcion': 'Cita médica para Luna',
       'veterinario': 'Dr. Pérez',
     },
-    <String, String>{
+    {
       'hora': '10:45 AM',
       'descripcion': 'Vacuna antirrábica para Max',
       'veterinario': 'Dra. López',
     },
-    <String, String>{
+    {
       'hora': '03:15 PM',
       'descripcion': 'Desparasitación programada para Coco',
       'veterinario': 'Dr. Gómez',
     },
-    <String, String>{
+    {
       'hora': '05:00 PM',
       'descripcion': 'Control postoperatorio para Rocky',
       'veterinario': 'Dra. Herrera',
@@ -47,60 +53,57 @@ class _CustomHeaderState extends State<CustomHeader> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) => SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        'Notificaciones',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF14746F),
-                        ),
+      builder: (_) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Notificaciones',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF14746F),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                for (final Map<String, String> notif in notificaciones)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: _notificacionCard(notif),
                   ),
-              ],
-            ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              for (final notif in notificaciones)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: _notificacionCard(notif),
+                ),
+            ],
           ),
         ),
+      ),
     );
   }
 
-  Widget _notificacionCard(Map<String, String> notif) => Container(
+  Widget _notificacionCard(Map<String, String> notif) {
+    return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const <BoxShadow>[
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
         ],
       ),
       child: Row(
-        children: <Widget>[
+        children: [
           const Icon(Icons.notifications_active, color: Color(0xFF1BB0A2)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
+              children: [
                 Text(
                   notif['descripcion']!,
                   style: const TextStyle(
@@ -111,17 +114,15 @@ class _CustomHeaderState extends State<CustomHeader> {
                 ),
                 const SizedBox(height: 4),
                 Row(
-                  children: <Widget>[
+                  children: [
                     Text(
                       notif['hora']!,
-                      style:
-                          const TextStyle(fontSize: 12, color: Colors.black54),
+                      style: const TextStyle(fontSize: 12, color: Colors.black54),
                     ),
                     const SizedBox(width: 12),
                     Text(
                       notif['veterinario']!,
-                      style:
-                          const TextStyle(fontSize: 12, color: Colors.black54),
+                      style: const TextStyle(fontSize: 12, color: Colors.black54),
                     ),
                   ],
                 ),
@@ -131,16 +132,47 @@ class _CustomHeaderState extends State<CustomHeader> {
         ],
       ),
     );
+  }
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    if (widget.isSecondaryScreen) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        color: const Color(0xFF35919E),
+        child: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: widget.onBack ?? () => Navigator.pop(context),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                widget.nameScreen,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(width: 48), // Espacio para balancear diseño
+          ],
+        ),
+      );
+    }
+
+    // Header normal
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: const BoxDecoration(color: Color(0xFF35919E)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
+        children: [
           Row(
-            children: <Widget>[
+            children: [
               const CircleAvatar(radius: 20),
               const SizedBox(width: 10),
               Text(
@@ -155,7 +187,7 @@ class _CustomHeaderState extends State<CustomHeader> {
           ),
           Stack(
             clipBehavior: Clip.none,
-            children: <Widget>[
+            children: [
               IconButton(
                 icon: const Icon(Icons.notifications, color: Colors.white),
                 onPressed: () => _mostrarNotificaciones(context),
@@ -185,4 +217,5 @@ class _CustomHeaderState extends State<CustomHeader> {
         ],
       ),
     );
+  }
 }

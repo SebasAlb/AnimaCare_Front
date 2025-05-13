@@ -16,7 +16,8 @@ class ContactInfoScreen extends StatelessWidget {
         child: Column(
           children: <Widget>[
             const CustomHeader(
-              petName: 'Gato 1',
+              nameScreen: "Contactos",
+              isSecondaryScreen: true,
             ),
             Expanded(
               child: Container(
@@ -109,39 +110,24 @@ class ContactInfoScreen extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: Stack(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 32, bottom: 16),
-              child: FloatingActionButton(
-                backgroundColor: const Color(0xFFFFE066),
-                onPressed: () => Navigator.pop(context),
-                child: const Icon(Icons.arrow_back, color: Color(0xFF4B1B3F)),
-              ),
-            ),
+      floatingActionButton: Align(
+        alignment: Alignment.bottomRight,
+        child: Padding(
+          padding: const EdgeInsets.only(right: 16, bottom: 16),
+          child: FloatingActionButton.extended(
+            backgroundColor: const Color(0xFFFFE066),
+            foregroundColor: const Color(0xFF4B1B3F),
+            icon: const Icon(Icons.event_available),
+            label: const Text('Agendar Cita'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const AgendarCitaScreen(),),
+              );
+            },
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16, bottom: 16),
-              child: FloatingActionButton.extended(
-                backgroundColor: const Color(0xFFFFE066),
-                foregroundColor: const Color(0xFF4B1B3F),
-                icon: const Icon(Icons.event_available),
-                label: const Text('Agendar Cita'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const AgendarCitaScreen(),),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

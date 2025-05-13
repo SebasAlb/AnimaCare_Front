@@ -17,9 +17,6 @@ class SettingsScreen extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           children: <Widget>[
-            const CustomHeader(
-              petName: 'Gato 1',
-            ),
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 12),
               child: Center(

@@ -3,7 +3,8 @@ import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agregar_mascota_controller.dart';
 
 class AgregarMascotaScreen extends StatefulWidget {
-  const AgregarMascotaScreen({super.key});
+  const AgregarMascotaScreen({super.key, this.isSecondaryScreen = false});
+  final bool isSecondaryScreen;
 
   @override
   State<AgregarMascotaScreen> createState() => _AgregarMascotaScreenState();
@@ -33,23 +34,13 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
             Column(
               children: <Widget>[
                 const CustomHeader(
-                  petName: 'Gato 1',
+                  nameScreen: 'Agregar Mascota',
+                  isSecondaryScreen: true,
                 ),
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.all(20),
                     children: <Widget>[
-                      const SizedBox(height: 12),
-                      Center(
-                        child: Text(
-                          'Agregar Mascota',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: controller.primario,
-                          ),
-                        ),
-                      ),
                       const SizedBox(height: 24),
                       _buildInput('Nombre', controller.nombreController),
                       _buildInput('Raza', controller.razaController),
@@ -110,19 +101,6 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                   ),
                 ),
               ],
-            ),
-            Positioned(
-              bottom: 20,
-              left: 20,
-              child: Opacity(
-                opacity: 0.85,
-                child: FloatingActionButton(
-                  heroTag: 'btnRegresarAgregar',
-                  backgroundColor: controller.acento,
-                  onPressed: () => Navigator.pop(context),
-                  child: Icon(Icons.arrow_back, color: controller.fondo),
-                ),
-              ),
             ),
           ],
         ),

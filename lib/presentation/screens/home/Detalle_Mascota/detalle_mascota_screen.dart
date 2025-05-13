@@ -96,20 +96,6 @@ class _DetalleMascotaScreenState extends State<DetalleMascotaScreen> {
               ],
             ),
           ),
-          Positioned(
-            bottom: 20,
-            left: 20,
-            child: Opacity(
-              opacity: 0.9,
-              child: FloatingActionButton(
-                heroTag: 'btnBack',
-                backgroundColor: const Color(0xFF1BB0A2),
-                foregroundColor: Colors.white,
-                onPressed: () => Navigator.pop(context),
-                child: const Icon(Icons.arrow_back),
-              ),
-            ),
-          ),
         ],
       ),
       bottomNavigationBar: CustomNavBar(
