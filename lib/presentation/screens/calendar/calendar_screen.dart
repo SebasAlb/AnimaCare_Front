@@ -6,6 +6,7 @@ import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agend
 import 'package:animacare_front/presentation/screens/calendar/widgets/vista_calendario.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/vista_eventos.dart';
 import 'package:animacare_front/presentation/screens/calendar/calendar_controller.dart';
+import 'package:animacare_front/presentation/screens/calendar/widgets/evento_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -17,7 +18,7 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   final CalendarController controller = CalendarController();
 
-  void mostrarDetallesEvento(Map<String, dynamic> evento) {
+  void mostrarDetallesEvento(EventoCalendar evento) {
     showDialog(
       context: context,
       builder: (_) => Dialog(
@@ -33,7 +34,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 children: <Widget>[
                   Center(
                     child: Text(
-                      evento['titulo'],
+                      evento.titulo,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -42,26 +43,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text("🗓 Fecha: ${evento['fecha']}"),
-                  Text("🕒 Hora: ${evento['hora']}"),
-                  Text("🐾 Mascota: ${evento['mascota']}"),
-                  Text("👨‍⚕️ Veterinario: ${evento['veterinario']}"),
-                  Text("📌 Tipo: ${evento['tipo']}"),
+                  Text("🗓 Fecha: ${evento.fecha}"),
+                  Text("🕒 Hora: ${evento.hora}"),
+                  Text("🐾 Mascota: ${evento.mascota}"),
+                  Text("👨‍⚕️ Veterinario: ${evento.veterinario}"),
+                  Text("📌 Tipo: ${evento.tipo}"),
+                  if (evento.estado != null) Text("📋 Estado: ${evento.estado}"),
+                  if (evento.descripcion != null) Text("📝 Nota: ${evento.descripcion}"),
                   const SizedBox(height: 24),
-                  if (evento['esCita'] == true) ...<Widget>[
+                  if (evento.esCita) ...<Widget>[
                     TextButton.icon(
                       onPressed: () {
                         Navigator.pop(context);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const AgendarCitaScreen(),),
+                              builder: (_) => const AgendarCitaScreen()),
                         );
                       },
                       icon: const Icon(Icons.edit_calendar,
-                          color: Color(0xFF14746F),),
+                          color: Color(0xFF14746F)),
                       label: const Text('Reagendar cita',
-                          style: TextStyle(color: Color(0xFF14746F)),),
+                          style: TextStyle(color: Color(0xFF14746F))),
                     ),
                     TextButton.icon(
                       onPressed: () {
@@ -75,7 +78,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       },
                       icon: const Icon(Icons.delete, color: Colors.redAccent),
                       label: const Text('Cancelar cita',
-                          style: TextStyle(color: Colors.redAccent),),
+                          style: TextStyle(color: Colors.redAccent)),
                     ),
                   ],
                 ],
@@ -97,87 +100,90 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: const Color(0xFFD5F3F1),
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const CustomHeader(
-              petName: 'Gato 1',
-            ),
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () =>
-                        controller.cambiarModo(true, () => setState(() {})),
-                    child: Text(
-                      'Calendario',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: controller.modoCalendario
-                            ? Colors.black
-                            : Colors.black45,
-                      ),
-                    ),
-                  ),
-                  const Text('  |  '),
-                  GestureDetector(
-                    onTap: () =>
-                        controller.cambiarModo(false, () => setState(() {})),
-                    child: Text(
-                      'Eventos',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: !controller.modoCalendario
-                            ? Colors.black
-                            : Colors.black45,
-                      ),
-                    ),
-                  ),
-                ],
+        backgroundColor: const Color(0xFFD5F3F1),
+        body: SafeArea(
+          child: Column(
+            children: <Widget>[
+              const CustomHeader(
+                petName: 'Gato 1',
               ),
-            ),
-            Expanded(
-              child: controller.modoCalendario
-                  ? VistaCalendario(
-                      eventos: controller.eventosDelDia(controller.selectedDay),
-                      selectedDay: controller.selectedDay,
-                      focusedDay: controller.focusedDay,
-                      onDaySelected: (DateTime sel, DateTime foc) => controller.seleccionarDia(
-                          sel, foc, () => setState(() {}),),
-                      onTapEvento: mostrarDetallesEvento,
-                    )
-                  : VistaEventos(
-                      eventos: controller.filtrarEventosPorTexto(),
-                      controller: controller.searchController,
-                      onTapEvento: mostrarDetallesEvento,
+              const SizedBox(height: 20),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () => setState(() => controller.cambiarModo(true)),
+                      child: Text(
+                        'Calendario',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: controller.modoCalendario
+                              ? Colors.black
+                              : Colors.black45,
+                        ),
+                      ),
                     ),
-            ),
-          ],
+                    const Text('  |  '),
+                    GestureDetector(
+                      onTap: () => setState(() => controller.cambiarModo(false)),
+                      child: Text(
+                        'Eventos',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: !controller.modoCalendario
+                              ? Colors.black
+                              : Colors.black45,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: controller.modoCalendario
+                    ? VistaCalendario(
+                        eventos:
+                            controller.eventosDelDia(controller.selectedDay),
+                        selectedDay: controller.selectedDay,
+                        focusedDay: controller.focusedDay,
+                        onDaySelected: (DateTime sel, DateTime foc) =>
+                            setState(() =>
+                                controller.seleccionarDia(sel, foc)),
+                        onTapEvento: mostrarDetallesEvento,
+                        eventosMarcados: controller.getDiasConEventos(),
+                      )
+                    : VistaEventos(
+                        eventos: controller.filtrarEventosPorTexto(),
+                        controller: controller.searchController,
+                        onTapEvento: mostrarDetallesEvento,
+                      ),
+              ),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: 2,
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, AppRoutes.homeOwner);
-              break;
-            case 1:
-              Navigator.pushNamed(context, AppRoutes.contactsP);
-              break;
-            case 2:
-              break;
-            case 3:
-              Navigator.pushNamed(context, AppRoutes.settingsP);
-              break;
-          }
-        },
-      ),
-    );
+        bottomNavigationBar: CustomNavBar(
+          currentIndex: 2,
+          onTap: (int index) {
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, AppRoutes.homeOwner);
+                break;
+              case 1:
+                Navigator.pushNamed(context, AppRoutes.contactsP);
+                break;
+              case 2:
+                break;
+              case 3:
+                Navigator.pushNamed(context, AppRoutes.settingsP);
+                break;
+            }
+          },
+        ),
+      );
 }
+
