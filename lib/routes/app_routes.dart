@@ -27,7 +27,7 @@ class AppRoutes {
   static const String calendar = '/calendar';
 
   static const String settingsP = '/settings';
-  static const String settingsEdit = '/settings/edit';
+  static const String settingsEditProfile = '/settings/editProfile';
 
   static const String editNotifications = '/edit_notifications';
 
@@ -57,7 +57,7 @@ class AppRoutes {
 
       case settingsP:
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
-      case settingsEdit:
+      case settingsEditProfile:
         return MaterialPageRoute(builder: (_) => const EditarPerfilScreen());
 
       case editNotifications:

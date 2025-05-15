@@ -26,110 +26,114 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      backgroundColor: controller.fondo,
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
-        child: Stack(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                const CustomHeader(
-                  nameScreen: 'Agregar Mascota',
-                  isSecondaryScreen: true,
-                ),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.all(20),
-                    children: <Widget>[
-                      const SizedBox(height: 24),
-                      _buildInput('Nombre', controller.nombreController),
-                      _buildInput('Raza', controller.razaController),
-                      _buildInput('Peso (kg)', controller.pesoController,
-                          keyboardType: TextInputType.number,),
-                      _buildInput('Altura (cm)', controller.alturaController,
-                          keyboardType: TextInputType.number,),
-                      GestureDetector(
-                        onTap: () =>
-                            controller.seleccionarFecha(context, (String fecha) {
-                          setState(() {
-                            controller.fechaNacimientoController.text = fecha;
-                          });
-                        }),
-                        child: AbsorbPointer(
-                          child: _buildInput('Cumpleaños',
-                              controller.fechaNacimientoController,),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text('Sexo',
-                          style: TextStyle(color: controller.primario),),
-                      Row(
-                        children: <String>['Macho', 'Hembra'].map((String option) => Expanded(
-                            child: RadioListTile(
-                              title: Text(option,
-                                  style: TextStyle(color: controller.primario),),
-                              value: option,
-                              groupValue: controller.sexo,
-                              activeColor: controller.acento,
-                              onChanged: (value) {
-                                setState(
-                                    () => controller.sexo = value.toString(),);
-                              },
-                            ),
-                          ),).toList(),
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: controller.acento,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        onPressed: () {
-                          controller.guardarMascota(context);
-                        },
-                        child: const Text(
-                          'Guardar Mascota',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(height: 80),
-                    ],
+        child: Column(
+          children: [
+            const CustomHeader(
+              nameScreen: 'Agregar Mascota',
+              isSecondaryScreen: true,
+            ),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  const SizedBox(height: 24),
+                  _buildTextField('Nombre', controller.nombreController, Icons.pets, theme),
+                  _buildTextField('Raza', controller.razaController, Icons.pets_outlined, theme),
+                  _buildTextField('Peso (kg)', controller.pesoController, Icons.monitor_weight, theme, type: TextInputType.number),
+                  _buildTextField('Altura (cm)', controller.alturaController, Icons.height, theme, type: TextInputType.number),
+                  GestureDetector(
+                    onTap: () => controller.seleccionarFecha(context, (String fecha) {
+                      setState(() {
+                        controller.fechaNacimientoController.text = fecha;
+                      });
+                    }),
+                    child: AbsorbPointer(
+                      child: _buildTextField('Cumpleaños', controller.fechaNacimientoController, Icons.cake, theme),
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  Text('Sexo', style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.primary, fontWeight: FontWeight.bold)),
+                  Row(
+                    children: ['Macho', 'Hembra'].map((String option) {
+                      return Expanded(
+                        child: RadioListTile(
+                          title: Text(option, style: theme.textTheme.bodyMedium),
+                          value: option,
+                          groupValue: controller.sexo,
+                          activeColor: theme.colorScheme.primary,
+                          onChanged: (value) {
+                            setState(() => controller.sexo = value.toString());
+                          },
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    onPressed: () {
+                      controller.guardarMascota(context);
+                    },
+                    child: const Text(
+                      'Guardar Mascota',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(height: 80),
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
+  }
 
-  Widget _buildInput(String label, TextEditingController controller,
-      {TextInputType keyboardType = TextInputType.text,}) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(label, style: TextStyle(color: this.controller.primario)),
-        const SizedBox(height: 6),
-        TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          style: TextStyle(
-              color: this.controller.primario, fontWeight: FontWeight.w500,),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+  Widget _buildTextField(
+      String label,
+      TextEditingController controller,
+      IconData icon,
+      ThemeData theme, {
+        TextInputType type = TextInputType.text,
+      }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label,
+              style: theme.textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary,
+              )),
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            keyboardType: type,
+            style: theme.textTheme.bodyMedium,
+            decoration: InputDecoration(
+              prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+              filled: true,
+              fillColor: theme.cardColor,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           ),
-        ),
-        const SizedBox(height: 16),
-      ],
+        ],
+      ),
     );
+  }
 }

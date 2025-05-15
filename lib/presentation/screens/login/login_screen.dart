@@ -10,6 +10,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final LoginController controller = Get.put(LoginController());
     final Size size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
 
     return PopScope(
       canPop: false,
@@ -17,52 +18,61 @@ class LoginScreen extends StatelessWidget {
         if (!didPop) {
           final bool shouldExit = await ExitDialog.show();
           if (shouldExit) {
-            Get.back();
+            // Si decides salir, puedes cerrar la app o ir a una pantalla anterior
+            // Depende de tu flujo de salida. Get.back() podría no funcionar aquí si es la primera pantalla.
+            // exit(0); // Considera usar esto o un plugin si Get.back no funciona como esperas en Android nativo
+            // O quizás SystemNavigator.pop();
           }
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF4DD0E2), // Fondo azul claro
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: Center(
           child: SingleChildScrollView(
-            // Evitar overflow
             padding: const EdgeInsets.all(20),
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white, // Caja blanca moderna
+                color: theme.cardColor,
                 borderRadius: BorderRadius.circular(30),
-                boxShadow: const <BoxShadow>[
+                boxShadow: [
                   BoxShadow(
-                    color: Colors.black12,
+                    color: theme.shadowColor.withOpacity(0.2),
                     blurRadius: 10,
-                    offset: Offset(0, 5),
+                    offset: const Offset(0, 5),
                   ),
                 ],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  const Text(
+                  Text(
                     'Inicio de Sesión',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF301B92),
+                      color: theme.colorScheme.primary,
                     ),
                   ),
                   const SizedBox(height: 20),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Image.network(
-                      'https://placedog.net/300/200',
+                      'https://via.placeholder.com/300x200',
                       height: size.height * 0.2,
                       width: size.width * 0.4,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: size.height * 0.2,
+                        width: size.width * 0.4,
+                        color: theme.colorScheme.surfaceContainerHighest,
+                        child: Icon(Icons.image_not_supported, color: theme.colorScheme.onSurfaceVariant),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 30),
                   _buildTextField(
+                    context: context,
                     label: 'Correo Electrónico',
                     hint: 'Ingrese su correo electrónico',
                     icon: Icons.person,
@@ -71,6 +81,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   _buildTextField(
+                    context: context,
                     label: 'Contraseña',
                     hint: 'Ingrese su contraseña',
                     icon: Icons.lock,
@@ -80,24 +91,27 @@ class LoginScreen extends StatelessWidget {
                   const SizedBox(height: 30),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF301B92),
+                      backgroundColor: theme.colorScheme.primary,
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     onPressed: controller.login,
-                    child: const Text(
+                    child: Text(
                       'Ingresar',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: theme.colorScheme.onPrimary),
                     ),
                   ),
                   const SizedBox(height: 15),
                   TextButton(
                     onPressed: controller.goToRegister,
-                    child: const Text(
+                    child: Text(
                       'Registrarse',
-                      style: TextStyle(color: Color(0xFF301B92)),
+                      style: TextStyle(
+                          color: theme.colorScheme.primary),
                     ),
                   ),
                 ],
@@ -110,39 +124,42 @@ class LoginScreen extends StatelessWidget {
   }
 
   Widget _buildTextField({
+    required BuildContext context,
     required String label,
     required String hint,
     required IconData icon,
     TextInputType type = TextInputType.text,
     bool obscureText = false,
     required TextEditingController controller,
-  }) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF301B92),
+  }) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          keyboardType: type,
+          obscureText: obscureText,
+          decoration: InputDecoration(
+            hintText: hint,
+            prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+            filled: true,
+            fillColor: theme.colorScheme.surfaceContainerHighest,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
           ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: controller,
-            keyboardType: type,
-            obscureText: obscureText,
-            decoration: InputDecoration(
-              hintText: hint,
-              prefixIcon: Icon(icon, color: const Color(0xFF301B92)),
-              filled: true,
-              fillColor: const Color(0xFFF0F4F8),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-        ],
-      );
+        ),
+      ],
+    );
+  }
 }
