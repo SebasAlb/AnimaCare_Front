@@ -10,8 +10,8 @@ class ContactInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final controller = ContactInfoController();
+    final ThemeData theme = Theme.of(context);
+    final ContactInfoController controller = ContactInfoController();
 
     return Scaffold(
       backgroundColor: theme.colorScheme.primary,
@@ -19,7 +19,7 @@ class ContactInfoScreen extends StatelessWidget {
         child: Column(
           children: <Widget>[
             const CustomHeader(
-              nameScreen: "Contactos",
+              nameScreen: 'Contactos',
               isSecondaryScreen: true,
             ),
             Expanded(
@@ -54,7 +54,7 @@ class ContactInfoScreen extends StatelessWidget {
                         radius: 65,
                         backgroundColor: theme.cardColor,
                         child: Icon(Icons.person,
-                            size: 60, color: theme.iconTheme.color),
+                            size: 60, color: theme.iconTheme.color,),
                       ),
                       const SizedBox(height: 25),
                       Column(
@@ -77,7 +77,7 @@ class ContactInfoScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       ...controller.infoExtra.map(
-                            (item) =>
+                        (item) =>
                             InfoItem(icon: item['icon'], text: item['text']),
                       ),
                       const SizedBox(height: 25),
@@ -133,19 +133,19 @@ class ContactInfoScreen extends StatelessWidget {
   }
 
   Widget _infoLinea(ThemeData theme, IconData icon, String text) => Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-      Icon(icon, color: theme.colorScheme.secondary, size: 20),
-      const SizedBox(width: 6),
-      Text(
-        text,
-        style: theme.textTheme.bodyMedium?.copyWith(
-          color: theme.colorScheme.secondary,
-          decoration: TextDecoration.underline,
-        ),
-      ),
-    ],
-  );
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(icon, color: theme.colorScheme.secondary, size: 20),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.secondary,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ],
+      );
 }
 
 class InfoItem extends StatelessWidget {
@@ -155,7 +155,7 @@ class InfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -182,33 +182,33 @@ class HorarioTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     return Column(
       children: horarios.entries
           .map(
             (MapEntry<String, String> entry) => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                entry.key,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onPrimary,
-                ),
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    entry.key,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                  Text(
+                    entry.value,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                entry.value,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      )
+            ),
+          )
           .toList(),
     );
   }

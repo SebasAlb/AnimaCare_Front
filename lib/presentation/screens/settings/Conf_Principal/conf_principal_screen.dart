@@ -12,7 +12,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final ConfPrincipalController controller = ConfPrincipalController();
     final ThemeController themeController = Get.find();
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -44,13 +44,17 @@ class SettingsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             _buildSectionTitle('Mi cuenta', theme),
-            _buildSettingCard(context, Icons.person, 'Mi perfil', controller, theme),
+            _buildSettingCard(
+                context, Icons.person, 'Mi perfil', controller, theme,),
             _buildSectionTitle('Preferencias', theme),
-            _buildSettingCard(context, Icons.notifications, 'Notificaciones', controller, theme),
-            _buildSettingCard(context, Icons.alarm, 'Recordatorios', controller, theme),
+            _buildSettingCard(context, Icons.notifications, 'Notificaciones',
+                controller, theme,),
+            _buildSettingCard(
+                context, Icons.alarm, 'Recordatorios', controller, theme,),
             _buildThemeSwitchCard(context, themeController, theme),
             _buildSectionTitle('Sesión', theme),
-            _buildSettingCard(context, Icons.logout, 'Cerrar sesión', controller, theme),
+            _buildSettingCard(
+                context, Icons.logout, 'Cerrar sesión', controller, theme,),
             const SizedBox(height: 20),
           ],
         ),
@@ -77,20 +81,21 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildSectionTitle(String title, ThemeData theme) => Padding(
-    padding: const EdgeInsets.only(left: 20, top: 18, bottom: 8),
-    child: Text(
-      title,
-      style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
-    ),
-  );
+        padding: const EdgeInsets.only(left: 20, top: 18, bottom: 8),
+        child: Text(
+          title,
+          style:
+              theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+        ),
+      );
 
   Widget _buildSettingCard(
-      BuildContext context,
-      IconData icon,
-      String title,
-      ConfPrincipalController controller,
-      ThemeData theme,
-      ) =>
+    BuildContext context,
+    IconData icon,
+    String title,
+    ConfPrincipalController controller,
+    ThemeData theme,
+  ) =>
       Card(
         color: theme.cardColor,
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
@@ -99,7 +104,8 @@ class SettingsScreen extends StatelessWidget {
           leading: Icon(icon, color: theme.iconTheme.color),
           title: Text(
             title,
-            style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+            style: theme.textTheme.bodyLarge
+                ?.copyWith(fontWeight: FontWeight.w600),
           ),
           trailing: Icon(Icons.chevron_right, color: theme.iconTheme.color),
           onTap: () => controller.onTapSetting(context, title),
@@ -107,11 +113,10 @@ class SettingsScreen extends StatelessWidget {
       );
 
   Widget _buildThemeSwitchCard(
-      BuildContext context,
-      ThemeController themeController,
-      ThemeData theme,
-      ) {
-    return Card(
+    BuildContext context,
+    ThemeController themeController,
+    ThemeData theme,
+  ) => Card(
       color: theme.cardColor,
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -119,10 +124,11 @@ class SettingsScreen extends StatelessWidget {
         leading: Icon(Icons.dark_mode, color: theme.iconTheme.color),
         title: Text(
           'Tema oscuro',
-          style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+          style:
+              theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
         trailing: GetBuilder<ThemeController>(
-          builder: (controller) => Switch(
+          builder: (ThemeController controller) => Switch(
             value: controller.themeMode == ThemeMode.dark,
             onChanged: controller.toggleTheme,
             activeColor: theme.colorScheme.primary,
@@ -130,5 +136,4 @@ class SettingsScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

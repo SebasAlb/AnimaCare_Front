@@ -14,7 +14,7 @@ class MascotaHistorialSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -31,9 +31,9 @@ class MascotaHistorialSection extends StatelessWidget {
         const _BuscadorHistorial(),
         const SizedBox(height: 16),
         ...historial.entries.map((entry) => _ExpandableCard(
-          title: entry.key,
-          items: entry.value,
-        )),
+              title: entry.key,
+              items: entry.value,
+            ),),
         const SizedBox(height: 40),
       ],
     );
@@ -51,13 +51,13 @@ class _ProximoEventoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.colorScheme.primary,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: <BoxShadow>[
           BoxShadow(
             color: Colors.black.withOpacity(0.15),
             blurRadius: 8,
@@ -89,7 +89,7 @@ class _BuscadorHistorial extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     return TextField(
       decoration: InputDecoration(
         hintText: 'Buscar en historial...',
@@ -151,7 +151,7 @@ class _ExpandableCardState extends State<_ExpandableCard>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -184,13 +184,12 @@ class _ExpandableCardState extends State<_ExpandableCard>
               SizeTransition(
                 sizeFactor: _expandAnimation,
                 child: Column(
-                  children: widget.items.map((item) {
-                    return Padding(
+                  children: widget.items.map((item) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Row(
                         children: <Widget>[
                           Icon(Icons.chevron_right,
-                              color: theme.colorScheme.primary),
+                              color: theme.colorScheme.primary,),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Column(
@@ -198,22 +197,22 @@ class _ExpandableCardState extends State<_ExpandableCard>
                               children: <Widget>[
                                 Text(
                                   item['descripcion'] ?? '',
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                      fontWeight: FontWeight.bold),
+                                  style: theme.textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
                                   item['fecha'] ?? '',
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.6)),
+                                      color: theme.textTheme.bodySmall?.color
+                                          ?.withOpacity(0.6),),
                                 ),
                               ],
                             ),
                           ),
                         ],
                       ),
-                    );
-                  }).toList(),
+                    ),).toList(),
                 ),
               ),
             ],

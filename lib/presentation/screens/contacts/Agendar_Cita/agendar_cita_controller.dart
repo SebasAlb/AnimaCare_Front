@@ -57,14 +57,14 @@ class AgendarCitaController {
         return !inhabilitados.contains(day.day);
       },
       builder: (context, child) => Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFF4B1B3F),
-              onSurface: Color(0xFF4B1B3F),
-            ),
+        data: ThemeData.light().copyWith(
+          colorScheme: const ColorScheme.light(
+            primary: Color(0xFF4B1B3F),
+            onSurface: Color(0xFF4B1B3F),
           ),
-          child: child!,
         ),
+        child: child!,
+      ),
     );
     if (fecha != null) {
       fechaSeleccionada = fecha;
@@ -72,7 +72,9 @@ class AgendarCitaController {
   }
 
   Future<void> mostrarSelectorHora(
-      BuildContext context, VoidCallback refreshUI,) async {
+    BuildContext context,
+    VoidCallback refreshUI,
+  ) async {
     await showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -80,77 +82,81 @@ class AgendarCitaController {
       ),
       backgroundColor: const Color(0xFF4B1B3F),
       builder: (context) => Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Center(
-                child: Text(
-                  'Selecciona una hora',
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Center(
+              child: Text(
+                'Selecciona una hora',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: diasSemana.map((String dia) {
-                      final List<Padding> lista = horasTotales.map((String h) {
-                        final bool ocupada =
-                            horasOcupadas[dia]?.contains(h) ?? false;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 4, vertical: 4,),
-                          child: ElevatedButton(
-                            onPressed: ocupada
-                                ? null
-                                : () {
-                                    horaSeleccionada = '$dia $h';
-                                    Navigator.pop(context);
-                                    refreshUI();
-                                  },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ocupada
-                                  ? Colors.grey[400]
-                                  : const Color(0xFFFFE066),
-                              foregroundColor: ocupada
-                                  ? Colors.white
-                                  : const Color(0xFF4B1B3F),
-                              minimumSize: const Size(100, 36),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: Text(h),
-                          ),
-                        );
-                      }).toList();
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 6, left: 4),
-                            child: Text(
-                              dia,
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,),
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: diasSemana.map((String dia) {
+                    final List<Padding> lista = horasTotales.map((String h) {
+                      final bool ocupada =
+                          horasOcupadas[dia]?.contains(h) ?? false;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 4,
+                        ),
+                        child: ElevatedButton(
+                          onPressed: ocupada
+                              ? null
+                              : () {
+                                  horaSeleccionada = '$dia $h';
+                                  Navigator.pop(context);
+                                  refreshUI();
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ocupada
+                                ? Colors.grey[400]
+                                : const Color(0xFFFFE066),
+                            foregroundColor: ocupada
+                                ? Colors.white
+                                : const Color(0xFF4B1B3F),
+                            minimumSize: const Size(100, 36),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          Wrap(children: lista),
-                          const SizedBox(height: 10),
-                        ],
+                          child: Text(h),
+                        ),
                       );
-                    }).toList(),
-                  ),
+                    }).toList();
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 6, left: 4),
+                          child: Text(
+                            dia,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Wrap(children: lista),
+                        const SizedBox(height: 10),
+                      ],
+                    );
+                  }).toList(),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
     );
   }
 

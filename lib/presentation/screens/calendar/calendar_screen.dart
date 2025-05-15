@@ -43,13 +43,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text("🗓 Fecha: ${evento.fecha}"),
-                  Text("🕒 Hora: ${evento.hora}"),
-                  Text("🐾 Mascota: ${evento.mascota}"),
-                  Text("👨‍⚕️ Veterinario: ${evento.veterinario}"),
-                  Text("📌 Tipo: ${evento.tipo}"),
-                  if (evento.estado != null) Text("📋 Estado: ${evento.estado}"),
-                  if (evento.descripcion != null) Text("📝 Nota: ${evento.descripcion}"),
+                  Text('🗓 Fecha: ${evento.fecha}'),
+                  Text('🕒 Hora: ${evento.hora}'),
+                  Text('🐾 Mascota: ${evento.mascota}'),
+                  Text('👨‍⚕️ Veterinario: ${evento.veterinario}'),
+                  Text('📌 Tipo: ${evento.tipo}'),
+                  if (evento.estado != null)
+                    Text('📋 Estado: ${evento.estado}'),
+                  if (evento.descripcion != null)
+                    Text('📝 Nota: ${evento.descripcion}'),
                   const SizedBox(height: 24),
                   if (evento.esCita) ...<Widget>[
                     TextButton.icon(
@@ -58,13 +60,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const AgendarCitaScreen()),
+                              builder: (_) => const AgendarCitaScreen(),),
                         );
                       },
                       icon: const Icon(Icons.edit_calendar,
-                          color: Color(0xFF14746F)),
+                          color: Color(0xFF14746F),),
                       label: const Text('Reagendar cita',
-                          style: TextStyle(color: Color(0xFF14746F))),
+                          style: TextStyle(color: Color(0xFF14746F)),),
                     ),
                     TextButton.icon(
                       onPressed: () {
@@ -78,7 +80,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       },
                       icon: const Icon(Icons.delete, color: Colors.redAccent),
                       label: const Text('Cancelar cita',
-                          style: TextStyle(color: Colors.redAccent)),
+                          style: TextStyle(color: Colors.redAccent),),
                     ),
                   ],
                 ],
@@ -100,8 +102,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -124,14 +126,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         fontWeight: FontWeight.bold,
                         color: controller.modoCalendario
                             ? colorScheme.primary
-                            : colorScheme.onBackground.withOpacity(0.5),
+                            : colorScheme.onSurface.withOpacity(0.5),
                       ),
                     ),
                   ),
                   Text(
                     '  |  ',
                     style: TextStyle(
-                        color: colorScheme.onBackground.withOpacity(0.6)),
+                        color: colorScheme.onSurface.withOpacity(0.6),),
                   ),
                   GestureDetector(
                     onTap: () => setState(() => controller.cambiarModo(false)),
@@ -142,7 +144,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         fontWeight: FontWeight.bold,
                         color: !controller.modoCalendario
                             ? colorScheme.primary
-                            : colorScheme.onBackground.withOpacity(0.5),
+                            : colorScheme.onSurface.withOpacity(0.5),
                       ),
                     ),
                   ),
@@ -152,19 +154,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
             Expanded(
               child: controller.modoCalendario
                   ? VistaCalendario(
-                eventos: controller.eventosDelDia(controller.selectedDay),
-                selectedDay: controller.selectedDay,
-                focusedDay: controller.focusedDay,
-                onDaySelected: (DateTime sel, DateTime foc) =>
-                    setState(() => controller.seleccionarDia(sel, foc)),
-                onTapEvento: mostrarDetallesEvento,
-                eventosMarcados: controller.getDiasConEventos(),
-              )
+                      eventos: controller.eventosDelDia(controller.selectedDay),
+                      selectedDay: controller.selectedDay,
+                      focusedDay: controller.focusedDay,
+                      onDaySelected: (DateTime sel, DateTime foc) =>
+                          setState(() => controller.seleccionarDia(sel, foc)),
+                      onTapEvento: mostrarDetallesEvento,
+                      eventosMarcados: controller.getDiasConEventos(),
+                    )
                   : VistaEventos(
-                eventos: controller.filtrarEventosPorTexto(),
-                controller: controller.searchController,
-                onTapEvento: mostrarDetallesEvento,
-              ),
+                      eventos: controller.filtrarEventosPorTexto(),
+                      controller: controller.searchController,
+                      onTapEvento: mostrarDetallesEvento,
+                    ),
             ),
           ],
         ),
@@ -190,4 +192,3 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 }
-

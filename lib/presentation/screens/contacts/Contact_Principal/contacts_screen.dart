@@ -11,7 +11,7 @@ class ContactsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ContactsController controller = ContactsController();
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -37,7 +37,8 @@ class ContactsScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: controller.contactos.length,
                 itemBuilder: (context, index) {
-                  final Map<String, String> contacto = controller.contactos[index];
+                  final Map<String, String> contacto =
+                      controller.contactos[index];
                   return ContactCard(
                     name: contacto['nombre']!,
                     estado: contacto['estado']!,

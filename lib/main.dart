@@ -21,21 +21,20 @@ class MyApp extends StatelessWidget {
   // Obtener la instancia del controlador puesta permanentemente
   final ThemeController themeController = Get.find<ThemeController>();
 
-
   @override
-  Widget build(BuildContext context) {
-    return GetBuilder<ThemeController>(
+  Widget build(BuildContext context) => GetBuilder<ThemeController>(
       // Inicializar con la instancia encontrada. Esto hace que GetBuilder
       // se suscriba a los cambios de themeController.update().
       init: themeController,
-      builder: (controller) => GetMaterialApp(
+      builder: (ThemeController controller) => GetMaterialApp(
         title: 'AnimaCare',
         debugShowCheckedModeBanner: false,
 
         // *** AnimatedTheme configurado correctamente, considera ajustar la duración si 500ms es lento ***
-        builder: (context, child) => AnimatedTheme(
+        builder: (BuildContext context, Widget? child) => AnimatedTheme(
           data: controller.themeMode == ThemeMode.dark ? darkTheme : lightTheme,
-          duration: const Duration(milliseconds: 300), // <-- Puedes reducir esto (ej: 300ms)
+          duration: const Duration(
+              milliseconds: 300,), // <-- Puedes reducir esto (ej: 300ms)
           curve: Curves.easeInOut,
           child: child!,
         ),
@@ -51,5 +50,4 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: AppRoutes.generateRoute,
       ),
     );
-  }
 }

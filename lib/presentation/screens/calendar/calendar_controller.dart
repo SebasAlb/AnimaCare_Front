@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/evento_calendar.dart';
 
-
 class CalendarController extends ChangeNotifier {
   final TextEditingController searchController = TextEditingController();
 
@@ -10,7 +9,7 @@ class CalendarController extends ChangeNotifier {
   bool modoCalendario = true;
 
   /// Lista de eventos tipados
-  final List<EventoCalendar> _eventos = [
+  final List<EventoCalendar> _eventos = <EventoCalendar>[
     EventoCalendar(
       id: '1',
       titulo: 'Vacuna contra la rabia',
@@ -94,25 +93,27 @@ class CalendarController extends ChangeNotifier {
 
   /// Devuelve los eventos del día seleccionado
   List<EventoCalendar> eventosDelDia(DateTime? dia) {
-    if (dia == null) return [];
+    if (dia == null) return <EventoCalendar>[];
     final String formato = _formatoFecha(dia);
     return _eventos.where((e) => e.fecha == formato).toList();
   }
 
   /// Filtra eventos por texto del buscador
   List<EventoCalendar> filtrarEventosPorTexto() {
-    final filtro = searchController.text.toLowerCase();
-    return _eventos.where((e) =>
-      e.titulo.toLowerCase().contains(filtro) ||
-      e.mascota.toLowerCase().contains(filtro)).toList();
+    final String filtro = searchController.text.toLowerCase();
+    return _eventos
+        .where((e) =>
+            e.titulo.toLowerCase().contains(filtro) ||
+            e.mascota.toLowerCase().contains(filtro),)
+        .toList();
   }
 
   /// Obtiene los días con eventos para marcarlos en el calendario
   Map<DateTime, List<EventoCalendar>> getDiasConEventos() {
-    final Map<DateTime, List<EventoCalendar>> mapa = {};
-    for (final evento in _eventos) {
+    final Map<DateTime, List<EventoCalendar>> mapa = <DateTime, List<EventoCalendar>>{};
+    for (final EventoCalendar evento in _eventos) {
       final DateTime fecha = DateTime.parse(evento.fecha);
-      mapa.putIfAbsent(fecha, () => []).add(evento);
+      mapa.putIfAbsent(fecha, () => <EventoCalendar>[]).add(evento);
     }
     return mapa;
   }
@@ -141,4 +142,3 @@ class CalendarController extends ChangeNotifier {
 
   String _dos(int n) => n.toString().padLeft(2, '0');
 }
-

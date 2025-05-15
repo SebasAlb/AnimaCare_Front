@@ -27,13 +27,13 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
-          children: [
+          children: <Widget>[
             const CustomHeader(
               nameScreen: 'Agregar Mascota',
               isSecondaryScreen: true,
@@ -41,45 +41,59 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.all(20),
-                children: [
+                children: <Widget>[
                   const SizedBox(height: 24),
-                  _buildTextField('Nombre', controller.nombreController, Icons.pets, theme),
-                  _buildTextField('Raza', controller.razaController, Icons.pets_outlined, theme),
-                  _buildTextField('Peso (kg)', controller.pesoController, Icons.monitor_weight, theme, type: TextInputType.number),
-                  _buildTextField('Altura (cm)', controller.alturaController, Icons.height, theme, type: TextInputType.number),
+                  _buildTextField(
+                      'Nombre', controller.nombreController, Icons.pets, theme,),
+                  _buildTextField('Raza', controller.razaController,
+                      Icons.pets_outlined, theme,),
+                  _buildTextField('Peso (kg)', controller.pesoController,
+                      Icons.monitor_weight, theme,
+                      type: TextInputType.number,),
+                  _buildTextField('Altura (cm)', controller.alturaController,
+                      Icons.height, theme,
+                      type: TextInputType.number,),
                   GestureDetector(
-                    onTap: () => controller.seleccionarFecha(context, (String fecha) {
+                    onTap: () =>
+                        controller.seleccionarFecha(context, (String fecha) {
                       setState(() {
                         controller.fechaNacimientoController.text = fecha;
                       });
                     }),
                     child: AbsorbPointer(
-                      child: _buildTextField('Cumpleaños', controller.fechaNacimientoController, Icons.cake, theme),
+                      child: _buildTextField(
+                          'Cumpleaños',
+                          controller.fechaNacimientoController,
+                          Icons.cake,
+                          theme,),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text('Sexo', style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.primary, fontWeight: FontWeight.bold)),
+                  Text('Sexo',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,),),
                   Row(
-                    children: ['Macho', 'Hembra'].map((String option) {
-                      return Expanded(
+                    children: <String>['Macho', 'Hembra'].map((String option) => Expanded(
                         child: RadioListTile(
-                          title: Text(option, style: theme.textTheme.bodyMedium),
+                          title:
+                              Text(option, style: theme.textTheme.bodyMedium),
                           value: option,
                           groupValue: controller.sexo,
                           activeColor: theme.colorScheme.primary,
-                          onChanged: (value) {
+                          onChanged: (String? value) {
                             setState(() => controller.sexo = value.toString());
                           },
                         ),
-                      );
-                    }).toList(),
+                      ),).toList(),
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primary,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     onPressed: () {
@@ -101,22 +115,21 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
   }
 
   Widget _buildTextField(
-      String label,
-      TextEditingController controller,
-      IconData icon,
-      ThemeData theme, {
-        TextInputType type = TextInputType.text,
-      }) {
-    return Padding(
+    String label,
+    TextEditingController controller,
+    IconData icon,
+    ThemeData theme, {
+    TextInputType type = TextInputType.text,
+  }) => Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Text(label,
               style: theme.textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.primary,
-              )),
+              ),),
           const SizedBox(height: 8),
           TextField(
             controller: controller,
@@ -135,5 +148,4 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
         ],
       ),
     );
-  }
 }

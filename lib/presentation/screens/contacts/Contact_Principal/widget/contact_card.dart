@@ -36,8 +36,8 @@ class ContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final estadoColor = _estadoColor(context);
+    final ThemeData theme = Theme.of(context);
+    final Color estadoColor = _estadoColor(context);
 
     return GestureDetector(
       onTap: onTap,
@@ -60,7 +60,7 @@ class ContactCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(Icons.person,
-                        color: theme.iconTheme.color, size: 30),
+                        color: theme.iconTheme.color, size: 30,),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -91,7 +91,7 @@ class ContactCard extends StatelessWidget {
               Container(
                 width: double.infinity,
                 padding:
-                const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 decoration: BoxDecoration(
                   color: estadoColor.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(10),

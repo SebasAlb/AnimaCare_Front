@@ -23,7 +23,7 @@ class VistaCalendario extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
 
     return Column(
       children: <Widget>[
@@ -42,8 +42,8 @@ class VistaCalendario extends StatelessWidget {
             selectedDayPredicate: (day) => isSameDay(selectedDay, day),
             onDaySelected: onDaySelected,
             eventLoader: (day) {
-              final key = DateTime(day.year, day.month, day.day);
-              return eventosMarcados[key] ?? [];
+              final DateTime key = DateTime(day.year, day.month, day.day);
+              return eventosMarcados[key] ?? <EventoCalendar>[];
             },
             headerStyle: HeaderStyle(
               titleCentered: true,
@@ -98,7 +98,7 @@ class VistaCalendario extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             itemCount: eventos.length,
             itemBuilder: (BuildContext context, int index) {
-              final evento = eventos[index];
+              final EventoCalendar evento = eventos[index];
               return GestureDetector(
                 onTap: () => onTapEvento(evento),
                 child: EventoCard(

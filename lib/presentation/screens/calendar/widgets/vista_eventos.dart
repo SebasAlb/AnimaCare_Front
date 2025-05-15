@@ -15,16 +15,16 @@ class VistaEventos extends StatelessWidget {
   final TextEditingController controller;
   final Function(EventoCalendar) onTapEvento;
 
-  Map<String, List<EventoCalendar>> agruparPorFecha(List<EventoCalendar> lista) {
-    final Map<String, List<EventoCalendar>> agrupados = {};
+  Map<String, List<EventoCalendar>> agruparPorFecha(
+      List<EventoCalendar> lista,) {
+    final Map<String, List<EventoCalendar>> agrupados = <String, List<EventoCalendar>>{};
 
-    for (final evento in lista) {
-      agrupados.putIfAbsent(evento.fecha, () => []).add(evento);
+    for (final EventoCalendar evento in lista) {
+      agrupados.putIfAbsent(evento.fecha, () => <EventoCalendar>[]).add(evento);
     }
 
-    final ordenado = Map.fromEntries(
-      agrupados.entries.toList()
-        ..sort((a, b) => a.key.compareTo(b.key)),
+    final Map<String, List<EventoCalendar>> ordenado = Map.fromEntries(
+      agrupados.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
     );
 
     return ordenado;
@@ -32,8 +32,8 @@ class VistaEventos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final eventosAgrupados = agruparPorFecha(eventos);
+    final ThemeData theme = Theme.of(context);
+    final Map<String, List<EventoCalendar>> eventosAgrupados = agruparPorFecha(eventos);
 
     return Column(
       children: <Widget>[
@@ -62,39 +62,40 @@ class VistaEventos extends StatelessWidget {
         Expanded(
           child: eventos.isEmpty
               ? Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text(
-                'No se encontraron eventos.',
-                style: theme.textTheme.bodyMedium,
-              ),
-            ),
-          )
-              : ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            itemCount: eventosAgrupados.length,
-            itemBuilder: (context, index) {
-              final fecha = eventosAgrupados.keys.elementAt(index);
-              final eventosDelDia = eventosAgrupados[fecha]!;
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  FechaAgrupada(fecha: fecha),
-                  ...eventosDelDia.map(
-                        (evento) => GestureDetector(
-                      onTap: () => onTapEvento(evento),
-                      child: EventoCard(
-                        hora: evento.hora,
-                        titulo: evento.titulo,
-                        mascota: evento.mascota,
-                      ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Text(
+                      'No se encontraron eventos.',
+                      style: theme.textTheme.bodyMedium,
                     ),
                   ),
-                ],
-              );
-            },
-          ),
+                )
+              : ListView.builder(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  itemCount: eventosAgrupados.length,
+                  itemBuilder: (context, index) {
+                    final String fecha = eventosAgrupados.keys.elementAt(index);
+                    final List<EventoCalendar> eventosDelDia = eventosAgrupados[fecha]!;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        FechaAgrupada(fecha: fecha),
+                        ...eventosDelDia.map(
+                          (evento) => GestureDetector(
+                            onTap: () => onTapEvento(evento),
+                            child: EventoCard(
+                              hora: evento.hora,
+                              titulo: evento.titulo,
+                              mascota: evento.mascota,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
         ),
       ],
     );

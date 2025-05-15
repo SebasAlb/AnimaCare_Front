@@ -10,7 +10,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final LoginController controller = Get.put(LoginController());
     final Size size = MediaQuery.of(context).size;
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
 
     return PopScope(
       canPop: false,
@@ -35,7 +35,7 @@ class LoginScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: theme.cardColor,
                 borderRadius: BorderRadius.circular(30),
-                boxShadow: [
+                boxShadow: <BoxShadow>[
                   BoxShadow(
                     color: theme.shadowColor.withOpacity(0.2),
                     blurRadius: 10,
@@ -66,7 +66,8 @@ class LoginScreen extends StatelessWidget {
                         height: size.height * 0.2,
                         width: size.width * 0.4,
                         color: theme.colorScheme.surfaceContainerHighest,
-                        child: Icon(Icons.image_not_supported, color: theme.colorScheme.onSurfaceVariant),
+                        child: Icon(Icons.image_not_supported,
+                            color: theme.colorScheme.onSurfaceVariant,),
                       ),
                     ),
                   ),
@@ -101,8 +102,7 @@ class LoginScreen extends StatelessWidget {
                     child: Text(
                       'Ingresar',
                       style: TextStyle(
-                          fontSize: 16,
-                          color: theme.colorScheme.onPrimary),
+                          fontSize: 16, color: theme.colorScheme.onPrimary,),
                     ),
                   ),
                   const SizedBox(height: 15),
@@ -110,8 +110,7 @@ class LoginScreen extends StatelessWidget {
                     onPressed: controller.goToRegister,
                     child: Text(
                       'Registrarse',
-                      style: TextStyle(
-                          color: theme.colorScheme.primary),
+                      style: TextStyle(color: theme.colorScheme.primary),
                     ),
                   ),
                 ],
@@ -132,7 +131,7 @@ class LoginScreen extends StatelessWidget {
     bool obscureText = false,
     required TextEditingController controller,
   }) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[

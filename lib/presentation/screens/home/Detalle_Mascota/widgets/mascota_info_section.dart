@@ -29,8 +29,9 @@ class MascotaInfoSection extends StatelessWidget {
   }
 
   void _abrirModalEdicion(BuildContext context) {
-    final theme = Theme.of(context);
-    final TextEditingController nombreController = TextEditingController(text: 'Firulais');
+    final ThemeData theme = Theme.of(context);
+    final TextEditingController nombreController =
+        TextEditingController(text: 'Firulais');
 
     showModalBottomSheet(
       context: context,
@@ -62,7 +63,8 @@ class MascotaInfoSection extends StatelessWidget {
                 children: <Widget>[
                   const CircleAvatar(
                     radius: 45,
-                    backgroundImage: AssetImage('assets/images/perfil_mascota.png'),
+                    backgroundImage:
+                        AssetImage('assets/images/perfil_mascota.png'),
                   ),
                   FloatingActionButton.small(
                     backgroundColor: theme.colorScheme.primary,
@@ -73,7 +75,8 @@ class MascotaInfoSection extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               _campoTexto('Nombre', nombreController, theme),
-              ...controllers.entries.map((e) => _campoTexto(e.key, e.value, theme)),
+              ...controllers.entries
+                  .map((e) => _campoTexto(e.key, e.value, theme)),
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 icon: const Icon(Icons.save),
@@ -81,7 +84,8 @@ class MascotaInfoSection extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),),
                   minimumSize: const Size(double.infinity, 50),
                 ),
                 onPressed: () {
@@ -101,8 +105,8 @@ class MascotaInfoSection extends StatelessWidget {
     );
   }
 
-  Widget _campoTexto(String label, TextEditingController controller, ThemeData theme) {
-    return Padding(
+  Widget _campoTexto(
+      String label, TextEditingController controller, ThemeData theme,) => Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextField(
         controller: controller,
@@ -117,11 +121,10 @@ class MascotaInfoSection extends StatelessWidget {
         ),
       ),
     );
-  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,7 +132,8 @@ class MascotaInfoSection extends StatelessWidget {
         Center(
           child: Text(
             'Información de la mascota',
-            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: theme.textTheme.titleMedium
+                ?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(height: 20),
@@ -160,7 +164,8 @@ class MascotaInfoSection extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       padding: const EdgeInsets.all(4),
-                      child: const Icon(Icons.photo_camera, size: 16, color: Colors.white),
+                      child: const Icon(Icons.photo_camera,
+                          size: 16, color: Colors.white,),
                     ),
                   ),
                 ],
@@ -210,7 +215,8 @@ class MascotaInfoSection extends StatelessWidget {
                             ),
                           ),
                           child: const Center(
-                            child: Icon(Icons.edit, color: Colors.white, size: 24),
+                            child:
+                                Icon(Icons.edit, color: Colors.white, size: 24),
                           ),
                         ),
                       ),
@@ -231,11 +237,11 @@ class MascotaInfoSection extends StatelessWidget {
           childAspectRatio: 0.95,
           children: controllers.entries
               .map((e) => _InfoBoxEditable(
-            icon: _getIconForLabel(e.key),
-            label: e.key,
-            value: e.value.text,
-            theme: theme,
-          ))
+                    icon: _getIconForLabel(e.key),
+                    label: e.key,
+                    value: e.value.text,
+                    theme: theme,
+                  ),)
               .toList(),
         ),
         const SizedBox(height: 30),
@@ -245,8 +251,7 @@ class MascotaInfoSection extends StatelessWidget {
     );
   }
 
-  Widget _buildEventosImportantes(ThemeData theme) {
-    return Container(
+  Widget _buildEventosImportantes(ThemeData theme) => Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.cardColor,
@@ -268,7 +273,8 @@ class MascotaInfoSection extends StatelessWidget {
               const SizedBox(width: 10),
               Text(
                 'Eventos importantes',
-                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -290,8 +296,7 @@ class MascotaInfoSection extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             controller: filtroScrollController,
             child: Row(
-              children: filtroKeys.entries.map((entry) {
-                return AnimatedContainer(
+              children: filtroKeys.entries.map((MapEntry<String, GlobalKey<State<StatefulWidget>>> entry) => AnimatedContainer(
                   key: entry.value,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeOut,
@@ -304,22 +309,41 @@ class MascotaInfoSection extends StatelessWidget {
                     },
                     theme: theme,
                   ),
-                );
-              }).toList(),
+                ),).toList(),
             ),
           ),
           const Divider(height: 20),
-          const _EventoCard(icon: Icons.calendar_today, title: 'Cita veterinaria', date: '15 de mayo de 2025'),
-          const _EventoCard(icon: Icons.vaccines, title: 'Vacuna anual', date: '1 de junio de 2025'),
-          const _EventoCard(icon: Icons.cake, title: 'Cumpleaños', date: '10 de abril de 2026'),
-          const _EventoCard(icon: Icons.medication, title: 'Rutina de medicina', date: 'Cada 8 horas'),
-          const _EventoCard(icon: Icons.shower, title: 'Día de baño', date: 'Todos los sábados'),
-          const _EventoCard(icon: Icons.cleaning_services, title: 'Limpieza dental', date: 'Mensual'),
-          const _EventoCard(icon: Icons.directions_walk, title: 'Paseo especial', date: 'Domingo 9 AM'),
+          const _EventoCard(
+              icon: Icons.calendar_today,
+              title: 'Cita veterinaria',
+              date: '15 de mayo de 2025',),
+          const _EventoCard(
+              icon: Icons.vaccines,
+              title: 'Vacuna anual',
+              date: '1 de junio de 2025',),
+          const _EventoCard(
+              icon: Icons.cake,
+              title: 'Cumpleaños',
+              date: '10 de abril de 2026',),
+          const _EventoCard(
+              icon: Icons.medication,
+              title: 'Rutina de medicina',
+              date: 'Cada 8 horas',),
+          const _EventoCard(
+              icon: Icons.shower,
+              title: 'Día de baño',
+              date: 'Todos los sábados',),
+          const _EventoCard(
+              icon: Icons.cleaning_services,
+              title: 'Limpieza dental',
+              date: 'Mensual',),
+          const _EventoCard(
+              icon: Icons.directions_walk,
+              title: 'Paseo especial',
+              date: 'Domingo 9 AM',),
         ],
       ),
     );
-  }
 
   IconData _getIconForLabel(String label) {
     switch (label) {
@@ -356,24 +380,28 @@ class _InfoBoxEditable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      color: theme.colorScheme.primary,
-      borderRadius: BorderRadius.circular(16),
-    ),
-    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Icon(icon, color: Colors.white, size: 24),
-        const SizedBox(height: 6),
-        Text(label, style: const TextStyle(color: Colors.white, fontSize: 12)),
-        const SizedBox(height: 2),
-        Text(value,
-            style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center),
-      ],
-    ),
-  );
+        decoration: BoxDecoration(
+          color: theme.colorScheme.primary,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(icon, color: Colors.white, size: 24),
+            const SizedBox(height: 6),
+            Text(label,
+                style: const TextStyle(color: Colors.white, fontSize: 12),),
+            const SizedBox(height: 2),
+            Text(value,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,),
+                textAlign: TextAlign.center,),
+          ],
+        ),
+      );
 }
 
 class _EventoCard extends StatelessWidget {
@@ -389,7 +417,7 @@ class _EventoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
@@ -405,9 +433,15 @@ class _EventoCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(title,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,),),
                 const SizedBox(height: 4),
-                Text(date, style: const TextStyle(color: Colors.white70, fontSize: 14)),
+                Text(date,
+                    style:
+                        const TextStyle(color: Colors.white70, fontSize: 14),),
               ],
             ),
           ),
@@ -433,18 +467,20 @@ class _FiltroChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(right: 8),
-    child: GestureDetector(
-      onTap: onTap,
-      child: Chip(
-        label: Text(label),
-        labelStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        backgroundColor: selected
-            ? theme.colorScheme.primary
-            : theme.colorScheme.primary.withOpacity(0.2),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        side: BorderSide.none,
-      ),
-    ),
-  );
+        padding: const EdgeInsets.only(right: 8),
+        child: GestureDetector(
+          onTap: onTap,
+          child: Chip(
+            label: Text(label),
+            labelStyle: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.white,),
+            backgroundColor: selected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.primary.withOpacity(0.2),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            side: BorderSide.none,
+          ),
+        ),
+      );
 }
