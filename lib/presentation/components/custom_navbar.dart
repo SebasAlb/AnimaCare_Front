@@ -54,7 +54,7 @@ class CustomNavBar extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings, size: 28),
-            label: 'Configuraciones',
+            label: 'Ajustes',
           ),
         ],
       ),

@@ -23,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Center(
                 child: Text(
-                  'Configuraciones',
+                  'Ajustes',
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -47,10 +47,6 @@ class SettingsScreen extends StatelessWidget {
             _buildSettingCard(
                 context, Icons.person, 'Mi perfil', controller, theme,),
             _buildSectionTitle('Preferencias', theme),
-            _buildSettingCard(context, Icons.notifications, 'Notificaciones',
-                controller, theme,),
-            _buildSettingCard(
-                context, Icons.alarm, 'Recordatorios', controller, theme,),
             _buildThemeSwitchCard(context, themeController, theme),
             _buildSectionTitle('Sesión', theme),
             _buildSettingCard(

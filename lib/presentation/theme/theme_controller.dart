@@ -33,57 +33,149 @@ class ThemeController extends GetxController {
   }
 }
 
-// 🌞 Tema Claro - cyan / celeste
+// 🌞 Tema Claro - Basado en paleta sugerida
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
-  scaffoldBackgroundColor: AppColors.background,
-  primaryColor: AppColors.header,
-  cardColor: AppColors.cardBackground,
-  appBarTheme: const AppBarTheme(
-    backgroundColor: AppColors.header,
-    foregroundColor: AppColors.primaryWhite,
-  ),
-  textTheme: const TextTheme(
-    bodyMedium: TextStyle(color: Colors.black87),
-    titleLarge: TextStyle(color: Colors.black87),
-    labelLarge:
-        TextStyle(color: Colors.black87), // Asegúrate de tener labelLarge
-    bodyLarge: TextStyle(color: Colors.black87), // Asegúrate de tener bodyLarge
-  ),
-  iconTheme: const IconThemeData(color: Colors.black87),
+  // Color de fondo del Scaffold (tu color base)
+  scaffoldBackgroundColor: AppColors.backgroundLight,
+
+  // Colores del esquema de colores (ColorScehme es el estándar moderno)
   colorScheme: ColorScheme.light(
-    primary: AppColors.header,
-    secondary: AppColors.labelBackground,
-    surfaceContainerHighest: Colors
-        .grey.shade200, // Un color para rellenos de input/superficies elevadas
+    primary: AppColors.primaryBrand, // Tu nuevo azul profundo
+    onPrimary: AppColors.onPrimary, // Blanco para texto/iconos sobre azul
+    secondary: AppColors.secondaryBrand, // Tu Teal para acentos
+    onSecondary: AppColors.onSecondary, // Blanco para texto/iconos sobre teal
+    surface: AppColors.surface, // Blanco para superficies (tarjetas, etc.)
+    onSurface: AppColors.onSurface, // Negro/Gris oscuro para texto/iconos sobre blanco
+    error: AppColors.error, // Rojo para errores
+    onError: AppColors.onError, // Blanco para texto/iconos sobre rojo
+    background: AppColors.backgroundLight, // Mapear background también si se usa
+    onBackground: AppColors.onSurface, // Texto/Iconos sobre el background
+    // Otros colores útiles:
+    surfaceContainerHighest: AppColors.inputFillLight, // Relleno de inputs
+    // outline: Colors.grey, // Color para bordes
+    // Añadir colores terciarios si se usan más de dos colores de acento
   ),
-  shadowColor: Colors.black, // Define color de sombra en el tema
+
+  // Propiedades heredadas/mapeadas de ColorScheme
+  primaryColor: AppColors.primaryBrand, // Mapear old primary a la nueva primaryBrand
+  cardColor: AppColors.surface, // Mapear cardColor a la nueva surface (blanco)
+  shadowColor: Colors.black.withOpacity(0.2), // Usar un color de sombra con opacidad
+
+  // Temas específicos de widgets
+  appBarTheme: AppBarTheme(
+    backgroundColor: AppColors.primaryBrand, // AppBar usa el nuevo color primario
+    foregroundColor: AppColors.onPrimary, // Iconos/Texto de AppBar sobre el primario
+    titleTextStyle: TextStyle( // Estilo del título del AppBar
+        color: AppColors.onPrimary,
+        fontSize: 20,
+        fontWeight: FontWeight.bold),
+    iconTheme: IconThemeData(color: AppColors.onPrimary), // Color de iconos en AppBar
+  ),
+
+  textTheme: TextTheme(
+    // Definir estilos de texto que usen los colores "On"
+    bodyMedium: TextStyle(color: AppColors.onSurface), // Texto normal sobre fondo/superficie
+    titleLarge: TextStyle(color: AppColors.primaryBrand, fontWeight: FontWeight.bold, fontSize: 22), // Títulos grandes, quizás con el color primario
+    labelLarge: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.bold), // Etiquetas/Headers de sección
+    bodyLarge: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.w600), // Texto ligeramente más grande o importante
+    // Añadir otros estilos de texto (headlineLarge, titleMedium, bodySmall, labelSmall, etc.)
+  ),
+
+  iconTheme: IconThemeData(color: AppColors.onSurface), // Color por defecto de iconos (sobre fondo/superficie)
+
+  // Otros temas de widgets si los necesitas (ej. ElevatedButtonTheme, TextButtonTheme, InputDecorationTheme)
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.primaryBrand, // Fondo del botón primario
+      foregroundColor: AppColors.onPrimary, // Texto del botón primario
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+    ),
+  ),
+  textButtonTheme: TextButtonThemeData(
+    style: TextButton.styleFrom(
+      foregroundColor: AppColors.primaryBrand, // Color del texto del botón de texto
+      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: AppColors.inputFillLight, // Relleno del campo de texto
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide.none, // O define un OutlineInputBorder temático
+    ),
+    hintStyle: TextStyle(color: AppColors.onSurface.withOpacity(0.6)), // Estilo del hint
+    prefixIconColor: AppColors.onSurface.withOpacity(0.8), // Color por defecto para iconos prefix
+  ),
+
 );
 
-// 🌙 Tema Oscuro - morado + amarillo para resaltar
+// 🌙 Tema Oscuro - (Asegúrate de que este también use colores semánticos adecuados para el modo oscuro)
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
-  scaffoldBackgroundColor: AppColors.oldHeader,
-  primaryColor: AppColors.oldHeader,
-  cardColor: const Color(0xFF1E1E1E),
-  appBarTheme: const AppBarTheme(
-    backgroundColor: AppColors.oldHeader,
-    foregroundColor: AppColors.primaryWhite,
-  ),
-  textTheme: const TextTheme(
-    bodyMedium: TextStyle(color: Colors.white70),
-    titleLarge: TextStyle(color: Colors.white),
-    labelLarge:
-        TextStyle(color: Colors.white70), // Asegúrate de tener labelLarge
-    bodyLarge: TextStyle(color: Colors.white70), // Asegúrate de tener bodyLarge
-  ),
-  iconTheme: const IconThemeData(color: Colors.white70),
+  scaffoldBackgroundColor: AppColors.backgroundDark,
+  // Colores del esquema de colores para modo oscuro
   colorScheme: ColorScheme.dark(
-    primary: AppColors.oldHeader, // O tu color primario en modo oscuro
-    secondary: AppColors.oldHighlight,
-    onPrimary:
-        Colors.white, // Color para texto/iconos sobre el color primario oscuro
-    surfaceContainerHighest: Colors.grey
-        .shade800, // Un color oscuro para rellenos de input/superficies elevadas
+    primary: AppColors.oldHighlight, // Naranja vibrante como color primario oscuro
+    onPrimary: Colors.black, // Texto/Iconos sobre naranja (negro para contraste)
+    secondary: AppColors.eventVaccine, // Celeste vibrante como color secundario oscuro
+    onSecondary: Colors.black, // Texto/Iconos sobre celeste (negro para contraste)
+    surface: const Color(0xFF1E1E1E), // Gris muy oscuro para superficies
+    onSurface: Colors.white70, // Gris claro para texto/iconos sobre superficies oscuras
+    error: const Color(0xFFCF6679), // Rojo de error para modo oscuro
+    onError: Colors.black, // Texto/Iconos sobre rojo de error
+    background: AppColors.backgroundDark, // Mapear background también
+    onBackground: Colors.white70, // Texto/Iconos sobre el background oscuro
+    surfaceContainerHighest: Colors.grey.shade800, // Relleno de inputs oscuro
+    // outline: Colors.grey.shade600, // Color para bordes oscuros si se usan
   ),
+  primaryColor: AppColors.backgroundDark, // Mapear old primary
+  cardColor: const Color(0xFF1E1E1E), // Tu color de tarjeta oscuro
+  shadowColor: Colors.white12, // Sombra para modo oscuro
+
+  appBarTheme: AppBarTheme(
+    backgroundColor: AppColors.backgroundDark, // AppBar oscuro
+    foregroundColor: AppColors.primaryWhite, // Iconos/Texto de AppBar oscuro
+    titleTextStyle: TextStyle(color: AppColors.primaryWhite, fontSize: 20, fontWeight: FontWeight.bold),
+    iconTheme: IconThemeData(color: AppColors.primaryWhite),
+  ),
+
+  textTheme: TextTheme(
+    bodyMedium: TextStyle(color: AppColors.onSurface),
+    titleLarge: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.bold, fontSize: 22),
+    labelLarge: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.bold),
+    bodyLarge: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.w600),
+  ),
+
+  iconTheme: IconThemeData(color: AppColors.onSurface),
+
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.backgroundDark, // Fondo del botón primario oscuro
+      foregroundColor: AppColors.onSurface, // Texto del botón primario oscuro
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+    ),
+  ),
+  textButtonTheme: TextButtonThemeData(
+    style: TextButton.styleFrom(
+      foregroundColor: AppColors.oldHighlight, // Quizás usar oldHighlight para botones de texto en oscuro
+      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: Colors.grey.shade800, // Relleno del campo de texto oscuro
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide.none,
+    ),
+    hintStyle: TextStyle(color: AppColors.onSurface.withOpacity(0.6)),
+    prefixIconColor: AppColors.onSurface.withOpacity(0.8),
+  ),
+
 );

@@ -15,7 +15,7 @@ class EditNotificationsScreen extends StatelessWidget {
     return WillPopScope(
       onWillPop: () => _confirmarSalida(context, controller),
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.backgroundLight,
         body: SafeArea(
           child: Column(
             children: <Widget>[

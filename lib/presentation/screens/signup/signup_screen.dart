@@ -8,6 +8,8 @@ class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SignupController controller = Get.put(SignupController());
+    final theme = Theme.of(context);
+
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
@@ -16,16 +18,16 @@ class SignupScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF4DD0E2),
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
             child: Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: theme.cardColor,
                 borderRadius: BorderRadius.circular(30),
-                boxShadow: const <BoxShadow>[
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 10,
@@ -35,28 +37,22 @@ class SignupScreen extends StatelessWidget {
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
+                children: [
                   Align(
                     alignment: Alignment.topLeft,
                     child: TextButton.icon(
                       onPressed: controller.goBack,
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: Color(0xFF301B92),
-                      ),
-                      label: const Text(
-                        'Volver',
-                        style: TextStyle(color: Color(0xFF301B92)),
-                      ),
+                      icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
+                      label: Text('Volver',
+                          style: TextStyle(color: theme.colorScheme.primary)),
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
+                  Text(
                     'Crear Cuenta',
-                    style: TextStyle(
-                      fontSize: 28,
+                    style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF301B92),
+                      color: theme.colorScheme.primary,
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -64,45 +60,48 @@ class SignupScreen extends StatelessWidget {
                     label: 'Nombre',
                     hint: 'Ingrese su nombre',
                     icon: Icons.person,
-                    type: TextInputType.name,
                     controller: controller.firstNameController,
+                    theme: theme,
                   ),
                   const SizedBox(height: 20),
                   _buildTextField(
                     label: 'Apellido',
                     hint: 'Ingrese su apellido',
                     icon: Icons.person_outline,
-                    type: TextInputType.name,
                     controller: controller.lastNameController,
+                    theme: theme,
                   ),
                   const SizedBox(height: 20),
                   _buildTextField(
                     label: 'Correo Electrónico',
-                    icon: Icons.email,
                     hint: 'Ingrese su correo electrónico',
-                    type: TextInputType.emailAddress,
+                    icon: Icons.email,
                     controller: controller.emailController,
+                    type: TextInputType.emailAddress,
+                    theme: theme,
                   ),
                   const SizedBox(height: 20),
                   _buildTextField(
                     label: 'Contraseña',
-                    icon: Icons.lock,
                     hint: 'Ingrese una contraseña segura',
-                    obscureText: true,
+                    icon: Icons.lock,
                     controller: controller.passwordController,
+                    obscureText: true,
+                    theme: theme,
                   ),
                   const SizedBox(height: 20),
                   _buildTextField(
                     label: 'Confirmar Contraseña',
-                    icon: Icons.lock_outline,
                     hint: 'Confirme su contraseña',
-                    obscureText: true,
+                    icon: Icons.lock_outline,
                     controller: controller.confirmPasswordController,
+                    obscureText: true,
+                    theme: theme,
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF301B92),
+                      backgroundColor: theme.colorScheme.primary,
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -130,33 +129,37 @@ class SignupScreen extends StatelessWidget {
     TextInputType type = TextInputType.text,
     bool obscureText = false,
     required TextEditingController controller,
-  }) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF301B92),
+    required ThemeData theme,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          keyboardType: type,
+          obscureText: obscureText,
+          style: theme.textTheme.bodyMedium,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+            prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+            filled: true,
+            fillColor: theme.cardColor,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
           ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: controller,
-            keyboardType: type,
-            obscureText: obscureText,
-            decoration: InputDecoration(
-              hintText: hint,
-              prefixIcon: Icon(icon, color: const Color(0xFF301B92)),
-              filled: true,
-              fillColor: const Color(0xFFF0F4F8),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-        ],
-      );
+        ),
+      ],
+    );
+  }
 }
