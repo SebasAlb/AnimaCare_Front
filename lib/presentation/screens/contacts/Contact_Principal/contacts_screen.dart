@@ -3,7 +3,6 @@ import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/screens/contacts/Contact_Principal/widget/contact_card.dart';
-//import '../Agendar_Cita/agendar_cita_screen.dart';
 import 'package:animacare_front/presentation/screens/contacts/Contact_Principal/contacts_controller.dart';
 
 class ContactsScreen extends StatelessWidget {
@@ -12,25 +11,23 @@ class ContactsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ContactsController controller = ContactsController();
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFD5F3F1),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            const CustomHeader(
-              petName: 'Gato 1',
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10),
+            const CustomHeader(petName: 'Gato 1'),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
               child: Center(
                 child: Text(
                   'Contactos',
-                  style: TextStyle(
-                    fontSize: 26,
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF14746F),
                     letterSpacing: 1.2,
+                    color: theme.colorScheme.primary,
                   ),
                 ),
               ),
@@ -54,7 +51,7 @@ class ContactsScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => controller.abrirAgendarCita(context),
-        backgroundColor: const Color(0xFFFFE066),
+        backgroundColor: theme.colorScheme.secondary,
         icon: const Icon(Icons.event_available, color: Color(0xFF4B1B3F)),
         label: const Text(
           'Agendar Cita',

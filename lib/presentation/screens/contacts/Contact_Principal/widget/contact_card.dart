@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 
-class ContactCard extends StatelessWidget { // "Disponible", "Vacaciones", "No disponible"
-
+class ContactCard extends StatelessWidget {
   const ContactCard({
     super.key,
     required this.name,
     this.onTap,
     this.estado = 'Disponible',
   });
+
   final String name;
   final VoidCallback? onTap;
   final String estado;
 
-  Color _estadoColor(String estado) {
+  Color _estadoColor(BuildContext context) {
     switch (estado) {
       case 'Vacaciones':
-        return const Color(0xFFFFE066); // Amarillo suave
+        return Colors.amber;
       case 'No disponible':
         return Colors.grey;
       default:
-        return const Color(0xFF1BB0A2); // Verde claro / acento
+        return Theme.of(context).colorScheme.secondary;
     }
   }
 
-  IconData _estadoIcon(String estado) {
+  IconData _estadoIcon() {
     switch (estado) {
       case 'Vacaciones':
         return Icons.beach_access;
@@ -35,10 +35,14 @@ class ContactCard extends StatelessWidget { // "Disponible", "Vacaciones", "No d
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final estadoColor = _estadoColor(context);
+
+    return GestureDetector(
       onTap: onTap,
       child: Card(
-        color: const Color(0xFF14746F), // Fondo de tarjeta: Verde marino
+        color: theme.colorScheme.primary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         margin: const EdgeInsets.symmetric(vertical: 10),
         elevation: 3,
@@ -52,46 +56,44 @@ class ContactCard extends StatelessWidget { // "Disponible", "Vacaciones", "No d
                     width: 60,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child:
-                        const Icon(Icons.person, color: Colors.grey, size: 30),
+                    child: Icon(Icons.person,
+                        color: theme.iconTheme.color, size: 30),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
                           'Veterinario',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onPrimary,
                           ),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
-                          'Nombre',
-                          style: TextStyle(
-                            color: Colors.white,
+                          name,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: theme.colorScheme.onPrimary,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const Icon(Icons.info_outline, color: Colors.white),
+                  Icon(Icons.info_outline, color: theme.colorScheme.onPrimary),
                 ],
               ),
               const SizedBox(height: 10),
               Container(
                 width: double.infinity,
                 padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 decoration: BoxDecoration(
-                  color: _estadoColor(estado).withOpacity(0.2),
+                  color: estadoColor.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
@@ -99,25 +101,22 @@ class ContactCard extends StatelessWidget { // "Disponible", "Vacaciones", "No d
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        Icon(_estadoIcon(estado),
-                            size: 18, color: _estadoColor(estado),),
+                        Icon(_estadoIcon(), size: 18, color: estadoColor),
                         const SizedBox(width: 8),
                         Text(
                           estado,
                           style: TextStyle(
-                            color: _estadoColor(estado),
+                            color: estadoColor,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
                     if (estado == 'Disponible')
-                      const Text(
+                      Text(
                         '08:00 - 20:00',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onPrimary.withOpacity(0.6),
                         ),
                       ),
                   ],
@@ -128,4 +127,5 @@ class ContactCard extends StatelessWidget { // "Disponible", "Vacaciones", "No d
         ),
       ),
     );
+  }
 }

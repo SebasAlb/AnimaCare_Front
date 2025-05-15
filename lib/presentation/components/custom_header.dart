@@ -22,34 +22,19 @@ class _CustomHeaderState extends State<CustomHeader> {
   bool notificacionesRevisadas = false;
 
   final List<Map<String, String>> notificaciones = [
-    {
-      'hora': '09:00 AM',
-      'descripcion': 'Cita médica para Luna',
-      'veterinario': 'Dr. Pérez',
-    },
-    {
-      'hora': '10:45 AM',
-      'descripcion': 'Vacuna antirrábica para Max',
-      'veterinario': 'Dra. López',
-    },
-    {
-      'hora': '03:15 PM',
-      'descripcion': 'Desparasitación programada para Coco',
-      'veterinario': 'Dr. Gómez',
-    },
-    {
-      'hora': '05:00 PM',
-      'descripcion': 'Control postoperatorio para Rocky',
-      'veterinario': 'Dra. Herrera',
-    },
+    {'hora': '09:00 AM', 'descripcion': 'Cita médica para Luna', 'veterinario': 'Dr. Pérez'},
+    {'hora': '10:45 AM', 'descripcion': 'Vacuna antirrábica para Max', 'veterinario': 'Dra. López'},
+    {'hora': '03:15 PM', 'descripcion': 'Desparasitación programada para Coco', 'veterinario': 'Dr. Gómez'},
+    {'hora': '05:00 PM', 'descripcion': 'Control postoperatorio para Rocky', 'veterinario': 'Dra. Herrera'},
   ];
 
   void _mostrarNotificaciones(BuildContext context) {
     setState(() => notificacionesRevisadas = true);
+    final theme = Theme.of(context);
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFFD5F3F1),
+      backgroundColor: theme.scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -59,15 +44,14 @@ class _CustomHeaderState extends State<CustomHeader> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Row(
+              Row(
                 children: [
                   Expanded(
                     child: Text(
                       'Notificaciones',
-                      style: TextStyle(
-                        fontSize: 20,
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF14746F),
+                        color: theme.colorScheme.primary,
                       ),
                     ),
                   ),
@@ -77,7 +61,7 @@ class _CustomHeaderState extends State<CustomHeader> {
               for (final notif in notificaciones)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: _notificacionCard(notif),
+                  child: _notificacionCard(notif, theme),
                 ),
             ],
           ),
@@ -86,11 +70,11 @@ class _CustomHeaderState extends State<CustomHeader> {
     );
   }
 
-  Widget _notificacionCard(Map<String, String> notif) {
+  Widget _notificacionCard(Map<String, String> notif, ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
@@ -98,32 +82,21 @@ class _CustomHeaderState extends State<CustomHeader> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.notifications_active, color: Color(0xFF1BB0A2)),
+          Icon(Icons.notifications_active, color: theme.colorScheme.secondary),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  notif['descripcion']!,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
+                Text(notif['descripcion']!,
+                  style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Text(
-                      notif['hora']!,
-                      style: const TextStyle(fontSize: 12, color: Colors.black54),
-                    ),
+                    Text(notif['hora']!, style: theme.textTheme.bodySmall),
                     const SizedBox(width: 12),
-                    Text(
-                      notif['veterinario']!,
-                      style: const TextStyle(fontSize: 12, color: Colors.black54),
-                    ),
+                    Text(notif['veterinario']!, style: theme.textTheme.bodySmall),
                   ],
                 ),
               ],
@@ -136,14 +109,20 @@ class _CustomHeaderState extends State<CustomHeader> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final Color background = theme.primaryColor;
+    final Color textColor = Colors.white;
+
     if (widget.isSecondaryScreen) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        color: const Color(0xFF35919E),
+        color: background,
         child: Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              icon: Icon(Icons.arrow_back, color: textColor),
               onPressed: widget.onBack ?? () => Navigator.pop(context),
             ),
             const SizedBox(width: 8),
@@ -151,11 +130,7 @@ class _CustomHeaderState extends State<CustomHeader> {
               child: Text(
                 widget.nameScreen,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
               ),
             ),
             const SizedBox(width: 48), // Espacio para balancear diseño
@@ -164,10 +139,9 @@ class _CustomHeaderState extends State<CustomHeader> {
       );
     }
 
-    // Header normal
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: const BoxDecoration(color: Color(0xFF35919E)),
+      decoration: BoxDecoration(color: background),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -175,21 +149,18 @@ class _CustomHeaderState extends State<CustomHeader> {
             children: [
               const CircleAvatar(radius: 20),
               const SizedBox(width: 10),
-              Text(
-                widget.petName,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              ),
+              Text(widget.petName,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: textColor)),
             ],
           ),
           Stack(
             clipBehavior: Clip.none,
             children: [
               IconButton(
-                icon: const Icon(Icons.notifications, color: Colors.white),
+                icon: Icon(Icons.notifications, color: textColor),
                 onPressed: () => _mostrarNotificaciones(context),
               ),
               if (!notificacionesRevisadas)
@@ -198,17 +169,16 @@ class _CustomHeaderState extends State<CustomHeader> {
                   bottom: 6,
                   child: Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Color(0xFF1BB0A2),
+                      color: theme.colorScheme.secondary,
                     ),
                     child: Text(
                       '${notificaciones.length}',
                       style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                   ),
                 ),

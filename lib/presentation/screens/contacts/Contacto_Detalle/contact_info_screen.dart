@@ -1,3 +1,5 @@
+import 'package:animacare_front/presentation/components/custom_navbar.dart';
+import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_screen.dart';
@@ -8,10 +10,11 @@ class ContactInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ContactInfoController controller = ContactInfoController();
+    final theme = Theme.of(context);
+    final controller = ContactInfoController();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF7B4A91),
+      backgroundColor: theme.colorScheme.primary,
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -22,72 +25,68 @@ class ContactInfoScreen extends StatelessWidget {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF4B1B3F), width: 8),
+                  border: Border.all(
+                    color: theme.colorScheme.onPrimary.withOpacity(0.2),
+                    width: 8,
+                  ),
                 ),
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     children: <Widget>[
-                      const Center(
-                        child: Text(
-                          'Veterinario',
-                          style: TextStyle(
-                            color: Color(0xFFFFE066),
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                          ),
+                      Text(
+                        'Veterinario',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         controller.nombre,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.8,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.colorScheme.onPrimary,
                         ),
                       ),
                       const SizedBox(height: 25),
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 65,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.person, size: 60, color: Colors.grey),
+                        backgroundColor: theme.cardColor,
+                        child: Icon(Icons.person,
+                            size: 60, color: theme.iconTheme.color),
                       ),
                       const SizedBox(height: 25),
                       Column(
                         children: <Widget>[
-                          _infoLinea(Icons.phone, controller.telefono),
+                          _infoLinea(theme, Icons.phone, controller.telefono),
                           const SizedBox(height: 8),
-                          _infoLinea(Icons.email, controller.correo),
+                          _infoLinea(theme, Icons.email, controller.correo),
                         ],
                       ),
                       const SizedBox(height: 30),
-                      const Align(
+                      Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Información adicional',
-                          style: TextStyle(
-                            color: Color(0xFFFFE066),
-                            fontSize: 18,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: theme.colorScheme.secondary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       const SizedBox(height: 12),
                       ...controller.infoExtra.map(
-                        (item) =>
+                            (item) =>
                             InfoItem(icon: item['icon'], text: item['text']),
                       ),
                       const SizedBox(height: 25),
-                      const Align(
+                      Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Horario de atención',
-                          style: TextStyle(
-                            color: Color(0xFFFFE066),
-                            fontSize: 18,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: theme.colorScheme.secondary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -96,7 +95,7 @@ class ContactInfoScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF4B1B3F),
+                          color: theme.colorScheme.onPrimary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: HorarioTable(horarios: controller.horarios),
@@ -123,7 +122,8 @@ class ContactInfoScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (_) => const AgendarCitaScreen(),),
+                  builder: (_) => const AgendarCitaScreen(),
+                ),
               );
             },
           ),
@@ -132,74 +132,84 @@ class ContactInfoScreen extends StatelessWidget {
     );
   }
 
-  Widget _infoLinea(IconData icon, String text) => Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Icon(icon, color: const Color(0xFFFFE066), size: 20),
-        const SizedBox(width: 6),
-        Text(
-          text,
-          style: const TextStyle(
-            color: Color(0xFFFFE066),
-            decoration: TextDecoration.underline,
-          ),
+  Widget _infoLinea(ThemeData theme, IconData icon, String text) => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: <Widget>[
+      Icon(icon, color: theme.colorScheme.secondary, size: 20),
+      const SizedBox(width: 6),
+      Text(
+        text,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.secondary,
+          decoration: TextDecoration.underline,
         ),
-      ],
-    );
+      ),
+    ],
+  );
 }
 
 class InfoItem extends StatelessWidget {
-
   const InfoItem({super.key, required this.icon, required this.text});
   final IconData icon;
   final String text;
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: <Widget>[
-          Icon(icon, color: Colors.white70),
+          Icon(icon, color: theme.iconTheme.color?.withOpacity(0.7)),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(color: Colors.white),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.textTheme.bodyMedium?.color,
+              ),
             ),
           ),
         ],
       ),
     );
+  }
 }
 
 class HorarioTable extends StatelessWidget {
-
   const HorarioTable({super.key, required this.horarios});
   final Map<String, String> horarios;
 
   @override
-  Widget build(BuildContext context) => Column(
-      children: horarios.entries.map((MapEntry<String, String> entry) => Padding(
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      children: horarios.entries
+          .map(
+            (MapEntry<String, String> entry) => Padding(
           padding: const EdgeInsets.symmetric(vertical: 6),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
                 entry.key,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onPrimary,
                 ),
               ),
               Text(
                 entry.value,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onPrimary,
                 ),
               ),
             ],
           ),
-        ),).toList(),
+        ),
+      )
+          .toList(),
     );
+  }
 }

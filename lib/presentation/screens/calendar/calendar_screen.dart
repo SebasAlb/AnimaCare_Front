@@ -99,91 +99,95 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: const Color(0xFFD5F3F1),
-        body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              const CustomHeader(
-                petName: 'Gato 1',
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () => setState(() => controller.cambiarModo(true)),
-                      child: Text(
-                        'Calendario',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: controller.modoCalendario
-                              ? Colors.black
-                              : Colors.black45,
-                        ),
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            const CustomHeader(petName: 'Gato 1'),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () => setState(() => controller.cambiarModo(true)),
+                    child: Text(
+                      'Calendario',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: controller.modoCalendario
+                            ? colorScheme.primary
+                            : colorScheme.onBackground.withOpacity(0.5),
                       ),
                     ),
-                    const Text('  |  '),
-                    GestureDetector(
-                      onTap: () => setState(() => controller.cambiarModo(false)),
-                      child: Text(
-                        'Eventos',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: !controller.modoCalendario
-                              ? Colors.black
-                              : Colors.black45,
-                        ),
+                  ),
+                  Text(
+                    '  |  ',
+                    style: TextStyle(
+                        color: colorScheme.onBackground.withOpacity(0.6)),
+                  ),
+                  GestureDetector(
+                    onTap: () => setState(() => controller.cambiarModo(false)),
+                    child: Text(
+                      'Eventos',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: !controller.modoCalendario
+                            ? colorScheme.primary
+                            : colorScheme.onBackground.withOpacity(0.5),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Expanded(
-                child: controller.modoCalendario
-                    ? VistaCalendario(
-                        eventos:
-                            controller.eventosDelDia(controller.selectedDay),
-                        selectedDay: controller.selectedDay,
-                        focusedDay: controller.focusedDay,
-                        onDaySelected: (DateTime sel, DateTime foc) =>
-                            setState(() =>
-                                controller.seleccionarDia(sel, foc)),
-                        onTapEvento: mostrarDetallesEvento,
-                        eventosMarcados: controller.getDiasConEventos(),
-                      )
-                    : VistaEventos(
-                        eventos: controller.filtrarEventosPorTexto(),
-                        controller: controller.searchController,
-                        onTapEvento: mostrarDetallesEvento,
-                      ),
+            ),
+            Expanded(
+              child: controller.modoCalendario
+                  ? VistaCalendario(
+                eventos: controller.eventosDelDia(controller.selectedDay),
+                selectedDay: controller.selectedDay,
+                focusedDay: controller.focusedDay,
+                onDaySelected: (DateTime sel, DateTime foc) =>
+                    setState(() => controller.seleccionarDia(sel, foc)),
+                onTapEvento: mostrarDetallesEvento,
+                eventosMarcados: controller.getDiasConEventos(),
+              )
+                  : VistaEventos(
+                eventos: controller.filtrarEventosPorTexto(),
+                controller: controller.searchController,
+                onTapEvento: mostrarDetallesEvento,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-        bottomNavigationBar: CustomNavBar(
-          currentIndex: 2,
-          onTap: (int index) {
-            switch (index) {
-              case 0:
-                Navigator.pushNamed(context, AppRoutes.homeOwner);
-                break;
-              case 1:
-                Navigator.pushNamed(context, AppRoutes.contactsP);
-                break;
-              case 2:
-                break;
-              case 3:
-                Navigator.pushNamed(context, AppRoutes.settingsP);
-                break;
-            }
-          },
-        ),
-      );
+      ),
+      bottomNavigationBar: CustomNavBar(
+        currentIndex: 2,
+        onTap: (int index) {
+          switch (index) {
+            case 0:
+              Navigator.pushNamed(context, AppRoutes.homeOwner);
+              break;
+            case 1:
+              Navigator.pushNamed(context, AppRoutes.contactsP);
+              break;
+            case 2:
+              break;
+            case 3:
+              Navigator.pushNamed(context, AppRoutes.settingsP);
+              break;
+          }
+        },
+      ),
+    );
+  }
 }
 

@@ -11,9 +11,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final HomeController controller = HomeController();
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF7B4A91),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,14 +22,13 @@ class HomeScreen extends StatelessWidget {
             const CustomHeader(
               petName: 'Sebastián',
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Text(
                 '🐾 Mascotas',
-                style: TextStyle(
-                  fontSize: 28,
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFFFFE066),
+                  color: theme.colorScheme.secondary,
                   letterSpacing: 1.2,
                 ),
               ),
@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                   children:
-                      controller.mascotas.map((m) => PetCard(name: m)).toList(),
+                  controller.mascotas.map((m) => PetCard(name: m)).toList(),
                 ),
               ),
             ),
@@ -50,12 +50,12 @@ class HomeScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => controller.onAgregarMascota(context),
-        backgroundColor: const Color(0xFFFFE066),
-        icon: const Icon(Icons.add, color: Color(0xFF4B1B3F)),
-        label: const Text(
+        backgroundColor: theme.colorScheme.secondary,
+        icon: Icon(Icons.add, color: theme.colorScheme.primary),
+        label: Text(
           'Agregar mascota',
           style: TextStyle(
-            color: Color(0xFF4B1B3F),
+            color: theme.colorScheme.primary,
             fontWeight: FontWeight.bold,
           ),
         ),

@@ -1,9 +1,9 @@
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
+import 'package:animacare_front/presentation/theme/theme_controller.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
-import 'package:animacare_front/presentation/components/custom_header.dart';
-// import '../Editar_Perfil/editar_perfil_screen.dart';
 import 'package:animacare_front/presentation/screens/settings/Conf_Principal/conf_principal_controller.dart';
+import 'package:get/get.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -11,58 +11,51 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ConfPrincipalController controller = ConfPrincipalController();
+    final ThemeController themeController = Get.find();
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFD5F3F1),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: ListView(
           children: <Widget>[
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
               child: Center(
                 child: Text(
                   'Configuraciones',
-                  style: TextStyle(
-                    fontSize: 24,
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF14746F),
                   ),
                 ),
               ),
             ),
-            const CircleAvatar(
+            CircleAvatar(
               radius: 45,
-              backgroundColor: Colors.white,
-              child: Icon(Icons.person, size: 50, color: Colors.grey),
+              backgroundColor: theme.cardColor,
+              child: Icon(Icons.person, size: 50, color: theme.iconTheme.color),
             ),
             const SizedBox(height: 8),
-            const Center(
+            Center(
               child: Text(
                 'Mr. Del Conde Mayhoccer',
-                style: TextStyle(fontSize: 16, color: Colors.black87),
+                style: theme.textTheme.bodyMedium,
               ),
             ),
             const SizedBox(height: 20),
-            _buildSectionTitle('Mi cuenta'),
-            _buildSettingCard(context, Icons.person, 'Mi perfil', controller),
-            _buildSectionTitle('Preferencias'),
-            _buildSettingCard(
-                context, Icons.notifications, 'Notificaciones', controller,),
-            _buildSettingCard(
-                context, Icons.alarm, 'Recordatorios', controller,),
-            _buildSettingCard(context, Icons.language, 'Idioma', controller),
-            _buildSettingCard(
-                context, Icons.dark_mode, 'Tema oscuro', controller,),
-            _buildSectionTitle('Soporte y privacidad'),
-            _buildSettingCard(context, Icons.privacy_tip,
-                'Política de privacidad', controller,),
-            _buildSettingCard(
-                context, Icons.share, 'Compartir con veterinario', controller,),
-            _buildSettingCard(
-                context, Icons.help_outline, 'Ayuda y soporte', controller,),
-            _buildSectionTitle('Sesión'),
-            _buildSettingCard(
-                context, Icons.logout, 'Cerrar sesión', controller,),
+            _buildSectionTitle('Mi cuenta', theme),
+            _buildSettingCard(context, Icons.person, 'Mi perfil', controller, theme),
+            _buildSectionTitle('Preferencias', theme),
+            _buildSettingCard(context, Icons.notifications, 'Notificaciones', controller, theme),
+            _buildSettingCard(context, Icons.alarm, 'Recordatorios', controller, theme),
+            _buildSettingCard(context, Icons.language, 'Idioma', controller, theme),
+            _buildThemeSwitchCard(context, themeController, theme),
+            _buildSectionTitle('Soporte y privacidad', theme),
+            _buildSettingCard(context, Icons.privacy_tip, 'Política de privacidad', controller, theme),
+            _buildSettingCard(context, Icons.share, 'Compartir con veterinario', controller, theme),
+            _buildSettingCard(context, Icons.help_outline, 'Ayuda y soporte', controller, theme),
+            _buildSectionTitle('Sesión', theme),
+            _buildSettingCard(context, Icons.logout, 'Cerrar sesión', controller, theme),
             const SizedBox(height: 20),
           ],
         ),
@@ -88,32 +81,59 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(String title) => Padding(
-      padding: const EdgeInsets.only(left: 20, top: 18, bottom: 8),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF14746F),
-        ),
-      ),
-    );
+  Widget _buildSectionTitle(String title, ThemeData theme) => Padding(
+    padding: const EdgeInsets.only(left: 20, top: 18, bottom: 8),
+    child: Text(
+      title,
+      style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+    ),
+  );
 
-  Widget _buildSettingCard(BuildContext context, IconData icon, String title,
-      ConfPrincipalController controller,) => Card(
-      color: const Color(0xFF1BB0A2),
+  Widget _buildSettingCard(
+      BuildContext context,
+      IconData icon,
+      String title,
+      ConfPrincipalController controller,
+      ThemeData theme,
+      ) =>
+      Card(
+        color: theme.cardColor,
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: ListTile(
+          leading: Icon(icon, color: theme.iconTheme.color),
+          title: Text(
+            title,
+            style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          trailing: Icon(Icons.chevron_right, color: theme.iconTheme.color),
+          onTap: () => controller.onTapSetting(context, title),
+        ),
+      );
+
+  Widget _buildThemeSwitchCard(
+      BuildContext context,
+      ThemeController themeController,
+      ThemeData theme,
+      ) {
+    return Card(
+      color: theme.cardColor,
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: Icon(icon, color: Colors.white),
+        leading: Icon(Icons.dark_mode, color: theme.iconTheme.color),
         title: Text(
-          title,
-          style:
-              const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          'Tema oscuro',
+          style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
-        trailing: const Icon(Icons.chevron_right, color: Colors.white),
-        onTap: () => controller.onTapSetting(context, title),
+        trailing: GetBuilder<ThemeController>(
+          builder: (controller) => Switch(
+            value: controller.themeMode == ThemeMode.dark,
+            onChanged: controller.toggleTheme,
+            activeColor: theme.colorScheme.primary,
+          ),
+        ),
       ),
     );
+  }
 }

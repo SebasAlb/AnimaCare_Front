@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/evento_card.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/fecha_agrupada.dart';
-import 'package:animacare_front/presentation/screens/calendar/widgets/evento_calendar.dart'; // Modelo
+import 'package:animacare_front/presentation/screens/calendar/widgets/evento_calendar.dart';
 
 class VistaEventos extends StatelessWidget {
   const VistaEventos({
@@ -15,7 +15,6 @@ class VistaEventos extends StatelessWidget {
   final TextEditingController controller;
   final Function(EventoCalendar) onTapEvento;
 
-  /// Agrupa los eventos por fecha (yyyy-MM-dd) y devuelve un Map ordenado
   Map<String, List<EventoCalendar>> agruparPorFecha(List<EventoCalendar> lista) {
     final Map<String, List<EventoCalendar>> agrupados = {};
 
@@ -23,7 +22,6 @@ class VistaEventos extends StatelessWidget {
       agrupados.putIfAbsent(evento.fecha, () => []).add(evento);
     }
 
-    // Ordenar por fecha (opcional)
     final ordenado = Map.fromEntries(
       agrupados.entries.toList()
         ..sort((a, b) => a.key.compareTo(b.key)),
@@ -34,6 +32,7 @@ class VistaEventos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final eventosAgrupados = agruparPorFecha(eventos);
 
     return Column(
@@ -45,52 +44,59 @@ class VistaEventos extends StatelessWidget {
             controller: controller,
             decoration: InputDecoration(
               hintText: 'Buscar eventos...',
-              prefixIcon: const Icon(Icons.search),
+              hintStyle: TextStyle(color: theme.hintColor),
+              prefixIcon: Icon(Icons.search, color: theme.iconTheme.color),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: theme.cardColor,
               contentPadding: const EdgeInsets.all(12),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
               ),
             ),
+            style: theme.textTheme.bodyMedium,
           ),
         ),
 
         // Lista de eventos agrupados por fecha
         Expanded(
           child: eventos.isEmpty
-              ? const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Text('No se encontraron eventos.'),
-                  ),
-                )
+              ? Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                'No se encontraron eventos.',
+                style: theme.textTheme.bodyMedium,
+              ),
+            ),
+          )
               : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  itemCount: eventosAgrupados.length,
-                  itemBuilder: (context, index) {
-                    final fecha = eventosAgrupados.keys.elementAt(index);
-                    final eventosDelDia = eventosAgrupados[fecha]!;
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            itemCount: eventosAgrupados.length,
+            itemBuilder: (context, index) {
+              final fecha = eventosAgrupados.keys.elementAt(index);
+              final eventosDelDia = eventosAgrupados[fecha]!;
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        FechaAgrupada(fecha: fecha),
-                        ...eventosDelDia.map((evento) => GestureDetector(
-                              onTap: () => onTapEvento(evento),
-                              child: EventoCard(
-                                hora: evento.hora,
-                                titulo: evento.titulo,
-                                mascota: evento.mascota,
-                              ),
-                            )),
-                      ],
-                    );
-                  },
-                ),
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  FechaAgrupada(fecha: fecha),
+                  ...eventosDelDia.map(
+                        (evento) => GestureDetector(
+                      onTap: () => onTapEvento(evento),
+                      child: EventoCard(
+                        hora: evento.hora,
+                        titulo: evento.titulo,
+                        mascota: evento.mascota,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ],
     );
   }
 }
-

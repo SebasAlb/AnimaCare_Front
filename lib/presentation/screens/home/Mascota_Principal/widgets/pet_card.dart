@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detalle_mascota_screen.dart'; // MISMA CARPETA, CORRECTO
+import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detalle_mascota_screen.dart';
 
 class PetCard extends StatelessWidget {
-
   const PetCard({super.key, required this.name});
   final String name;
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
@@ -18,7 +21,7 @@ class PetCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF4B1B3F),
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: <BoxShadow>[
             BoxShadow(
@@ -34,16 +37,14 @@ class PetCard extends StatelessWidget {
               flex: 3,
               child: Container(
                 width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.background,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.pets,
-                    size: 50,
-                    color: Color(0xFF7B4A91),
-                  ),
+                child: Icon(
+                  Icons.pets,
+                  size: 50,
+                  color: theme.colorScheme.primary,
                 ),
               ),
             ),
@@ -58,9 +59,9 @@ class PetCard extends StatelessWidget {
                       child: Text(
                         name,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFFFFE066),
+                          color: theme.colorScheme.secondary,
                           fontSize: 16,
                         ),
                       ),
@@ -68,7 +69,7 @@ class PetCard extends StatelessWidget {
                     const SizedBox(width: 6),
                     Icon(
                       Icons.chevron_right,
-                      color: const Color(0xFFFFE066).withOpacity(0.6),
+                      color: theme.colorScheme.secondary.withOpacity(0.6),
                       size: 20,
                     ),
                   ],
@@ -79,4 +80,5 @@ class PetCard extends StatelessWidget {
         ),
       ),
     );
+  }
 }

@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
 class FechaAgrupada extends StatelessWidget {
-
   const FechaAgrupada({super.key, required this.fecha});
   final String fecha;
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Text(
         fecha,
-        style: const TextStyle(
-          fontSize: 16,
+        style: theme.textTheme.titleSmall?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Color(0xFF14746F), // verde marino
+          color: theme.colorScheme.primary,
         ),
       ),
     );
+  }
 }
