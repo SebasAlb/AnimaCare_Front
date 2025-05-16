@@ -3,64 +3,173 @@ import 'package:animacare_front/presentation/screens/calendar/widgets/evento_car
 import 'package:animacare_front/presentation/screens/calendar/widgets/fecha_agrupada.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/evento_calendar.dart';
 
-class VistaEventos extends StatelessWidget {
+class VistaEventos extends StatefulWidget {
   const VistaEventos({
     super.key,
     required this.eventos,
     required this.controller,
     required this.onTapEvento,
+    required this.onSeleccionarFecha,
+    required this.onAbrirFiltro,
   });
 
   final List<EventoCalendar> eventos;
   final TextEditingController controller;
   final Function(EventoCalendar) onTapEvento;
+  final Function(DateTime) onSeleccionarFecha;
+  final VoidCallback onAbrirFiltro;
 
-  Map<String, List<EventoCalendar>> agruparPorFecha(
-      List<EventoCalendar> lista,) {
-    final Map<String, List<EventoCalendar>> agrupados = <String, List<EventoCalendar>>{};
+  @override
+  State<VistaEventos> createState() => _VistaEventosState();
+}
 
-    for (final EventoCalendar evento in lista) {
-      agrupados.putIfAbsent(evento.fecha, () => <EventoCalendar>[]).add(evento);
+class _VistaEventosState extends State<VistaEventos> {
+  final ScrollController _scrollController = ScrollController();
+  String? tipoSeleccionado;
+
+  List<String> generarFiltros(List<EventoCalendar> eventos) {
+    final Set<String> categorias = {};
+    bool tieneCitas = false;
+    bool tieneEventos = false;
+
+    for (final evento in eventos) {
+      if (evento.tipo == 'cita') tieneCitas = true;
+      if (evento.tipo == 'evento') tieneEventos = true;
+      if (evento.categoria != null) categorias.add(evento.categoria!);
     }
 
-    final Map<String, List<EventoCalendar>> ordenado = Map.fromEntries(
+    final List<String> filtros = ['Todos'];
+    if (tieneCitas) filtros.add('Cita');
+    if (tieneEventos) filtros.add('Evento');
+    return filtros;
+  }
+
+  List<EventoCalendar> filtrarEventos() {
+    final todos = widget.eventos;
+    final tipoFiltro = tipoSeleccionado;
+
+    return todos.where((evento) {
+      final coincideTipo = tipoFiltro == null ||
+          tipoFiltro == 'Todos' ||
+          (tipoFiltro == 'Cita' && evento.tipo == 'cita') ||
+          (tipoFiltro == 'Evento' && evento.tipo == 'evento') ||
+          evento.categoria?.toLowerCase() == tipoFiltro.toLowerCase();
+
+      return coincideTipo;
+    }).toList();
+  }
+
+  Map<String, List<EventoCalendar>> agruparPorFecha(List<EventoCalendar> lista) {
+    final Map<String, List<EventoCalendar>> agrupados = {};
+    for (final evento in lista) {
+      agrupados.putIfAbsent(evento.fecha, () => []).add(evento);
+    }
+    final ordenado = Map.fromEntries(
       agrupados.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
     );
-
     return ordenado;
+  }
+
+  void seleccionarFiltro(String tipo, int index) {
+    setState(() {
+      if (tipo == 'Todos') {
+        tipoSeleccionado = 'Todos';
+      } else if (tipoSeleccionado == tipo) {
+        tipoSeleccionado = null;
+      } else {
+        tipoSeleccionado = tipo;
+      }
+
+      final double chipWidth = 90;
+      _scrollController.animateTo(
+        (index * chipWidth) - 100,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final Map<String, List<EventoCalendar>> eventosAgrupados = agruparPorFecha(eventos);
+    final ColorScheme colorScheme = theme.colorScheme;
+
+    final eventosFiltrados = filtrarEventos();
+    final eventosAgrupados = agruparPorFecha(eventosFiltrados);
 
     return Column(
       children: <Widget>[
-        // Barra de búsqueda
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          child: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              hintText: 'Buscar eventos...',
-              hintStyle: TextStyle(color: theme.hintColor),
-              prefixIcon: Icon(Icons.search, color: theme.iconTheme.color),
-              filled: true,
-              fillColor: theme.cardColor,
-              contentPadding: const EdgeInsets.all(12),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: TextField(
+                  controller: widget.controller,
+                  decoration: InputDecoration(
+                    hintText: 'Buscar eventos...',
+                    hintStyle: TextStyle(color: theme.hintColor),
+                    prefixIcon: Icon(Icons.search, color: theme.iconTheme.color),
+                    filled: true,
+                    fillColor: theme.cardColor,
+                    contentPadding: const EdgeInsets.all(12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  style: theme.textTheme.bodyMedium,
+                ),
               ),
-            ),
-            style: theme.textTheme.bodyMedium,
+              const SizedBox(width: 8),
+              IconButton(
+                icon: Icon(Icons.filter_alt, color: colorScheme.primary),
+                onPressed: widget.onAbrirFiltro,
+                tooltip: 'Filtros avanzados',
+              ),
+            ],
           ),
         ),
 
-        // Lista de eventos agrupados por fecha
+        SizedBox(
+          height: 42,
+          child: Builder(
+            builder: (context) {
+              final filtros = generarFiltros(widget.eventos);
+
+              return ListView.builder(
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: filtros.length,
+                itemBuilder: (context, index) {
+                  final tipo = filtros[index];
+                  final bool isSelected = tipo == tipoSeleccionado;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(tipo),
+                      selected: isSelected,
+                      onSelected: (_) => seleccionarFiltro(tipo, index),
+                      selectedColor: colorScheme.primary,
+                      backgroundColor: theme.colorScheme.surfaceVariant,
+                      labelStyle: TextStyle(
+                        color: isSelected
+                            ? colorScheme.onPrimary
+                            : colorScheme.onSurface,
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+
+        const SizedBox(height: 8),
+
         Expanded(
-          child: eventos.isEmpty
+          child: eventosFiltrados.isEmpty
               ? Center(
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -71,27 +180,29 @@ class VistaEventos extends StatelessWidget {
                   ),
                 )
               : ListView.builder(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   itemCount: eventosAgrupados.length,
                   itemBuilder: (context, index) {
-                    final String fecha = eventosAgrupados.keys.elementAt(index);
-                    final List<EventoCalendar> eventosDelDia = eventosAgrupados[fecha]!;
+                    final fechaStr = eventosAgrupados.keys.elementAt(index);
+                    final eventosDelDia = eventosAgrupados[fechaStr]!;
+
+                    final fecha = DateTime.parse(fechaStr);
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        FechaAgrupada(fecha: fecha),
-                        ...eventosDelDia.map(
-                          (evento) => GestureDetector(
-                            onTap: () => onTapEvento(evento),
-                            child: EventoCard(
-                              hora: evento.hora,
-                              titulo: evento.titulo,
-                              mascota: evento.mascota,
-                            ),
-                          ),
+                        FechaAgrupada(
+                          fecha: fechaStr,
+                          onTap: () => widget.onSeleccionarFecha(fecha),
                         ),
+                        ...eventosDelDia.map((evento) => GestureDetector(
+                              onTap: () => widget.onTapEvento(evento),
+                              child: EventoCard(
+                                hora: evento.hora,
+                                titulo: evento.titulo,
+                                mascota: evento.mascota,
+                              ),
+                            )),
                       ],
                     );
                   },
