@@ -24,10 +24,10 @@ class VistaCalendario extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
 
     return Column(
       children: <Widget>[
-        // Calendario visual
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           padding: const EdgeInsets.all(10),
@@ -42,30 +42,30 @@ class VistaCalendario extends StatelessWidget {
             selectedDayPredicate: (day) => isSameDay(selectedDay, day),
             onDaySelected: onDaySelected,
             eventLoader: (day) {
-              final DateTime key = DateTime(day.year, day.month, day.day);
-              return eventosMarcados[key] ?? <EventoCalendar>[];
+              final key = DateTime(day.year, day.month, day.day);
+              return eventosMarcados[key] ?? [];
             },
             headerStyle: HeaderStyle(
               titleCentered: true,
               formatButtonVisible: false,
               titleTextStyle: theme.textTheme.titleMedium!.copyWith(
-                color: theme.colorScheme.primary,
+                color: colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
             calendarStyle: CalendarStyle(
               todayDecoration: BoxDecoration(
-                color: theme.colorScheme.secondary,
+                color: colorScheme.secondary,
                 shape: BoxShape.circle,
               ),
               selectedDecoration: BoxDecoration(
-                color: theme.colorScheme.primary,
+                color: colorScheme.primary,
                 shape: BoxShape.circle,
               ),
               todayTextStyle: const TextStyle(color: Colors.white),
               selectedTextStyle: const TextStyle(color: Colors.white),
               markerDecoration: BoxDecoration(
-                color: theme.primaryColorDark,
+                color: colorScheme.tertiary, // O usa theme.primaryColorDark
                 shape: BoxShape.circle,
               ),
               defaultTextStyle: theme.textTheme.bodyMedium!,
@@ -82,7 +82,7 @@ class VistaCalendario extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Eventos para el día',
+              '${eventos.length} evento${eventos.length == 1 ? '' : 's'} en la fecha ${_formatearFecha(selectedDay)}',
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -92,13 +92,12 @@ class VistaCalendario extends StatelessWidget {
 
         const SizedBox(height: 8),
 
-        // Lista de eventos del día
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             itemCount: eventos.length,
             itemBuilder: (BuildContext context, int index) {
-              final EventoCalendar evento = eventos[index];
+              final evento = eventos[index];
               return GestureDetector(
                 onTap: () => onTapEvento(evento),
                 child: EventoCard(
@@ -113,4 +112,13 @@ class VistaCalendario extends StatelessWidget {
       ],
     );
   }
+
+  String _formatearFecha(DateTime? fecha) {
+    if (fecha == null) return '...';
+    final dia = fecha.day.toString().padLeft(2, '0');
+    final mes = fecha.month.toString().padLeft(2, '0');
+    final anio = fecha.year;
+    return '$anio-$mes-$dia';
+  }
 }
+
