@@ -15,9 +15,10 @@ class EventoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
 
     return Card(
-      color: theme.cardColor,
+      color: colorScheme.primaryContainer, // Fondo adaptado a tema
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: ListTile(
@@ -25,22 +26,24 @@ class EventoCard extends StatelessWidget {
           hora,
           style: theme.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
+            color: colorScheme.onPrimaryContainer, // Contraste del texto
           ),
         ),
         title: Text(
           titulo,
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface,
+            color: colorScheme.onPrimaryContainer,
           ),
         ),
         trailing: Text(
           mascota,
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.9),
+            color: colorScheme.onPrimaryContainer.withOpacity(0.9),
           ),
         ),
       ),
     );
   }
 }
+
+
