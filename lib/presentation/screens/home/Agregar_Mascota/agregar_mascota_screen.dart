@@ -12,6 +12,7 @@ class AgregarMascotaScreen extends StatefulWidget {
 
 class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
   final AgregarMascotaController controller = AgregarMascotaController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -33,79 +34,149 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
+          
           children: <Widget>[
             const CustomHeader(
               nameScreen: 'Agregar Mascota',
               isSecondaryScreen: true,
             ),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(20),
-                children: <Widget>[
-                  const SizedBox(height: 24),
-                  _buildTextField(
-                      'Nombre', controller.nombreController, Icons.pets, theme,),
-                  _buildTextField('Raza', controller.razaController,
-                      Icons.pets_outlined, theme,),
-                  _buildTextField('Peso (kg)', controller.pesoController,
-                      Icons.monitor_weight, theme,
-                      type: TextInputType.number,),
-                  _buildTextField('Altura (cm)', controller.alturaController,
-                      Icons.height, theme,
-                      type: TextInputType.number,),
-                  GestureDetector(
-                    onTap: () =>
-                        controller.seleccionarFecha(context, (String fecha) {
-                      setState(() {
-                        controller.fechaNacimientoController.text = fecha;
-                      });
-                    }),
-                    child: AbsorbPointer(
-                      child: _buildTextField(
-                          'Cumpleaños',
-                          controller.fechaNacimientoController,
-                          Icons.cake,
-                          theme,),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  padding: const EdgeInsets.all(20),
+                  
+                  children: <Widget>[
+                    const SizedBox(height: 24),
+
+                    // 🐶 Nombre (fila única)
+                    _buildTextField(
+                      label: 'Nombre',
+                      controller: controller.nombreController,
+                      icon: Icons.pets,
+                      theme: theme,
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text('Sexo',
-                      style: theme.textTheme.labelLarge?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,),),
-                  Row(
-                    children: <String>['Macho', 'Hembra'].map((String option) => Expanded(
-                        child: RadioListTile(
-                          title:
-                              Text(option, style: theme.textTheme.bodyMedium),
-                          value: option,
-                          groupValue: controller.sexo,
-                          activeColor: theme.colorScheme.primary,
-                          onChanged: (String? value) {
-                            setState(() => controller.sexo = value.toString());
-                          },
+
+                    // 🐾 Especie + Raza (fila doble)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildTextField(
+                            label: 'Especie',
+                            controller: TextEditingController(text: controller.especie),
+                            icon: Icons.category,
+                            theme: theme,
+                            isDropdown: true,
+                            items: ['Perro', 'Gato', 'Otro'],
+                            onChangedDropdown: (val) => setState(() => controller.especie = val!),
+                          ),
                         ),
-                      ),).toList(),
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildTextField(
+                            label: 'Raza',
+                            controller: controller.razaController,
+                            icon: Icons.pets_outlined,
+                            theme: theme,
+                          ),
+                        ),
+                      ],
                     ),
-                    onPressed: () {
-                      controller.guardarMascota(context);
-                    },
-                    child: const Text(
-                      'Guardar Mascota',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+
+                    // ⚧ Sexo (fila única)
+                    _buildTextField(
+                      label: 'Sexo',
+                      controller: TextEditingController(text: controller.sexo),
+                      icon: Icons.male,
+                      theme: theme,
+                      isDropdown: true,
+                      items: ['Macho', 'Hembra'],
+                      onChangedDropdown: (val) => setState(() => controller.sexo = val!),
                     ),
-                  ),
-                  const SizedBox(height: 80),
-                ],
+
+                    // 🎂 Fecha de nacimiento (fila única)
+                    GestureDetector(
+                      onTap: () => controller.seleccionarFecha(context, (String fecha) {
+                        setState(() {
+                          controller.fechaNacimientoController.text = fecha;
+                        });
+                      }),
+                      child: AbsorbPointer(
+                        child: _buildTextField(
+                          label: 'Fecha de nacimiento',
+                          controller: controller.fechaNacimientoController,
+                          icon: Icons.cake,
+                          theme: theme,
+                        ),
+                      ),
+                    ),
+
+                    // ⚖️ Peso + Altura (fila doble)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildTextField(
+                            label: 'Peso (kg)',
+                            controller: controller.pesoController,
+                            icon: Icons.monitor_weight,
+                            theme: theme,
+                            type: TextInputType.number,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildTextField(
+                            label: 'Altura (cm)',
+                            controller: controller.alturaController,
+                            icon: Icons.height,
+                            theme: theme,
+                            type: TextInputType.number,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // 🖼️ URL imagen (opcional)
+                    _buildTextField(
+                      label: 'Foto URL (opcional)',
+                      controller: controller.fotoUrlController,
+                      icon: Icons.image,
+                      theme: theme,
+                      isOptional: true,
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          final nueva = controller.guardarMascota();
+                          Navigator.pop(context, nueva);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('Mascota guardada exitosamente'),
+                              backgroundColor: controller.primario,
+                            ),
+                          );
+                        }
+                      },
+                      child: const Text(
+                        'Guardar Mascota',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+
+                    const SizedBox(height: 80),
+                  ],
+                ),
               ),
             ),
           ],
@@ -114,38 +185,69 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
     );
   }
 
-  Widget _buildTextField(
-    String label,
-    TextEditingController controller,
-    IconData icon,
-    ThemeData theme, {
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    required IconData icon,
+    required ThemeData theme,
     TextInputType type = TextInputType.text,
-  }) => Padding(
+    bool isOptional = false,
+    bool isDropdown = false,
+    List<String>? items,
+    void Function(String?)? onChangedDropdown,
+  }) {
+    return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(label,
-              style: theme.textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary,
-              ),),
-          const SizedBox(height: 8),
-          TextField(
-            controller: controller,
-            keyboardType: type,
-            style: theme.textTheme.bodyMedium,
-            decoration: InputDecoration(
-              prefixIcon: Icon(icon, color: theme.colorScheme.primary),
-              filled: true,
-              fillColor: theme.cardColor,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
+          Text(
+            label,
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
             ),
           ),
+          const SizedBox(height: 8),
+          isDropdown
+              ? DropdownButtonFormField<String>(
+                  value: controller.text,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: theme.cardColor,
+                    prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: theme.colorScheme.primary.withOpacity(0.4), width: 1),
+                    ),
+                  ),
+                  items: items!
+                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .toList(),
+                  onChanged: onChangedDropdown,
+                  validator: (value) => (value == null || value.isEmpty) && !isOptional
+                      ? 'Campo requerido'
+                      : null,
+                )
+              : TextFormField(
+                  controller: controller,
+                  keyboardType: type,
+                  style: theme.textTheme.bodyMedium,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+                    filled: true,
+                    fillColor: theme.cardColor,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: theme.colorScheme.primary.withOpacity(0.4), width: 1),
+                    ),
+                  ),
+                  validator: (value) => (value == null || value.trim().isEmpty) && !isOptional
+                      ? 'Campo requerido'
+                      : null,
+                ),
         ],
       ),
     );
+  }
 }
