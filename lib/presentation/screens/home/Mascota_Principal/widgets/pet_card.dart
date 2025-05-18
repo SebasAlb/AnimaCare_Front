@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:animacare_front/models/mascota.dart';
 import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detalle_mascota_screen.dart';
+import 'package:animacare_front/routes/app_routes.dart';
 
 class PetCard extends StatelessWidget {
-  const PetCard({super.key, required this.name});
-  final String name;
+  const PetCard({super.key, required this.mascota});
+  final Mascota mascota;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushNamed(
           context,
-          MaterialPageRoute(
-            builder: (BuildContext context) => const DetalleMascotaScreen(),
-          ),
+          AppRoutes.detalleMascota,
+          arguments: mascota,
         );
+
       },
       child: Container(
         decoration: BoxDecoration(
@@ -39,14 +40,17 @@ class PetCard extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  image: mascota.fotoUrl != null && mascota.fotoUrl!.isNotEmpty
+                      ? DecorationImage(
+                          image: NetworkImage(mascota.fotoUrl!),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
                 ),
-                child: Icon(
-                  Icons.pets,
-                  size: 50,
-                  color: theme.colorScheme.primary,
-                ),
+                child: mascota.fotoUrl == null || mascota.fotoUrl!.isEmpty
+                    ? Icon(Icons.pets, size: 50, color: theme.colorScheme.primary)
+                    : null,
               ),
             ),
             Expanded(
@@ -58,7 +62,7 @@ class PetCard extends StatelessWidget {
                   children: <Widget>[
                     Flexible(
                       child: Text(
-                        name,
+                        mascota.nombre,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
