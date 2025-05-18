@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:animacare_front/models/mascota.dart';
 
 class AgregarMascotaController {
   final TextEditingController nombreController = TextEditingController();
@@ -7,8 +8,11 @@ class AgregarMascotaController {
   final TextEditingController alturaController = TextEditingController();
   final TextEditingController fechaNacimientoController =
       TextEditingController();
+  //Imagen
+  final TextEditingController fotoUrlController = TextEditingController();
 
   String sexo = 'Macho';
+  String especie = 'Perro'; // Se puede cambiar luego por un Dropdown
 
   final Color fondo = const Color(0xFFD5F3F1);
   final Color primario = const Color(0xFF14746F);
@@ -24,6 +28,7 @@ class AgregarMascotaController {
     pesoController.dispose();
     alturaController.dispose();
     fechaNacimientoController.dispose();
+    fotoUrlController.dispose();
   }
 
   Future<void> seleccionarFecha(
@@ -52,13 +57,27 @@ class AgregarMascotaController {
     }
   }
 
-  void guardarMascota(BuildContext context) {
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Mascota guardada exitosamente'),
-        backgroundColor: primario,
-      ),
+  Mascota guardarMascota() {
+    return Mascota(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      nombre: nombreController.text,
+      especie: especie,
+      raza: razaController.text,
+      fechaNacimiento: _parseFecha(fechaNacimientoController.text),
+      sexo: sexo,
+      peso: double.tryParse(pesoController.text) ?? 0,
+      altura: double.tryParse(alturaController.text) ?? 0,
+      fotoUrl: fotoUrlController.text,
+    );
+  }
+
+  DateTime _parseFecha(String fecha) {
+    final partes = fecha.split('/');
+    return DateTime(
+      int.parse(partes[2]),
+      int.parse(partes[1]),
+      int.parse(partes[0]),
     );
   }
 }
+
