@@ -222,3 +222,4 @@ class _ExpandableCardState extends State<_ExpandableCard>
     );
   }
 }
+
