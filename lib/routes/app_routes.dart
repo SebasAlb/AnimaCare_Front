@@ -11,6 +11,7 @@ import 'package:animacare_front/presentation/screens/settings/Conf_Principal/con
 import 'package:animacare_front/presentation/screens/settings/Editar_Perfil/editar_perfil_screen.dart';
 import 'package:animacare_front/presentation/screens/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:animacare_front/models/mascota.dart';
 
 class AppRoutes {
   static const String login = '/login';
@@ -19,6 +20,7 @@ class AppRoutes {
   static const String homeOwner = '/homeowner';
   static const String homeDetails = './details_pet';
   static const String homeAdd = './addpet';
+  static const String detalleMascota = '/detalle_mascota';
 
   static const String contactsP = '/contacts';
   static const String contactInfo = '/contact_info';
@@ -40,8 +42,13 @@ class AppRoutes {
 
       case homeOwner:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-      case homeDetails:
-        return MaterialPageRoute(builder: (_) => const DetalleMascotaScreen());
+      
+      case detalleMascota:
+        final mascota = settings.arguments as Mascota;
+        return MaterialPageRoute(
+          builder: (_) => DetalleMascotaScreen(mascota: mascota),
+        );
+
       case homeAdd:
         return MaterialPageRoute(builder: (_) => const AgregarMascotaScreen());
 
@@ -74,3 +81,4 @@ class AppRoutes {
     }
   }
 }
+
