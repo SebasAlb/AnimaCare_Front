@@ -2,23 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:animacare_front/models/mascota.dart';
 import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detalle_mascota_screen.dart';
 import 'package:animacare_front/routes/app_routes.dart';
+import 'dart:io';
 
-class PetCard extends StatelessWidget {
+
+class PetCard extends StatefulWidget {
   const PetCard({super.key, required this.mascota});
   final Mascota mascota;
+
+  @override
+  State<PetCard> createState() => _PetCardState();
+}
+
+class _PetCardState extends State<PetCard> {
+  late Mascota mascotaActual;
+
+  @override
+  void initState() {
+    super.initState();
+    mascotaActual = widget.mascota;
+  }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(
+      onTap: () async {
+        final resultado = await Navigator.pushNamed(
           context,
           AppRoutes.detalleMascota,
-          arguments: mascota,
+          arguments: mascotaActual,
         );
 
+        if (resultado is Mascota) {
+          setState(() {
+            mascotaActual = resultado;
+          });
+        }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -41,14 +61,16 @@ class PetCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                  image: mascota.fotoUrl != null && mascota.fotoUrl!.isNotEmpty
+                  image: mascotaActual.fotoUrl != null && mascotaActual.fotoUrl!.isNotEmpty
                       ? DecorationImage(
-                          image: NetworkImage(mascota.fotoUrl!),
+                          image: mascotaActual.fotoUrl!.startsWith('/')
+                              ? FileImage(File(mascotaActual.fotoUrl!))
+                              : NetworkImage(mascotaActual.fotoUrl!) as ImageProvider,
                           fit: BoxFit.cover,
                         )
                       : null,
                 ),
-                child: mascota.fotoUrl == null || mascota.fotoUrl!.isEmpty
+                child: mascotaActual.fotoUrl == null || mascotaActual.fotoUrl!.isEmpty
                     ? Icon(Icons.pets, size: 50, color: theme.colorScheme.primary)
                     : null,
               ),
@@ -62,7 +84,7 @@ class PetCard extends StatelessWidget {
                   children: <Widget>[
                     Flexible(
                       child: Text(
-                        mascota.nombre,
+                        mascotaActual.nombre,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
