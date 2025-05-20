@@ -90,44 +90,53 @@ class _DetalleContenido extends StatelessWidget {
             filtroKeys: controller.filtroKeys,
           );
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            CustomHeader(
-              petName: controller.mascota.nombre, // ← usa el nombre actualizado
-            ),
-            _buildToggleTabs(),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(20),
-                children: <Widget>[_buildContenido()],
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, controller.mascota); // ← Devuelve la mascota actualizada
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: SafeArea(
+          child: Column(
+            children: <Widget>[
+              CustomHeader(
+                petName: controller.mascota.nombre, // ← usa el nombre actualizado
               ),
-            ),
-          ],
+              _buildToggleTabs(),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(20),
+                  children: <Widget>[_buildContenido()],
+                ),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: CustomNavBar(
+          currentIndex: 0,
+          onTap: (int index) {
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, AppRoutes.homeOwner);
+                break;
+              case 1:
+                Navigator.pushNamed(context, AppRoutes.contactsP);
+                break;
+              case 2:
+                Navigator.pushNamed(context, AppRoutes.calendar);
+                break;
+              case 3:
+                Navigator.pushNamed(context, AppRoutes.settingsP);
+                break;
+            }
+          },
         ),
       ),
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: 0,
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, AppRoutes.homeOwner);
-              break;
-            case 1:
-              Navigator.pushNamed(context, AppRoutes.contactsP);
-              break;
-            case 2:
-              Navigator.pushNamed(context, AppRoutes.calendar);
-              break;
-            case 3:
-              Navigator.pushNamed(context, AppRoutes.settingsP);
-              break;
-          }
-        },
-      ),
     );
+
   }
 }
+
+
 
