@@ -48,6 +48,26 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                   
                   children: <Widget>[
                     const SizedBox(height: 24),
+                    Center(
+                      child: GestureDetector(
+                        onTap: () async {
+                          await controller.pickImage();
+                          setState(() {}); // <- para que se actualice visualmente
+                        },
+                        child: CircleAvatar(
+                          radius: 45,
+                          backgroundColor: theme.cardColor,
+                          backgroundImage: controller.fotoLocal != null
+                              ? FileImage(controller.fotoLocal!)
+                              : null,
+                          child: controller.fotoLocal == null
+                              ? Icon(Icons.camera_alt, color: theme.colorScheme.primary, size: 30)
+                              : null,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
 
                     // 🐶 Nombre (fila única)
                     _buildTextField(
@@ -136,15 +156,6 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                       ],
                     ),
 
-                    // 🖼️ URL imagen (opcional)
-                    _buildTextField(
-                      label: 'Foto URL (opcional)',
-                      controller: controller.fotoUrlController,
-                      icon: Icons.image,
-                      theme: theme,
-                      isOptional: true,
-                    ),
-
                     const SizedBox(height: 24),
 
                     ElevatedButton(
@@ -156,18 +167,28 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          final nueva = controller.guardarMascota();
-                          Navigator.pop(context, nueva);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text('Mascota guardada exitosamente'),
-                              backgroundColor: controller.primario,
-                            ),
-                          );
+                          final nueva = await controller.guardarMascota();
+                          if (nueva != null) {
+                            Navigator.pop(context, nueva);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text('Mascota guardada exitosamente'),
+                                backgroundColor: controller.primario,
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Error al subir imagen'),
+                                backgroundColor: Colors.redAccent,
+                              ),
+                            );
+                          }
                         }
                       },
+
                       child: const Text(
                         'Guardar Mascota',
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -232,7 +253,11 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
               : TextFormField(
                   controller: controller,
                   keyboardType: type,
-                  style: theme.textTheme.bodyMedium,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.textTheme.titleMedium?.color,
+                    fontWeight: FontWeight.w600,
+                  ),
+
                   decoration: InputDecoration(
                     prefixIcon: Icon(icon, color: theme.colorScheme.primary),
                     filled: true,
