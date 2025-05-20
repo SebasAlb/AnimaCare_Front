@@ -97,13 +97,15 @@ class SettingsScreen extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: ListTile(
-          leading: Icon(icon, color: theme.iconTheme.color),
+          leading: Icon(icon, color: theme.colorScheme.primary),
           title: Text(
             title,
-            style: theme.textTheme.bodyLarge
-                ?.copyWith(fontWeight: FontWeight.w600),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.primary,
+            ),
           ),
-          trailing: Icon(Icons.chevron_right, color: theme.iconTheme.color),
+          trailing: Icon(Icons.chevron_right, color: theme.colorScheme.primary),
           onTap: () => controller.onTapSetting(context, title),
         ),
       );
@@ -117,11 +119,13 @@ class SettingsScreen extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: Icon(Icons.dark_mode, color: theme.iconTheme.color),
+        leading: Icon(Icons.dark_mode, color: theme.colorScheme.primary),
         title: Text(
           'Tema oscuro',
-          style:
-              theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.primary,
+          ),
         ),
         trailing: GetBuilder<ThemeController>(
           builder: (ThemeController controller) => Switch(
@@ -133,3 +137,4 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
 }
+
