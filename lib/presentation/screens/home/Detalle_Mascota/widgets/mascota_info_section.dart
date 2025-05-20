@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detalle_mascota_controller.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
+
 
 class MascotaInfoSection extends StatelessWidget {
   final String nombre;
@@ -39,6 +43,7 @@ class MascotaInfoSection extends StatelessWidget {
   void _abrirModalEdicion(BuildContext context) { //version 4
     final TextEditingController nombreController = TextEditingController(text: nombre);
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    File? nuevaFoto;
 
     showModalBottomSheet(
       context: context,
@@ -70,20 +75,50 @@ class MascotaInfoSection extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
+
                   Stack(
                     alignment: Alignment.bottomRight,
                     children: <Widget>[
-                      const CircleAvatar(
-                        radius: 45,
-                        child: Icon(Icons.pets, size: 40),
+                      Container(
+                        width: 90,
+                        height: 90,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: theme.colorScheme.primary.withOpacity(0.5),
+                            width: 2,
+                          ),
+                        ),
+                        child: CircleAvatar(
+                          radius: 45,
+                          backgroundImage: nuevaFoto != null
+                              ? FileImage(nuevaFoto!)
+                              : (fotoUrl.isNotEmpty
+                                  ? (fotoUrl.startsWith('/') || fotoUrl.startsWith('file')
+                                      ? FileImage(File(fotoUrl))
+                                      : NetworkImage(fotoUrl)) as ImageProvider
+                                  : const AssetImage('assets/images/perfil_mascota.png')),
+                          backgroundColor: theme.cardColor,
+                        ),
                       ),
+
+
                       FloatingActionButton.small(
                         backgroundColor: theme.colorScheme.primary,
-                        onPressed: () {},
-                        child: const Icon(Icons.photo_camera, size: 18),
+                        onPressed: () async {
+                          final picker = ImagePicker();
+                          final picked = await picker.pickImage(source: ImageSource.gallery);
+                          if (picked != null) {
+                            nuevaFoto = File(picked.path);
+                            (modalContext as Element).markNeedsBuild(); // 🔁 actualiza modal
+                          }
+                        },
+                        child: const Icon(Icons.edit, size: 18),
                       ),
                     ],
                   ),
+
+                  
                   const SizedBox(height: 20),
 
                   // 🐶 Nombre
@@ -97,6 +132,7 @@ class MascotaInfoSection extends StatelessWidget {
                           value: controllers['Especie']!.text.isNotEmpty
                               ? controllers['Especie']!.text
                               : null,
+                          style: theme.textTheme.titleMedium,
                           decoration: _decoracionCampo(theme, label: 'Especie'),
                           items: ['Perro', 'Gato', 'Otro']
                               .map((e) => DropdownMenuItem(value: e, child: Text(e)))
@@ -120,6 +156,7 @@ class MascotaInfoSection extends StatelessWidget {
                     value: controllers['Sexo']!.text.isNotEmpty
                         ? controllers['Sexo']!.text
                         : null,
+                    style: theme.textTheme.titleMedium,
                     decoration: _decoracionCampo(theme, label: 'Sexo'),
                     items: ['Macho', 'Hembra']
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))
@@ -200,6 +237,9 @@ class MascotaInfoSection extends StatelessWidget {
                       if (!_formKey.currentState!.validate()) {
                         return; // ❌ No cerrar si hay errores
                       }
+                      if (nuevaFoto != null) {
+                        controller.mascota.fotoUrl = nuevaFoto!.path;
+                      }
 
                       // ✅ Si pasa validación
                       controller.guardarCambiosDesdeFormulario(
@@ -236,6 +276,10 @@ class MascotaInfoSection extends StatelessWidget {
         child: TextFormField(
           controller: controller,
           keyboardType: type,
+           style: theme.textTheme.titleMedium?.copyWith(
+            color: theme.textTheme.titleMedium?.color, // ✅ Se adapta al tema
+            fontWeight: FontWeight.w600,
+          ),
           decoration: _decoracionCampo(theme, label: label),
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
@@ -304,14 +348,17 @@ class MascotaInfoSection extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                       
                       image: fotoUrl.isNotEmpty
-                          ? DecorationImage(
-                              image: NetworkImage(fotoUrl),
-                              fit: BoxFit.cover,
-                            )
-                          : const DecorationImage(
-                              image: AssetImage('assets/images/perfil_mascota.png'),
-                              fit: BoxFit.cover,
-                            ),
+                        ? DecorationImage(
+                            image: fotoUrl.startsWith('/') || fotoUrl.startsWith('file')
+                                ? FileImage(File(fotoUrl))
+                                : NetworkImage(fotoUrl) as ImageProvider,
+                            fit: BoxFit.cover,
+                          )
+                        : const DecorationImage(
+                            image: AssetImage('assets/images/perfil_mascota.png'),
+                            fit: BoxFit.cover,
+                          ),
+
 
                     ),
                   ),
@@ -457,7 +504,13 @@ class MascotaInfoSection extends StatelessWidget {
           TextField(
             decoration: InputDecoration(
               hintText: 'Buscar evento...',
-              prefixIcon: const Icon(Icons.search),
+              hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+              prefixIcon: Icon(
+                Icons.search,
+                color: theme.colorScheme.onSurface.withOpacity(0.8), // ✅ color dinámico
+              ),
               filled: true,
               fillColor: theme.cardColor,
               border: OutlineInputBorder(
@@ -669,4 +722,5 @@ class _FiltroChip extends StatelessWidget {
         ),
       );
 }
+
 
