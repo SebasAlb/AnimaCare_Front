@@ -66,8 +66,10 @@ class LoginScreen extends StatelessWidget {
                         height: size.height * 0.2,
                         width: size.width * 0.4,
                         color: theme.colorScheme.surfaceContainerHighest,
-                        child: Icon(Icons.image_not_supported,
-                            color: theme.colorScheme.onSurfaceVariant,),
+                        child: Icon(
+                          Icons.image_not_supported,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   ),
@@ -102,7 +104,9 @@ class LoginScreen extends StatelessWidget {
                     child: Text(
                       'Ingresar',
                       style: TextStyle(
-                          fontSize: 16, color: theme.colorScheme.onPrimary,),
+                        fontSize: 16,
+                        color: theme.colorScheme.onPrimary,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 15),

@@ -1,3 +1,4 @@
+import 'package:animacare_front/models/mascota.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,13 +16,13 @@ class HomeScreen extends StatelessWidget {
 
     return ChangeNotifierProvider(
       create: (_) {
-        final controller = HomeController();
-        controller.cargarMascotasIniciales(); // Datos quemados, reemplazables por DB
+        final HomeController controller = HomeController();
+        controller
+            .cargarMascotasIniciales(); // Datos quemados, reemplazables por DB
         return controller;
       },
       child: Consumer<HomeController>(
-        builder: (context, controller, _) {
-          return Scaffold(
+        builder: (context, controller, _) => Scaffold(
             backgroundColor: theme.scaffoldBackgroundColor,
             body: SafeArea(
               child: Column(
@@ -29,12 +30,13 @@ class HomeScreen extends StatelessWidget {
                 children: <Widget>[
                   const CustomHeader(petName: 'Sebastián'),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12,),
                     child: Text(
-                      '🐾 Mascotas',
+                      'Mascotas ',
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: theme.colorScheme.secondary,
+                        color: theme.colorScheme.primary,
                         letterSpacing: 1.2,
                       ),
                     ),
@@ -47,7 +49,7 @@ class HomeScreen extends StatelessWidget {
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
                         children: controller.mascotas
-                            .map((m) => PetCard(mascota: m))
+                            .map((Mascota m) => PetCard(mascota: m))
                             .toList(),
                       ),
                     ),
@@ -57,19 +59,19 @@ class HomeScreen extends StatelessWidget {
             ),
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () => controller.onAgregarMascota(context),
-              backgroundColor: theme.colorScheme.secondary,
-              icon: Icon(Icons.add, color: theme.colorScheme.primary),
+              backgroundColor: theme.colorScheme.primary,
+              icon: Icon(Icons.add, color: theme.colorScheme.onPrimary),
               label: Text(
                 'Agregar mascota',
                 style: TextStyle(
-                  color: theme.colorScheme.primary,
+                  color: theme.colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
             bottomNavigationBar: CustomNavBar(
               currentIndex: 0,
-              onTap: (index) {
+              onTap: (int index) {
                 switch (index) {
                   case 0:
                     break;
@@ -85,10 +87,8 @@ class HomeScreen extends StatelessWidget {
                 }
               },
             ),
-          );
-        },
+          ),
       ),
     );
   }
 }
-

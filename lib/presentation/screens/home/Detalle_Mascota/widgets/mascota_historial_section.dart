@@ -30,10 +30,12 @@ class MascotaHistorialSection extends StatelessWidget {
         const SizedBox(height: 16),
         const _BuscadorHistorial(),
         const SizedBox(height: 16),
-        ...historial.entries.map((entry) => _ExpandableCard(
-              title: entry.key,
-              items: entry.value,
-            ),),
+        ...historial.entries.map(
+          (entry) => _ExpandableCard(
+            title: entry.key,
+            items: entry.value,
+          ),
+        ),
         const SizedBox(height: 40),
       ],
     );
@@ -184,35 +186,44 @@ class _ExpandableCardState extends State<_ExpandableCard>
               SizeTransition(
                 sizeFactor: _expandAnimation,
                 child: Column(
-                  children: widget.items.map((item) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.chevron_right,
-                              color: theme.colorScheme.primary,),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  item['descripcion'] ?? '',
-                                  style: theme.textTheme.bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.bold),
+                  children: widget.items
+                      .map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.chevron_right,
+                                color: theme.colorScheme.primary,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      item['descripcion'] ?? '',
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.bold,),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      item['fecha'] ?? '',
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.textTheme.bodySmall?.color
+                                            ?.withOpacity(0.6),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  item['fecha'] ?? '',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.textTheme.bodySmall?.color
-                                          ?.withOpacity(0.6),),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),).toList(),
+                        ),
+                      )
+                      .toList(),
                 ),
               ),
             ],
@@ -222,4 +233,3 @@ class _ExpandableCardState extends State<_ExpandableCard>
     );
   }
 }
-

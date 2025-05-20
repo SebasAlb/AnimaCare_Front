@@ -1,3 +1,4 @@
+import 'package:animacare_front/models/mascota.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agregar_mascota_controller.dart';
@@ -12,7 +13,7 @@ class AgregarMascotaScreen extends StatefulWidget {
 
 class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
   final AgregarMascotaController controller = AgregarMascotaController();
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -34,7 +35,6 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
-          
           children: <Widget>[
             const CustomHeader(
               nameScreen: 'Agregar Mascota',
@@ -45,14 +45,14 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                 key: _formKey,
                 child: ListView(
                   padding: const EdgeInsets.all(20),
-                  
                   children: <Widget>[
                     const SizedBox(height: 24),
                     Center(
                       child: GestureDetector(
                         onTap: () async {
                           await controller.pickImage();
-                          setState(() {}); // <- para que se actualice visualmente
+                          setState(
+                              () {},); // <- para que se actualice visualmente
                         },
                         child: CircleAvatar(
                           radius: 45,
@@ -61,13 +61,13 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                               ? FileImage(controller.fotoLocal!)
                               : null,
                           child: controller.fotoLocal == null
-                              ? Icon(Icons.camera_alt, color: theme.colorScheme.primary, size: 30)
+                              ? Icon(Icons.camera_alt,
+                                  color: theme.colorScheme.primary, size: 30,)
                               : null,
                         ),
                       ),
                     ),
                     const SizedBox(height: 24),
-
 
                     // 🐶 Nombre (fila única)
                     _buildTextField(
@@ -79,16 +79,18 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
 
                     // 🐾 Especie + Raza (fila doble)
                     Row(
-                      children: [
+                      children: <Widget>[
                         Expanded(
                           child: _buildTextField(
                             label: 'Especie',
-                            controller: TextEditingController(text: controller.especie),
+                            controller:
+                                TextEditingController(text: controller.especie),
                             icon: Icons.category,
                             theme: theme,
                             isDropdown: true,
-                            items: ['Perro', 'Gato', 'Otro'],
-                            onChangedDropdown: (val) => setState(() => controller.especie = val!),
+                            items: <String>['Perro', 'Gato', 'Otro'],
+                            onChangedDropdown: (val) =>
+                                setState(() => controller.especie = val!),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -110,13 +112,15 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                       icon: Icons.male,
                       theme: theme,
                       isDropdown: true,
-                      items: ['Macho', 'Hembra'],
-                      onChangedDropdown: (val) => setState(() => controller.sexo = val!),
+                      items: <String>['Macho', 'Hembra'],
+                      onChangedDropdown: (val) =>
+                          setState(() => controller.sexo = val!),
                     ),
 
                     // 🎂 Fecha de nacimiento (fila única)
                     GestureDetector(
-                      onTap: () => controller.seleccionarFecha(context, (String fecha) {
+                      onTap: () =>
+                          controller.seleccionarFecha(context, (String fecha) {
                         setState(() {
                           controller.fechaNacimientoController.text = fecha;
                         });
@@ -133,7 +137,7 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
 
                     // ⚖️ Peso + Altura (fila doble)
                     Row(
-                      children: [
+                      children: <Widget>[
                         Expanded(
                           child: _buildTextField(
                             label: 'Peso (kg)',
@@ -169,12 +173,13 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          final nueva = await controller.guardarMascota();
+                          final Mascota? nueva = await controller.guardarMascota();
                           if (nueva != null) {
                             Navigator.pop(context, nueva);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text('Mascota guardada exitosamente'),
+                                content:
+                                    const Text('Mascota guardada exitosamente'),
                                 backgroundColor: controller.primario,
                               ),
                             );
@@ -188,7 +193,6 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                           }
                         }
                       },
-
                       child: const Text(
                         'Guardar Mascota',
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -216,8 +220,7 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
     bool isDropdown = false,
     List<String>? items,
     void Function(String?)? onChangedDropdown,
-  }) {
-    return Padding(
+  }) => Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,16 +242,18 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                     prefixIcon: Icon(icon, color: theme.colorScheme.primary),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: theme.colorScheme.primary.withOpacity(0.4), width: 1),
+                      borderSide: BorderSide(
+                          color: theme.colorScheme.primary.withOpacity(0.4),),
                     ),
                   ),
                   items: items!
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .map((String e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
                   onChanged: onChangedDropdown,
-                  validator: (value) => (value == null || value.isEmpty) && !isOptional
-                      ? 'Campo requerido'
-                      : null,
+                  validator: (String? value) =>
+                      (value == null || value.isEmpty) && !isOptional
+                          ? 'Campo requerido'
+                          : null,
                 )
               : TextFormField(
                   controller: controller,
@@ -257,22 +262,22 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                     color: theme.textTheme.titleMedium?.color,
                     fontWeight: FontWeight.w600,
                   ),
-
                   decoration: InputDecoration(
                     prefixIcon: Icon(icon, color: theme.colorScheme.primary),
                     filled: true,
                     fillColor: theme.cardColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: theme.colorScheme.primary.withOpacity(0.4), width: 1),
+                      borderSide: BorderSide(
+                          color: theme.colorScheme.primary.withOpacity(0.4),),
                     ),
                   ),
-                  validator: (value) => (value == null || value.trim().isEmpty) && !isOptional
-                      ? 'Campo requerido'
-                      : null,
+                  validator: (String? value) =>
+                      (value == null || value.trim().isEmpty) && !isOptional
+                          ? 'Campo requerido'
+                          : null,
                 ),
         ],
       ),
     );
-  }
 }

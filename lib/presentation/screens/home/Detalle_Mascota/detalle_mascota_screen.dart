@@ -16,12 +16,10 @@ class DetalleMascotaScreen extends StatelessWidget {
   final Mascota mascota;
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<DetalleMascotaController>(
+  Widget build(BuildContext context) => ChangeNotifierProvider<DetalleMascotaController>(
       create: (_) => DetalleMascotaController(mascota),
       child: const _DetalleContenido(),
     );
-  }
 }
 
 class _DetalleContenido extends StatelessWidget {
@@ -29,10 +27,10 @@ class _DetalleContenido extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final controller = context.watch<DetalleMascotaController>();
+    final ThemeData theme = Theme.of(context);
+    final DetalleMascotaController controller = context.watch<DetalleMascotaController>();
 
-    Widget _buildToggleTabs() => Padding(
+    Widget buildToggleTabs() => Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -55,7 +53,7 @@ class _DetalleContenido extends StatelessWidget {
                   style: TextStyle(
                     color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
                     fontSize: 16,
-                  )),
+                  ),),
               const SizedBox(width: 12),
               GestureDetector(
                 onTap: () => controller.mostrarHistorial = true,
@@ -74,7 +72,7 @@ class _DetalleContenido extends StatelessWidget {
           ),
         );
 
-    Widget _buildContenido() => controller.mostrarHistorial
+    Widget buildContenido() => controller.mostrarHistorial
         ? MascotaHistorialSection(
             historial: controller.historialMedico,
             proximoEvento: controller.proximoEvento,
@@ -92,7 +90,8 @@ class _DetalleContenido extends StatelessWidget {
 
     return WillPopScope(
       onWillPop: () async {
-        Navigator.pop(context, controller.mascota); // ← Devuelve la mascota actualizada
+        Navigator.pop(
+            context, controller.mascota,); // ← Devuelve la mascota actualizada
         return false;
       },
       child: Scaffold(
@@ -101,13 +100,14 @@ class _DetalleContenido extends StatelessWidget {
           child: Column(
             children: <Widget>[
               CustomHeader(
-                petName: controller.mascota.nombre, // ← usa el nombre actualizado
+                petName:
+                    controller.mascota.nombre, // ← usa el nombre actualizado
               ),
-              _buildToggleTabs(),
+              buildToggleTabs(),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(20),
-                  children: <Widget>[_buildContenido()],
+                  children: <Widget>[buildContenido()],
                 ),
               ),
             ],
@@ -134,9 +134,5 @@ class _DetalleContenido extends StatelessWidget {
         ),
       ),
     );
-
   }
 }
-
-
-

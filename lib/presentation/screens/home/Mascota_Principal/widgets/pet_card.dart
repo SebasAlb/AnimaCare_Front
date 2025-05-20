@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:animacare_front/models/mascota.dart';
-import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detalle_mascota_screen.dart';
-import 'package:animacare_front/routes/app_routes.dart';
 import 'dart:io';
 
+import 'package:animacare_front/models/mascota.dart';
+import 'package:animacare_front/presentation/theme/colors.dart';
+import 'package:animacare_front/routes/app_routes.dart';
+import 'package:flutter/material.dart';
 
 class PetCard extends StatefulWidget {
   const PetCard({super.key, required this.mascota});
@@ -28,7 +28,7 @@ class _PetCardState extends State<PetCard> {
 
     return GestureDetector(
       onTap: () async {
-        final resultado = await Navigator.pushNamed(
+        final Object? resultado = await Navigator.pushNamed(
           context,
           AppRoutes.detalleMascota,
           arguments: mascotaActual,
@@ -60,18 +60,21 @@ class _PetCardState extends State<PetCard> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                  image: mascotaActual.fotoUrl != null && mascotaActual.fotoUrl!.isNotEmpty
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
+                  image: mascotaActual.fotoUrl.isNotEmpty
                       ? DecorationImage(
-                          image: mascotaActual.fotoUrl!.startsWith('/')
-                              ? FileImage(File(mascotaActual.fotoUrl!))
-                              : NetworkImage(mascotaActual.fotoUrl!) as ImageProvider,
+                          image: mascotaActual.fotoUrl.startsWith('/')
+                              ? FileImage(File(mascotaActual.fotoUrl))
+                              : NetworkImage(mascotaActual.fotoUrl)
+                                  as ImageProvider,
                           fit: BoxFit.cover,
                         )
                       : null,
                 ),
-                child: mascotaActual.fotoUrl == null || mascotaActual.fotoUrl!.isEmpty
-                    ? Icon(Icons.pets, size: 50, color: theme.colorScheme.primary)
+                child: mascotaActual.fotoUrl.isEmpty
+                    ? Icon(Icons.pets,
+                        size: 50, color: theme.colorScheme.primary,)
                     : null,
               ),
             ),
@@ -88,7 +91,9 @@ class _PetCardState extends State<PetCard> {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.secondary,
+                          color: theme.brightness == Brightness.dark
+                              ? AppColors.onSurfaceDark // blanco suave
+                              : AppColors.primaryBrand, // azul profundo
                           fontSize: 16,
                         ),
                       ),
@@ -96,7 +101,9 @@ class _PetCardState extends State<PetCard> {
                     const SizedBox(width: 6),
                     Icon(
                       Icons.chevron_right,
-                      color: theme.colorScheme.secondary.withOpacity(0.6),
+                      color: theme.brightness == Brightness.dark
+                          ? AppColors.onSurfaceDark.withOpacity(0.6)
+                          : AppColors.primaryBrand.withOpacity(0.6),
                       size: 20,
                     ),
                   ],

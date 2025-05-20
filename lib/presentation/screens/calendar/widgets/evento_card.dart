@@ -45,5 +45,3 @@ class EventoCard extends StatelessWidget {
     );
   }
 }
-
-

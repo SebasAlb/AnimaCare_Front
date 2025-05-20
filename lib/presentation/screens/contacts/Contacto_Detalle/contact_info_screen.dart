@@ -53,8 +53,11 @@ class ContactInfoScreen extends StatelessWidget {
                       CircleAvatar(
                         radius: 65,
                         backgroundColor: theme.cardColor,
-                        child: Icon(Icons.person,
-                            size: 60, color: theme.iconTheme.color,),
+                        child: Icon(
+                          Icons.person,
+                          size: 60,
+                          color: theme.iconTheme.color,
+                        ),
                       ),
                       const SizedBox(height: 25),
                       Column(

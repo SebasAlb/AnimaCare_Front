@@ -42,8 +42,8 @@ class VistaCalendario extends StatelessWidget {
             selectedDayPredicate: (day) => isSameDay(selectedDay, day),
             onDaySelected: onDaySelected,
             eventLoader: (day) {
-              final key = DateTime(day.year, day.month, day.day);
-              return eventosMarcados[key] ?? [];
+              final DateTime key = DateTime(day.year, day.month, day.day);
+              return eventosMarcados[key] ?? <EventoCalendar>[];
             },
             headerStyle: HeaderStyle(
               titleCentered: true,
@@ -76,7 +76,6 @@ class VistaCalendario extends StatelessWidget {
             ),
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Align(
@@ -89,15 +88,13 @@ class VistaCalendario extends StatelessWidget {
             ),
           ),
         ),
-
         const SizedBox(height: 8),
-
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             itemCount: eventos.length,
             itemBuilder: (BuildContext context, int index) {
-              final evento = eventos[index];
+              final EventoCalendar evento = eventos[index];
               return GestureDetector(
                 onTap: () => onTapEvento(evento),
                 child: EventoCard(
@@ -115,10 +112,9 @@ class VistaCalendario extends StatelessWidget {
 
   String _formatearFecha(DateTime? fecha) {
     if (fecha == null) return '...';
-    final dia = fecha.day.toString().padLeft(2, '0');
-    final mes = fecha.month.toString().padLeft(2, '0');
-    final anio = fecha.year;
+    final String dia = fecha.day.toString().padLeft(2, '0');
+    final String mes = fecha.month.toString().padLeft(2, '0');
+    final int anio = fecha.year;
     return '$anio-$mes-$dia';
   }
 }
-

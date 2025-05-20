@@ -60,15 +60,21 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                         iconEnabledColor: theme.iconTheme.color,
                         style: TextStyle(color: theme.colorScheme.onPrimary),
                         items: controller.mascotas
-                            .map((String m) => DropdownMenuItem(
-                                  value: m,
-                                  child: Text(m,
-                                      style: TextStyle(
-                                          color: theme.colorScheme.onPrimary,),),
-                                ),)
+                            .map(
+                              (String m) => DropdownMenuItem(
+                                value: m,
+                                child: Text(
+                                  m,
+                                  style: TextStyle(
+                                    color: theme.colorScheme.onPrimary,
+                                  ),
+                                ),
+                              ),
+                            )
                             .toList(),
                         onChanged: (String? value) => setState(
-                            () => controller.mascotaSeleccionada = value,),
+                          () => controller.mascotaSeleccionada = value,
+                        ),
                       ),
                       const SizedBox(height: 14),
                       DropdownButtonFormField<String>(
@@ -78,15 +84,21 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                         iconEnabledColor: theme.iconTheme.color,
                         style: TextStyle(color: theme.colorScheme.onPrimary),
                         items: controller.razones
-                            .map((String r) => DropdownMenuItem(
-                                  value: r,
-                                  child: Text(r,
-                                      style: TextStyle(
-                                          color: theme.colorScheme.onPrimary,),),
-                                ),)
+                            .map(
+                              (String r) => DropdownMenuItem(
+                                value: r,
+                                child: Text(
+                                  r,
+                                  style: TextStyle(
+                                    color: theme.colorScheme.onPrimary,
+                                  ),
+                                ),
+                              ),
+                            )
                             .toList(),
                         onChanged: (String? value) => setState(
-                            () => controller.razonSeleccionada = value,),
+                          () => controller.razonSeleccionada = value,
+                        ),
                       ),
                       const SizedBox(height: 14),
                       DropdownButtonFormField<String>(
@@ -96,15 +108,21 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                         iconEnabledColor: theme.iconTheme.color,
                         style: TextStyle(color: theme.colorScheme.onPrimary),
                         items: controller.veterinarios
-                            .map((String v) => DropdownMenuItem(
-                                  value: v,
-                                  child: Text(v,
-                                      style: TextStyle(
-                                          color: theme.colorScheme.onPrimary,),),
-                                ),)
+                            .map(
+                              (String v) => DropdownMenuItem(
+                                value: v,
+                                child: Text(
+                                  v,
+                                  style: TextStyle(
+                                    color: theme.colorScheme.onPrimary,
+                                  ),
+                                ),
+                              ),
+                            )
                             .toList(),
                         onChanged: (String? value) => setState(
-                            () => controller.veterinarioSeleccionado = value,),
+                          () => controller.veterinarioSeleccionado = value,
+                        ),
                       ),
                       const SizedBox(height: 14),
                       ListTile(
@@ -114,46 +132,60 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                         },
                         tileColor: theme.colorScheme.surface,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4,),
-                        title: Text('Fecha',
-                            style:
-                                TextStyle(color: theme.colorScheme.onPrimary),),
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        title: Text(
+                          'Fecha',
+                          style: TextStyle(color: theme.colorScheme.onPrimary),
+                        ),
                         subtitle: Text(
                           controller.fechaSeleccionada != null
                               ? DateFormat('dd/MM/yyyy')
                                   .format(controller.fechaSeleccionada!)
                               : 'No seleccionada',
                           style: TextStyle(
-                              color:
-                                  theme.colorScheme.onPrimary.withOpacity(0.7),),
+                            color: theme.colorScheme.onPrimary.withOpacity(0.7),
+                          ),
                         ),
-                        trailing: Icon(Icons.calendar_today,
-                            color: theme.iconTheme.color,),
+                        trailing: Icon(
+                          Icons.calendar_today,
+                          color: theme.iconTheme.color,
+                        ),
                       ),
                       const SizedBox(height: 14),
                       ListTile(
                         onTap: () async {
                           await controller.mostrarSelectorHora(
-                              context, () => setState(() {}),);
+                            context,
+                            () => setState(() {}),
+                          );
                         },
                         tileColor: theme.colorScheme.surface,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4,),
-                        title: Text('Hora',
-                            style:
-                                TextStyle(color: theme.colorScheme.onPrimary),),
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        title: Text(
+                          'Hora',
+                          style: TextStyle(color: theme.colorScheme.onPrimary),
+                        ),
                         subtitle: Text(
                           controller.horaSeleccionada ?? 'No seleccionada',
                           style: TextStyle(
-                              color:
-                                  theme.colorScheme.onPrimary.withOpacity(0.7),),
+                            color: theme.colorScheme.onPrimary.withOpacity(0.7),
+                          ),
                         ),
-                        trailing: Icon(Icons.access_time,
-                            color: theme.iconTheme.color,),
+                        trailing: Icon(
+                          Icons.access_time,
+                          color: theme.iconTheme.color,
+                        ),
                       ),
                       const SizedBox(height: 14),
                       TextField(
@@ -161,7 +193,9 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                         maxLines: 3,
                         style: TextStyle(color: theme.colorScheme.onPrimary),
                         decoration: _inputDecoration(
-                            'Notas adicionales (opcional)', theme,),
+                          'Notas adicionales (opcional)',
+                          theme,
+                        ),
                       ),
                       const SizedBox(height: 30),
                       ElevatedButton.icon(
@@ -171,7 +205,8 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                           foregroundColor: const Color(0xFF4B1B3F),
                           minimumSize: const Size(double.infinity, 50),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
                         icon: const Icon(Icons.check),
                         label: const Text('Confirmar cita'),

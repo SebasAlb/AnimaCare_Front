@@ -71,38 +71,55 @@ class EditarPerfilController extends GetxController {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text('Cambiar Contraseña',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+                const Text(
+                  'Cambiar Contraseña',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
                 const SizedBox(height: 20),
-                Obx(() =>
-                    _passwordInput('Contraseña Actual', actual, visibleActual),),
+                Obx(
+                  () => _passwordInput(
+                      'Contraseña Actual', actual, visibleActual,),
+                ),
                 const SizedBox(height: 12),
-                Obx(() =>
-                    _passwordInput('Nueva Contraseña', nueva, visibleNueva),),
+                Obx(
+                  () => _passwordInput('Nueva Contraseña', nueva, visibleNueva),
+                ),
                 const SizedBox(height: 12),
-                Obx(() => _passwordInput(
-                    'Confirmar Contraseña', confirmar, visibleConfirmar,),),
+                Obx(
+                  () => _passwordInput(
+                    'Confirmar Contraseña',
+                    confirmar,
+                    visibleConfirmar,
+                  ),
+                ),
                 const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
                       if (nueva.text != confirmar.text) {
-                        Get.snackbar('Error', 'Las contraseñas no coinciden.',
-                            backgroundColor: Colors.white,
-                            colorText: Colors.red,);
+                        Get.snackbar(
+                          'Error',
+                          'Las contraseñas no coinciden.',
+                          backgroundColor: Colors.white,
+                          colorText: Colors.red,
+                        );
                         return;
                       }
                       Get.back();
                       Get.snackbar(
-                          'Éxito', 'Contraseña cambiada correctamente.',
-                          backgroundColor: Colors.white,
-                          colorText: Colors.black,);
+                        'Éxito',
+                        'Contraseña cambiada correctamente.',
+                        backgroundColor: Colors.white,
+                        colorText: Colors.black,
+                      );
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF301B92),),
-                    child: const Text('Guardar',
-                        style: TextStyle(color: Colors.white),),
+                      backgroundColor: const Color(0xFF301B92),
+                    ),
+                    child: const Text(
+                      'Guardar',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ],
@@ -114,23 +131,30 @@ class EditarPerfilController extends GetxController {
   }
 
   Widget _passwordInput(
-      String label, TextEditingController controller, RxBool visible,) => TextField(
-      controller: controller,
-      obscureText: !visible.value,
-      decoration: InputDecoration(
-        labelText: label,
-        filled: true,
-        fillColor: const Color(0xFFF0F4F8),
-        border: OutlineInputBorder(
+    String label,
+    TextEditingController controller,
+    RxBool visible,
+  ) =>
+      TextField(
+        controller: controller,
+        obscureText: !visible.value,
+        decoration: InputDecoration(
+          labelText: label,
+          filled: true,
+          fillColor: const Color(0xFFF0F4F8),
+          border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,),
-        suffixIcon: IconButton(
-          icon: Icon(visible.value ? Icons.visibility_off : Icons.visibility,
-              color: Colors.grey,),
-          onPressed: () => visible.value = !visible.value,
+            borderSide: BorderSide.none,
+          ),
+          suffixIcon: IconButton(
+            icon: Icon(
+              visible.value ? Icons.visibility_off : Icons.visibility,
+              color: Colors.grey,
+            ),
+            onPressed: () => visible.value = !visible.value,
+          ),
         ),
-      ),
-    );
+      );
 
   @override
   void onClose() {

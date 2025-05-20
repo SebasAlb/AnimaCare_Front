@@ -8,7 +8,7 @@ class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SignupController controller = Get.put(SignupController());
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
 
     return PopScope(
       canPop: false,
@@ -27,7 +27,7 @@ class SignupScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: theme.cardColor,
                 borderRadius: BorderRadius.circular(30),
-                boxShadow: const [
+                boxShadow: const <BoxShadow>[
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 10,
@@ -37,14 +37,15 @@ class SignupScreen extends StatelessWidget {
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
                   Align(
                     alignment: Alignment.topLeft,
                     child: TextButton.icon(
                       onPressed: controller.goBack,
-                      icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
+                      icon: Icon(Icons.arrow_back,
+                          color: theme.colorScheme.primary,),
                       label: Text('Volver',
-                          style: TextStyle(color: theme.colorScheme.primary)),
+                          style: TextStyle(color: theme.colorScheme.primary),),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -130,10 +131,9 @@ class SignupScreen extends StatelessWidget {
     bool obscureText = false,
     required TextEditingController controller,
     required ThemeData theme,
-  }) {
-    return Column(
+  }) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           label,
           style: theme.textTheme.labelLarge?.copyWith(
@@ -149,7 +149,8 @@ class SignupScreen extends StatelessWidget {
           style: theme.textTheme.bodyMedium,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+            hintStyle:
+                theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
             prefixIcon: Icon(icon, color: theme.colorScheme.primary),
             filled: true,
             fillColor: theme.cardColor,
@@ -161,5 +162,4 @@ class SignupScreen extends StatelessWidget {
         ),
       ],
     );
-  }
 }

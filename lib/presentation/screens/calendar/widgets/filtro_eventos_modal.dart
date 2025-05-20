@@ -33,7 +33,7 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
   @override
   void initState() {
     super.initState();
-    final filtros = widget.filtrosActuales ?? {};
+    final Map<String, dynamic> filtros = widget.filtrosActuales ?? <String, dynamic>{};
     mascotaSeleccionada = filtros['mascota'];
     veterinarioSeleccionado = filtros['veterinario'];
     tipoSeleccionado = filtros['tipo'];
@@ -85,16 +85,17 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textStyle = theme.textTheme.bodyMedium;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final TextStyle? textStyle = theme.textTheme.bodyMedium;
 
     return AlertDialog(
       backgroundColor: theme.dialogBackgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Text(
         'Filtros avanzados',
-        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        style:
+            theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
       ),
       content: SingleChildScrollView(
         child: Column(
@@ -106,67 +107,57 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
               hint: Text('Selecciona una mascota', style: textStyle),
               isExpanded: true,
               dropdownColor: theme.cardColor,
-              items: widget.mascotas.map((e) {
-                return DropdownMenuItem(
+              items: widget.mascotas.map((e) => DropdownMenuItem(
                   value: e,
                   child: Text(e, style: textStyle),
-                );
-              }).toList(),
+                ),).toList(),
               onChanged: (value) => setState(() => mascotaSeleccionada = value),
             ),
             const SizedBox(height: 10),
-
             Text('Veterinario', style: textStyle),
             DropdownButton<String>(
               value: veterinarioSeleccionado,
               hint: Text('Selecciona un veterinario', style: textStyle),
               isExpanded: true,
               dropdownColor: theme.cardColor,
-              items: widget.veterinarios.map((e) {
-                return DropdownMenuItem(
+              items: widget.veterinarios.map((e) => DropdownMenuItem(
                   value: e,
                   child: Text(e, style: textStyle),
-                );
-              }).toList(),
-              onChanged: (value) => setState(() => veterinarioSeleccionado = value),
+                ),).toList(),
+              onChanged: (value) =>
+                  setState(() => veterinarioSeleccionado = value),
             ),
             const SizedBox(height: 10),
-
             Text('Tipo de evento', style: textStyle),
             DropdownButton<String>(
               value: tipoSeleccionado,
               hint: Text('Cita o Evento', style: textStyle),
               isExpanded: true,
               dropdownColor: theme.cardColor,
-              items: ['cita', 'evento'].map((e) {
-                return DropdownMenuItem(
+              items: <String>['cita', 'evento'].map((e) => DropdownMenuItem(
                   value: e,
                   child: Text(e, style: textStyle),
-                );
-              }).toList(),
+                ),).toList(),
               onChanged: (value) => setState(() => tipoSeleccionado = value),
             ),
             const SizedBox(height: 10),
-
             Text('Categoría', style: textStyle),
             DropdownButton<String>(
               value: categoriaSeleccionada,
               hint: Text('Selecciona una categoría', style: textStyle),
               isExpanded: true,
               dropdownColor: theme.cardColor,
-              items: widget.categorias.map((e) {
-                return DropdownMenuItem(
+              items: widget.categorias.map((e) => DropdownMenuItem(
                   value: e,
                   child: Text(e, style: textStyle),
-                );
-              }).toList(),
-              onChanged: (value) => setState(() => categoriaSeleccionada = value),
+                ),).toList(),
+              onChanged: (value) =>
+                  setState(() => categoriaSeleccionada = value),
             ),
             const SizedBox(height: 10),
-
             Text('Rango de fechas', style: textStyle),
             Row(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: TextButton(
                     onPressed: () => seleccionarFecha(context, true),
@@ -191,11 +182,10 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
                 ),
               ],
             ),
-
             const SizedBox(height: 10),
             Text('Rango de horas', style: textStyle),
             Row(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: TextButton(
                     onPressed: () => seleccionarHora(context, true),
@@ -219,18 +209,20 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
           ],
         ),
       ),
-      actions: [
+      actions: <Widget>[
         TextButton(
           onPressed: limpiarCampos,
-          child: Text('Limpiar todo', style: TextStyle(color: colorScheme.error)),
+          child:
+              Text('Limpiar todo', style: TextStyle(color: colorScheme.error)),
         ),
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('Cancelar', style: TextStyle(color: colorScheme.onSurface)),
+          child:
+              Text('Cancelar', style: TextStyle(color: colorScheme.onSurface)),
         ),
         ElevatedButton.icon(
           onPressed: () {
-            final filtros = <String, dynamic>{
+            final Map<String, dynamic> filtros = <String, dynamic>{
               'mascota': mascotaSeleccionada,
               'veterinario': veterinarioSeleccionado,
               'tipo': tipoSeleccionado,
@@ -250,4 +242,3 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
     );
   }
 }
-

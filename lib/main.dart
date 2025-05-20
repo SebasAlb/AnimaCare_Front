@@ -23,31 +23,34 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<ThemeController>(
-      // Inicializar con la instancia encontrada. Esto hace que GetBuilder
-      // se suscriba a los cambios de themeController.update().
-      init: themeController,
-      builder: (ThemeController controller) => GetMaterialApp(
-        title: 'AnimaCare',
-        debugShowCheckedModeBanner: false,
+        // Inicializar con la instancia encontrada. Esto hace que GetBuilder
+        // se suscriba a los cambios de themeController.update().
+        init: themeController,
+        builder: (ThemeController controller) => GetMaterialApp(
+          title: 'AnimaCare',
+          debugShowCheckedModeBanner: false,
 
-        // *** AnimatedTheme configurado correctamente, considera ajustar la duración si 500ms es lento ***
-        builder: (BuildContext context, Widget? child) => AnimatedTheme(
-          data: controller.themeMode == ThemeMode.dark ? darkTheme : lightTheme,
-          duration: const Duration(
-              milliseconds: 300,), // <-- Puedes reducir esto (ej: 300ms)
-          curve: Curves.easeInOut,
-          child: child!,
+          // *** AnimatedTheme configurado correctamente, considera ajustar la duración si 500ms es lento ***
+          builder: (BuildContext context, Widget? child) => AnimatedTheme(
+            data:
+                controller.themeMode == ThemeMode.dark ? darkTheme : lightTheme,
+            duration: const Duration(
+              milliseconds: 500,
+            ), // <-- Puedes reducir esto (ej: 300ms)
+            curve: Curves.easeInOutCubic,
+            child: child!,
+          ),
+
+          // GetMaterialApp también necesita saber los temas para el themeMode
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode:
+              controller.themeMode, // <-- Lee el themeMode del controlador
+
+          initialRoute: AppRoutes.login,
+          // Si usas Get.toNamed/Get.offAllNamed, es mejor usar getPages en lugar de onGenerateRoute
+          // Si DEBES usar onGenerateRoute, asegúrate de que funcione bien con GetX Find/Put.
+          onGenerateRoute: AppRoutes.generateRoute,
         ),
-
-        // GetMaterialApp también necesita saber los temas para el themeMode
-        theme: lightTheme,
-        darkTheme: darkTheme,
-        themeMode: controller.themeMode, // <-- Lee el themeMode del controlador
-
-        initialRoute: AppRoutes.login,
-        // Si usas Get.toNamed/Get.offAllNamed, es mejor usar getPages en lugar de onGenerateRoute
-        // Si DEBES usar onGenerateRoute, asegúrate de que funcione bien con GetX Find/Put.
-        onGenerateRoute: AppRoutes.generateRoute,
-      ),
-    );
+      );
 }

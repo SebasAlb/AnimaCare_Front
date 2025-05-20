@@ -45,12 +45,22 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 20),
             _buildSectionTitle('Mi cuenta', theme),
             _buildSettingCard(
-                context, Icons.person, 'Mi perfil', controller, theme,),
+              context,
+              Icons.person,
+              'Mi perfil',
+              controller,
+              theme,
+            ),
             _buildSectionTitle('Preferencias', theme),
             _buildThemeSwitchCard(context, themeController, theme),
             _buildSectionTitle('Sesión', theme),
             _buildSettingCard(
-                context, Icons.logout, 'Cerrar sesión', controller, theme,),
+              context,
+              Icons.logout,
+              'Cerrar sesión',
+              controller,
+              theme,
+            ),
             const SizedBox(height: 20),
           ],
         ),
@@ -114,27 +124,27 @@ class SettingsScreen extends StatelessWidget {
     BuildContext context,
     ThemeController themeController,
     ThemeData theme,
-  ) => Card(
-      color: theme.cardColor,
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        leading: Icon(Icons.dark_mode, color: theme.colorScheme.primary),
-        title: Text(
-          'Tema oscuro',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: theme.colorScheme.primary,
+  ) =>
+      Card(
+        color: theme.cardColor,
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: ListTile(
+          leading: Icon(Icons.dark_mode, color: theme.colorScheme.primary),
+          title: Text(
+            'Tema oscuro',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          trailing: GetBuilder<ThemeController>(
+            builder: (ThemeController controller) => Switch(
+              value: controller.themeMode == ThemeMode.dark,
+              onChanged: controller.toggleTheme,
+              activeColor: theme.colorScheme.primary,
+            ),
           ),
         ),
-        trailing: GetBuilder<ThemeController>(
-          builder: (ThemeController controller) => Switch(
-            value: controller.themeMode == ThemeMode.dark,
-            onChanged: controller.toggleTheme,
-            activeColor: theme.colorScheme.primary,
-          ),
-        ),
-      ),
-    );
+      );
 }
-

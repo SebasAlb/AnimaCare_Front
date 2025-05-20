@@ -21,7 +21,8 @@ class ConfPrincipalController extends GetxController {
           // Este caso no debería ocurrir si el controlador se puso permanentemente al inicio.
           // Podrías añadir un log o manejo de error si es necesario.
           debugPrint(
-              'ThemeController no encontrado durante el cierre de sesión. No se pudo resetear el tema via controlador.',);
+            'ThemeController no encontrado durante el cierre de sesión. No se pudo resetear el tema via controlador.',
+          );
           // Opcional: Forzar el almacenamiento a false como fallback si el controlador no está
           // final _storage = GetStorage();
           // _storage.write('isDarkMode', false);

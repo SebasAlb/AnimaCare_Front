@@ -1,8 +1,8 @@
+import 'package:animacare_front/models/mascota.dart';
 import 'package:animacare_front/presentation/screens/calendar/calendar_screen.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_screen.dart';
 import 'package:animacare_front/presentation/screens/contacts/Contact_Principal/contacts_screen.dart';
 import 'package:animacare_front/presentation/screens/contacts/Contacto_Detalle/contact_info_screen.dart';
-import 'package:animacare_front/presentation/screens/edit_notifications/edit_notifications_screen.dart';
 import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agregar_mascota_screen.dart';
 import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detalle_mascota_screen.dart';
 import 'package:animacare_front/presentation/screens/home/Mascota_Principal/home_screen.dart';
@@ -11,7 +11,6 @@ import 'package:animacare_front/presentation/screens/settings/Conf_Principal/con
 import 'package:animacare_front/presentation/screens/settings/Editar_Perfil/editar_perfil_screen.dart';
 import 'package:animacare_front/presentation/screens/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:animacare_front/models/mascota.dart';
 
 class AppRoutes {
   static const String login = '/login';
@@ -42,9 +41,9 @@ class AppRoutes {
 
       case homeOwner:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-      
+
       case detalleMascota:
-        final mascota = settings.arguments as Mascota;
+        final Mascota mascota = settings.arguments as Mascota;
         return MaterialPageRoute(
           builder: (_) => DetalleMascotaScreen(mascota: mascota),
         );
@@ -67,11 +66,6 @@ class AppRoutes {
       case settingsEditProfile:
         return MaterialPageRoute(builder: (_) => const EditarPerfilScreen());
 
-      case editNotifications:
-        return MaterialPageRoute(
-          builder: (_) => const EditNotificationsScreen(),
-        );
-
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(
@@ -81,4 +75,3 @@ class AppRoutes {
     }
   }
 }
-

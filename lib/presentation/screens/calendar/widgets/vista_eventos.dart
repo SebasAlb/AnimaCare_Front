@@ -28,28 +28,28 @@ class _VistaEventosState extends State<VistaEventos> {
   String? tipoSeleccionado;
 
   List<String> generarFiltros(List<EventoCalendar> eventos) {
-    final Set<String> categorias = {};
+    final Set<String> categorias = <String>{};
     bool tieneCitas = false;
     bool tieneEventos = false;
 
-    for (final evento in eventos) {
+    for (final EventoCalendar evento in eventos) {
       if (evento.tipo == 'cita') tieneCitas = true;
       if (evento.tipo == 'evento') tieneEventos = true;
       if (evento.categoria != null) categorias.add(evento.categoria!);
     }
 
-    final List<String> filtros = ['Todos'];
+    final List<String> filtros = <String>['Todos'];
     if (tieneCitas) filtros.add('Cita');
     if (tieneEventos) filtros.add('Evento');
     return filtros;
   }
 
   List<EventoCalendar> filtrarEventos() {
-    final todos = widget.eventos;
-    final tipoFiltro = tipoSeleccionado;
+    final List<EventoCalendar> todos = widget.eventos;
+    final String? tipoFiltro = tipoSeleccionado;
 
     return todos.where((evento) {
-      final coincideTipo = tipoFiltro == null ||
+      final bool coincideTipo = tipoFiltro == null ||
           tipoFiltro == 'Todos' ||
           (tipoFiltro == 'Cita' && evento.tipo == 'cita') ||
           (tipoFiltro == 'Evento' && evento.tipo == 'evento') ||
@@ -59,12 +59,13 @@ class _VistaEventosState extends State<VistaEventos> {
     }).toList();
   }
 
-  Map<String, List<EventoCalendar>> agruparPorFecha(List<EventoCalendar> lista) {
-    final Map<String, List<EventoCalendar>> agrupados = {};
-    for (final evento in lista) {
-      agrupados.putIfAbsent(evento.fecha, () => []).add(evento);
+  Map<String, List<EventoCalendar>> agruparPorFecha(
+      List<EventoCalendar> lista,) {
+    final Map<String, List<EventoCalendar>> agrupados = <String, List<EventoCalendar>>{};
+    for (final EventoCalendar evento in lista) {
+      agrupados.putIfAbsent(evento.fecha, () => <EventoCalendar>[]).add(evento);
     }
-    final ordenado = Map.fromEntries(
+    final Map<String, List<EventoCalendar>> ordenado = Map.fromEntries(
       agrupados.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
     );
     return ordenado;
@@ -80,7 +81,7 @@ class _VistaEventosState extends State<VistaEventos> {
         tipoSeleccionado = tipo;
       }
 
-      final double chipWidth = 90;
+      const double chipWidth = 90;
       _scrollController.animateTo(
         (index * chipWidth) - 100,
         duration: const Duration(milliseconds: 300),
@@ -94,8 +95,8 @@ class _VistaEventosState extends State<VistaEventos> {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
 
-    final eventosFiltrados = filtrarEventos();
-    final eventosAgrupados = agruparPorFecha(eventosFiltrados);
+    final List<EventoCalendar> eventosFiltrados = filtrarEventos();
+    final Map<String, List<EventoCalendar>> eventosAgrupados = agruparPorFecha(eventosFiltrados);
 
     return Column(
       children: <Widget>[
@@ -109,7 +110,8 @@ class _VistaEventosState extends State<VistaEventos> {
                   decoration: InputDecoration(
                     hintText: 'Buscar eventos...',
                     hintStyle: TextStyle(color: theme.hintColor),
-                    prefixIcon: Icon(Icons.search, color: theme.iconTheme.color),
+                    prefixIcon:
+                        Icon(Icons.search, color: theme.iconTheme.color),
                     filled: true,
                     fillColor: theme.cardColor,
                     contentPadding: const EdgeInsets.all(12),
@@ -130,12 +132,11 @@ class _VistaEventosState extends State<VistaEventos> {
             ],
           ),
         ),
-
         SizedBox(
           height: 42,
           child: Builder(
             builder: (context) {
-              final filtros = generarFiltros(widget.eventos);
+              final List<String> filtros = generarFiltros(widget.eventos);
 
               return ListView.builder(
                 controller: _scrollController,
@@ -143,7 +144,7 @@ class _VistaEventosState extends State<VistaEventos> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: filtros.length,
                 itemBuilder: (context, index) {
-                  final tipo = filtros[index];
+                  final String tipo = filtros[index];
                   final bool isSelected = tipo == tipoSeleccionado;
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
@@ -152,7 +153,7 @@ class _VistaEventosState extends State<VistaEventos> {
                       selected: isSelected,
                       onSelected: (_) => seleccionarFiltro(tipo, index),
                       selectedColor: colorScheme.primary,
-                      backgroundColor: theme.colorScheme.surfaceVariant,
+                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
                       labelStyle: TextStyle(
                         color: isSelected
                             ? colorScheme.onPrimary
@@ -165,9 +166,7 @@ class _VistaEventosState extends State<VistaEventos> {
             },
           ),
         ),
-
         const SizedBox(height: 8),
-
         Expanded(
           child: eventosFiltrados.isEmpty
               ? Center(
@@ -180,13 +179,14 @@ class _VistaEventosState extends State<VistaEventos> {
                   ),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   itemCount: eventosAgrupados.length,
                   itemBuilder: (context, index) {
-                    final fechaStr = eventosAgrupados.keys.elementAt(index);
-                    final eventosDelDia = eventosAgrupados[fechaStr]!;
+                    final String fechaStr = eventosAgrupados.keys.elementAt(index);
+                    final List<EventoCalendar> eventosDelDia = eventosAgrupados[fechaStr]!;
 
-                    final fecha = DateTime.parse(fechaStr);
+                    final DateTime fecha = DateTime.parse(fechaStr);
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +202,7 @@ class _VistaEventosState extends State<VistaEventos> {
                                 titulo: evento.titulo,
                                 mascota: evento.mascota,
                               ),
-                            )),
+                            ),),
                       ],
                     );
                   },

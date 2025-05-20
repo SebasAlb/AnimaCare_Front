@@ -59,8 +59,11 @@ class ContactCard extends StatelessWidget {
                       color: theme.cardColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(Icons.person,
-                        color: theme.iconTheme.color, size: 30,),
+                    child: Icon(
+                      Icons.person,
+                      color: theme.iconTheme.color,
+                      size: 30,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(

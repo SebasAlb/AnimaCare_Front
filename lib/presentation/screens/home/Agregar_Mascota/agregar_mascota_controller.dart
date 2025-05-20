@@ -10,7 +10,8 @@ class AgregarMascotaController {
   final TextEditingController razaController = TextEditingController();
   final TextEditingController pesoController = TextEditingController();
   final TextEditingController alturaController = TextEditingController();
-  final TextEditingController fechaNacimientoController = TextEditingController();
+  final TextEditingController fechaNacimientoController =
+      TextEditingController();
   final TextEditingController fotoUrlController = TextEditingController();
 
   String sexo = 'Macho';
@@ -114,7 +115,7 @@ class AgregarMascotaController {
   }
 
   DateTime _parseFecha(String fecha) {
-    final partes = fecha.split('/');
+    final List<String> partes = fecha.split('/');
     return DateTime(
       int.parse(partes[2]),
       int.parse(partes[1]),
@@ -122,4 +123,3 @@ class AgregarMascotaController {
     );
   }
 }
-

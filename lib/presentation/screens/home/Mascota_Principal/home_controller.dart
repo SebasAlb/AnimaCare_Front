@@ -1,15 +1,15 @@
-import 'package:flutter/material.dart';
 import 'package:animacare_front/models/mascota.dart';
 import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agregar_mascota_screen.dart';
+import 'package:flutter/material.dart';
 
 class HomeController extends ChangeNotifier {
-  final List<Mascota> _mascotas = [];
+  final List<Mascota> _mascotas = <Mascota>[];
 
   List<Mascota> get mascotas => _mascotas;
 
   void cargarMascotasIniciales() {
     _mascotas.clear();
-    _mascotas.addAll([
+    _mascotas.addAll(<Mascota>[
       Mascota(
         id: '1',
         nombre: 'Michi',
