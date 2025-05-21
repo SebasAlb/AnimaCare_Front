@@ -4,21 +4,30 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class ThemeController extends GetxController {
+  final GetStorage _storage = GetStorage();
+
+  // Usando Rx para hacer el tema reactivo
+  final Rx<ThemeMode> _themeMode = ThemeMode.light.obs;
+
+  // Getter para acceder al tema actual
+  ThemeMode get themeMode => _themeMode.value;
+
   ThemeController() {
     final storedTheme = _storage.read('isDarkMode') ?? false;
-    themeMode = storedTheme ? ThemeMode.dark : ThemeMode.light;
+    _themeMode.value = storedTheme ? ThemeMode.dark : ThemeMode.light;
   }
 
-  final GetStorage _storage = GetStorage();
-  late ThemeMode themeMode;
-
   void toggleTheme(bool isDark) {
-    themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    final newMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    if (_themeMode.value == newMode) return;
+
+    _themeMode.value = newMode;
     _storage.write('isDarkMode', isDark);
-    update();
+    // No necesitamos llamar a update() cuando usamos variables Rx
   }
 }
 
+// Los temas se mantienen igual
 final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   scaffoldBackgroundColor: AppColors.backgroundLight,
@@ -36,19 +45,23 @@ final ThemeData lightTheme = ThemeData(
     backgroundColor: AppColors.primaryBrand,
     foregroundColor: AppColors.onPrimary,
     titleTextStyle: TextStyle(
-        fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.onPrimary,),
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+      color: AppColors.onPrimary,
+    ),
     iconTheme: IconThemeData(color: AppColors.onPrimary),
   ),
   textTheme: const TextTheme(
     bodyMedium: TextStyle(color: AppColors.onSurface),
     titleLarge: TextStyle(
-        color: AppColors.primaryBrand,
-        fontWeight: FontWeight.bold,
-        fontSize: 22,),
+      color: AppColors.primaryBrand,
+      fontWeight: FontWeight.bold,
+      fontSize: 22,
+    ),
     labelLarge:
-        TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.bold),
+    TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.bold),
     bodyLarge:
-        TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.w600),
+    TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.w600),
   ),
   iconTheme: const IconThemeData(color: AppColors.onSurface),
   elevatedButtonTheme: ElevatedButtonThemeData(

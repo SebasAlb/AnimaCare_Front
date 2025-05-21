@@ -5,13 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/screens/settings/Conf_Principal/conf_principal_controller.dart';
 import 'package:get/get.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStateMixin {
+  final ConfPrincipalController controller = ConfPrincipalController();
+  final ThemeController themeController = Get.find();
+
+  @override
   Widget build(BuildContext context) {
-    final ConfPrincipalController controller = ConfPrincipalController();
-    final ThemeController themeController = Get.find();
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
@@ -52,7 +58,7 @@ class SettingsScreen extends StatelessWidget {
               theme,
             ),
             _buildSectionTitle('Preferencias', theme),
-            _buildThemeSwitchCard(context, themeController, theme),
+            _buildThemeSwitchCard(context, theme),
             _buildSectionTitle('Sesión', theme),
             _buildSettingCard(
               context,
@@ -87,21 +93,21 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildSectionTitle(String title, ThemeData theme) => Padding(
-        padding: const EdgeInsets.only(left: 20, top: 18, bottom: 8),
-        child: Text(
-          title,
-          style:
-              theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
-        ),
-      );
+    padding: const EdgeInsets.only(left: 20, top: 18, bottom: 8),
+    child: Text(
+      title,
+      style:
+      theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+    ),
+  );
 
   Widget _buildSettingCard(
-    BuildContext context,
-    IconData icon,
-    String title,
-    ConfPrincipalController controller,
-    ThemeData theme,
-  ) =>
+      BuildContext context,
+      IconData icon,
+      String title,
+      ConfPrincipalController controller,
+      ThemeData theme,
+      ) =>
       Card(
         color: theme.cardColor,
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
@@ -120,31 +126,78 @@ class SettingsScreen extends StatelessWidget {
         ),
       );
 
-  Widget _buildThemeSwitchCard(
-    BuildContext context,
-    ThemeController themeController,
-    ThemeData theme,
-  ) =>
-      Card(
-        color: theme.cardColor,
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: ListTile(
-          leading: Icon(Icons.dark_mode, color: theme.colorScheme.primary),
-          title: Text(
-            'Tema oscuro',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: theme.colorScheme.primary,
-            ),
+  Widget _buildThemeSwitchCard(BuildContext context, ThemeData theme) {
+    return Card(
+      color: theme.cardColor,
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: Icon(Icons.dark_mode, color: theme.colorScheme.primary),
+        title: Text(
+          'Tema oscuro',
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.primary,
           ),
-          trailing: GetBuilder<ThemeController>(
-            builder: (ThemeController controller) => Switch(
-              value: controller.themeMode == ThemeMode.dark,
-              onChanged: controller.toggleTheme,
-              activeColor: theme.colorScheme.primary,
+        ),
+        trailing: GetBuilder<ThemeController>(
+          builder: (controller) => Switch(
+            value: controller.themeMode == ThemeMode.dark,
+            onChanged: (bool isDark) => _mostrarAnimacionCascada(context, isDark),
+            activeColor: theme.colorScheme.primary,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _mostrarAnimacionCascada(BuildContext context, bool isDark) {
+    final overlay = Overlay.of(context);
+    late final OverlayEntry overlayEntry;
+    final controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    final animation = Tween<Offset>(
+      begin: const Offset(0, -1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
+
+    overlayEntry = OverlayEntry(
+      builder: (_) => Material(
+        color: Colors.transparent,
+        child: SlideTransition(
+          position: animation,
+          child: Container(
+            color: Colors.black,
+            width: double.infinity,
+            height: double.infinity,
+            alignment: Alignment.center,
+            child: const Icon(
+              Icons.auto_mode,
+              size: 80,
+              color: Colors.amber,
             ),
           ),
         ),
-      );
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+    controller.forward();
+
+    // Solo después que termina la animación hacemos el cambio de tema
+    controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        Get.find<ThemeController>().toggleTheme(isDark);
+
+        // Esperamos un pequeño delay antes de quitar el overlay
+        Future.delayed(const Duration(milliseconds: 150), () {
+          overlayEntry.remove();
+          controller.dispose();
+        });
+      }
+    });
+  }
 }

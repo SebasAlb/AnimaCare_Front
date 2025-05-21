@@ -41,166 +41,154 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
               isSecondaryScreen: true,
             ),
             Expanded(
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  padding: const EdgeInsets.all(20),
-                  children: <Widget>[
-                    const SizedBox(height: 24),
-                    Center(
-                      child: GestureDetector(
-                        onTap: () async {
-                          await controller.pickImage();
-                          setState(
-                              () {},); // <- para que se actualice visualmente
-                        },
-                        child: CircleAvatar(
-                          radius: 45,
-                          backgroundColor: theme.cardColor,
-                          backgroundImage: controller.fotoLocal != null
-                              ? FileImage(controller.fotoLocal!)
-                              : null,
-                          child: controller.fotoLocal == null
-                              ? Icon(Icons.camera_alt,
-                                  color: theme.colorScheme.primary, size: 30,)
-                              : null,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Center(
+                        child: GestureDetector(
+                          onTap: () async {
+                            await controller.pickImage();
+                            setState(() {});
+                          },
+                          child: CircleAvatar(
+                            radius: 45,
+                            backgroundColor: theme.cardColor,
+                            backgroundImage: controller.fotoLocal != null
+                                ? FileImage(controller.fotoLocal!)
+                                : null,
+                            child: controller.fotoLocal == null
+                                ? Icon(
+                              Icons.camera_alt,
+                              color: theme.colorScheme.primary,
+                              size: 30,
+                            )
+                                : null,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 🐶 Nombre (fila única)
-                    _buildTextField(
-                      label: 'Nombre',
-                      controller: controller.nombreController,
-                      icon: Icons.pets,
-                      theme: theme,
-                    ),
-
-                    // 🐾 Especie + Raza (fila doble)
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: _buildTextField(
-                            label: 'Especie',
-                            controller:
-                                TextEditingController(text: controller.especie),
-                            icon: Icons.category,
-                            theme: theme,
-                            isDropdown: true,
-                            items: <String>['Perro', 'Gato', 'Otro'],
-                            onChangedDropdown: (val) =>
-                                setState(() => controller.especie = val!),
+                      const SizedBox(height: 30),
+                      _buildTextField(
+                        'Nombre',
+                        'Ingrese el nombre de la mascota',
+                        Icons.pets,
+                        controller.nombreController,
+                        theme,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildDropdownField(
+                              'Especie',
+                              Icons.category,
+                              theme,
+                              controller.especie,
+                              ['Perro', 'Gato', 'Otro'],
+                                  (val) => setState(() => controller.especie = val!),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildTextField(
-                            label: 'Raza',
-                            controller: controller.razaController,
-                            icon: Icons.pets_outlined,
-                            theme: theme,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildTextField(
+                              'Raza',
+                              'Ingrese la raza',
+                              Icons.pets_outlined,
+                              controller.razaController,
+                              theme,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-
-                    // ⚧ Sexo (fila única)
-                    _buildTextField(
-                      label: 'Sexo',
-                      controller: TextEditingController(text: controller.sexo),
-                      icon: Icons.male,
-                      theme: theme,
-                      isDropdown: true,
-                      items: <String>['Macho', 'Hembra'],
-                      onChangedDropdown: (val) =>
-                          setState(() => controller.sexo = val!),
-                    ),
-
-                    // 🎂 Fecha de nacimiento (fila única)
-                    GestureDetector(
-                      onTap: () =>
-                          controller.seleccionarFecha(context, (String fecha) {
-                        setState(() {
-                          controller.fechaNacimientoController.text = fecha;
-                        });
-                      }),
-                      child: AbsorbPointer(
-                        child: _buildTextField(
-                          label: 'Fecha de nacimiento',
-                          controller: controller.fechaNacimientoController,
-                          icon: Icons.cake,
-                          theme: theme,
+                        ],
+                      ),
+                      _buildDropdownField(
+                        'Sexo',
+                        Icons.male,
+                        theme,
+                        controller.sexo,
+                        ['Macho', 'Hembra'],
+                            (val) => setState(() => controller.sexo = val!),
+                      ),
+                      GestureDetector(
+                        onTap: () => controller.seleccionarFecha(context, (String fecha) {
+                          setState(() {
+                            controller.fechaNacimientoController.text = fecha;
+                          });
+                        }),
+                        child: AbsorbPointer(
+                          child: _buildTextField(
+                            'Fecha de nacimiento',
+                            'Seleccione la fecha',
+                            Icons.cake,
+                            controller.fechaNacimientoController,
+                            theme,
+                          ),
                         ),
                       ),
-                    ),
-
-                    // ⚖️ Peso + Altura (fila doble)
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: _buildTextField(
-                            label: 'Peso (kg)',
-                            controller: controller.pesoController,
-                            icon: Icons.monitor_weight,
-                            theme: theme,
-                            type: TextInputType.number,
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: _buildTextField(
+                              'Peso (kg)',
+                              'Ej. 12.5',
+                              Icons.monitor_weight,
+                              controller.pesoController,
+                              theme,
+                              type: TextInputType.number,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildTextField(
-                            label: 'Altura (cm)',
-                            controller: controller.alturaController,
-                            icon: Icons.height,
-                            theme: theme,
-                            type: TextInputType.number,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildTextField(
+                              'Altura (cm)',
+                              'Ej. 50',
+                              Icons.height,
+                              controller.alturaController,
+                              theme,
+                              type: TextInputType.number,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        ],
                       ),
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          final Mascota? nueva = await controller.guardarMascota();
-                          if (nueva != null) {
-                            Navigator.pop(context, nueva);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content:
-                                    const Text('Mascota guardada exitosamente'),
-                                backgroundColor: controller.primario,
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Error al subir imagen'),
-                                backgroundColor: Colors.redAccent,
-                              ),
-                            );
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary,
+                          minimumSize: const Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            final Mascota? nueva = await controller.guardarMascota();
+                            if (nueva != null) {
+                              Navigator.pop(context, nueva);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('Mascota guardada exitosamente'),
+                                  backgroundColor: controller.primario,
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Error al subir imagen'),
+                                  backgroundColor: Colors.redAccent,
+                                ),
+                              );
+                            }
                           }
-                        }
-                      },
-                      child: const Text(
-                        'Guardar Mascota',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        },
+                        child: const Text(
+                          'Guardar Mascota',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
                       ),
-                    ),
-
-                    const SizedBox(height: 80),
-                  ],
+                      const SizedBox(height: 40),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -210,74 +198,86 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
     );
   }
 
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    required IconData icon,
-    required ThemeData theme,
-    TextInputType type = TextInputType.text,
-    bool isOptional = false,
-    bool isDropdown = false,
-    List<String>? items,
-    void Function(String?)? onChangedDropdown,
-  }) => Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            label,
-            style: theme.textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.primary,
+  Widget _buildTextField(
+      String label,
+      String hint,
+      IconData icon,
+      TextEditingController controller,
+      ThemeData theme, {
+        TextInputType type = TextInputType.text,
+      }) =>
+      Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              label,
+              style: theme.textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          isDropdown
-              ? DropdownButtonFormField<String>(
-                  value: controller.text,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: theme.cardColor,
-                    prefixIcon: Icon(icon, color: theme.colorScheme.primary),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                          color: theme.colorScheme.primary.withOpacity(0.4),),
-                    ),
-                  ),
-                  items: items!
-                      .map((String e) => DropdownMenuItem(value: e, child: Text(e)))
-                      .toList(),
-                  onChanged: onChangedDropdown,
-                  validator: (String? value) =>
-                      (value == null || value.isEmpty) && !isOptional
-                          ? 'Campo requerido'
-                          : null,
-                )
-              : TextFormField(
-                  controller: controller,
-                  keyboardType: type,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.textTheme.titleMedium?.color,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(icon, color: theme.colorScheme.primary),
-                    filled: true,
-                    fillColor: theme.cardColor,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                          color: theme.colorScheme.primary.withOpacity(0.4),),
-                    ),
-                  ),
-                  validator: (String? value) =>
-                      (value == null || value.trim().isEmpty) && !isOptional
-                          ? 'Campo requerido'
-                          : null,
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: controller,
+              keyboardType: type,
+              style: theme.textTheme.bodyMedium,
+              decoration: InputDecoration(
+                hintText: hint,
+                hintStyle: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+                filled: true,
+                fillColor: theme.cardColor,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
                 ),
-        ],
-      ),
-    );
+              ),
+              validator: (value) =>
+              (value == null || value.trim().isEmpty) ? 'Campo requerido' : null,
+            ),
+          ],
+        ),
+      );
+
+  Widget _buildDropdownField(
+      String label,
+      IconData icon,
+      ThemeData theme,
+      String selectedValue,
+      List<String> items,
+      void Function(String?) onChanged,
+      ) =>
+      Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              label,
+              style: theme.textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              value: selectedValue,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: theme.cardColor,
+                prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              onChanged: onChanged,
+              validator: (val) => (val == null || val.isEmpty) ? 'Campo requerido' : null,
+            ),
+          ],
+        ),
+      );
 }

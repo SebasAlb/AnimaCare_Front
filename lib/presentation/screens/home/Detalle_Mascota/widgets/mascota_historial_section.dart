@@ -203,9 +203,10 @@ class _ExpandableCardState extends State<_ExpandableCard>
                                   children: <Widget>[
                                     Text(
                                       item['descripcion'] ?? '',
-                                      style: theme.textTheme.bodyMedium
-                                          ?.copyWith(
-                                              fontWeight: FontWeight.bold,),
+                                      style:
+                                          theme.textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(

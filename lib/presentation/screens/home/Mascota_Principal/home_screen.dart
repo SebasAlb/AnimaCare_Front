@@ -23,71 +23,73 @@ class HomeScreen extends StatelessWidget {
       },
       child: Consumer<HomeController>(
         builder: (context, controller, _) => Scaffold(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            body: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const CustomHeader(petName: 'Sebastián'),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12,),
-                    child: Text(
-                      'Mascotas ',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: theme.colorScheme.primary,
-                        letterSpacing: 1.2,
-                      ),
+          backgroundColor: theme.scaffoldBackgroundColor,
+          body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const CustomHeader(petName: 'Sebastián'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  child: Text(
+                    'Mascotas ',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: theme.colorScheme.primary,
+                      letterSpacing: 1.2,
                     ),
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: GridView.count(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        children: controller.mascotas
-                            .map((Mascota m) => PetCard(mascota: m))
-                            .toList(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            floatingActionButton: FloatingActionButton.extended(
-              onPressed: () => controller.onAgregarMascota(context),
-              backgroundColor: theme.colorScheme.primary,
-              icon: Icon(Icons.add, color: theme.colorScheme.onPrimary),
-              label: Text(
-                'Agregar mascota',
-                style: TextStyle(
-                  color: theme.colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
                 ),
-              ),
-            ),
-            bottomNavigationBar: CustomNavBar(
-              currentIndex: 0,
-              onTap: (int index) {
-                switch (index) {
-                  case 0:
-                    break;
-                  case 1:
-                    Navigator.pushNamed(context, AppRoutes.contactsP);
-                    break;
-                  case 2:
-                    Navigator.pushNamed(context, AppRoutes.calendar);
-                    break;
-                  case 3:
-                    Navigator.pushNamed(context, AppRoutes.settingsP);
-                    break;
-                }
-              },
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      children: controller.mascotas
+                          .map((Mascota m) => PetCard(mascota: m))
+                          .toList(),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () => controller.onAgregarMascota(context),
+            backgroundColor: theme.colorScheme.primary,
+            icon: Icon(Icons.add, color: theme.colorScheme.onPrimary),
+            label: Text(
+              'Agregar mascota',
+              style: TextStyle(
+                color: theme.colorScheme.onPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          bottomNavigationBar: CustomNavBar(
+            currentIndex: 0,
+            onTap: (int index) {
+              switch (index) {
+                case 0:
+                  break;
+                case 1:
+                  Navigator.pushNamed(context, AppRoutes.contactsP);
+                  break;
+                case 2:
+                  Navigator.pushNamed(context, AppRoutes.calendar);
+                  break;
+                case 3:
+                  Navigator.pushNamed(context, AppRoutes.settingsP);
+                  break;
+              }
+            },
+          ),
+        ),
       ),
     );
   }

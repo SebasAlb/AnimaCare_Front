@@ -42,10 +42,14 @@ class SignupScreen extends StatelessWidget {
                     alignment: Alignment.topLeft,
                     child: TextButton.icon(
                       onPressed: controller.goBack,
-                      icon: Icon(Icons.arrow_back,
-                          color: theme.colorScheme.primary,),
-                      label: Text('Volver',
-                          style: TextStyle(color: theme.colorScheme.primary),),
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: theme.colorScheme.primary,
+                      ),
+                      label: Text(
+                        'Volver',
+                        style: TextStyle(color: theme.colorScheme.primary),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -131,35 +135,36 @@ class SignupScreen extends StatelessWidget {
     bool obscureText = false,
     required TextEditingController controller,
     required ThemeData theme,
-  }) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          label,
-          style: theme.textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.primary,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          keyboardType: type,
-          obscureText: obscureText,
-          style: theme.textTheme.bodyMedium,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle:
-                theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
-            prefixIcon: Icon(icon, color: theme.colorScheme.primary),
-            filled: true,
-            fillColor: theme.cardColor,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+  }) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            label,
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
             ),
           ),
-        ),
-      ],
-    );
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            keyboardType: type,
+            obscureText: obscureText,
+            style: theme.textTheme.bodyMedium,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle:
+                  theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+              prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+              filled: true,
+              fillColor: theme.cardColor,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ],
+      );
 }

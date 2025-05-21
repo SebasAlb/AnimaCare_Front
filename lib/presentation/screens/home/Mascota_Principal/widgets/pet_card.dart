@@ -73,8 +73,11 @@ class _PetCardState extends State<PetCard> {
                       : null,
                 ),
                 child: mascotaActual.fotoUrl.isEmpty
-                    ? Icon(Icons.pets,
-                        size: 50, color: theme.colorScheme.primary,)
+                    ? Icon(
+                        Icons.pets,
+                        size: 50,
+                        color: theme.colorScheme.primary,
+                      )
                     : null,
               ),
             ),

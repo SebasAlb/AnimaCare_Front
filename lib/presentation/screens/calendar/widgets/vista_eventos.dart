@@ -96,7 +96,8 @@ class _VistaEventosState extends State<VistaEventos> {
     final ColorScheme colorScheme = theme.colorScheme;
 
     final List<EventoCalendar> eventosFiltrados = filtrarEventos();
-    final Map<String, List<EventoCalendar>> eventosAgrupados = agruparPorFecha(eventosFiltrados);
+    final Map<String, List<EventoCalendar>> eventosAgrupados =
+        agruparPorFecha(eventosFiltrados);
 
     return Column(
       children: <Widget>[
@@ -153,7 +154,8 @@ class _VistaEventosState extends State<VistaEventos> {
                       selected: isSelected,
                       onSelected: (_) => seleccionarFiltro(tipo, index),
                       selectedColor: colorScheme.primary,
-                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                      backgroundColor:
+                          theme.colorScheme.surfaceContainerHighest,
                       labelStyle: TextStyle(
                         color: isSelected
                             ? colorScheme.onPrimary
@@ -183,8 +185,10 @@ class _VistaEventosState extends State<VistaEventos> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   itemCount: eventosAgrupados.length,
                   itemBuilder: (context, index) {
-                    final String fechaStr = eventosAgrupados.keys.elementAt(index);
-                    final List<EventoCalendar> eventosDelDia = eventosAgrupados[fechaStr]!;
+                    final String fechaStr =
+                        eventosAgrupados.keys.elementAt(index);
+                    final List<EventoCalendar> eventosDelDia =
+                        eventosAgrupados[fechaStr]!;
 
                     final DateTime fecha = DateTime.parse(fechaStr);
 
@@ -195,14 +199,16 @@ class _VistaEventosState extends State<VistaEventos> {
                           fecha: fechaStr,
                           onTap: () => widget.onSeleccionarFecha(fecha),
                         ),
-                        ...eventosDelDia.map((evento) => GestureDetector(
-                              onTap: () => widget.onTapEvento(evento),
-                              child: EventoCard(
-                                hora: evento.hora,
-                                titulo: evento.titulo,
-                                mascota: evento.mascota,
-                              ),
-                            ),),
+                        ...eventosDelDia.map(
+                          (evento) => GestureDetector(
+                            onTap: () => widget.onTapEvento(evento),
+                            child: EventoCard(
+                              hora: evento.hora,
+                              titulo: evento.titulo,
+                              mascota: evento.mascota,
+                            ),
+                          ),
+                        ),
                       ],
                     );
                   },

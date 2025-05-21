@@ -41,4 +41,7 @@ limpio, consistente y fácil de mantener.
 
    ```bash
    dart analyze
+   
+3. Aplicar correcciones automáticas para advertencias y errores:
+   ```bash
    dart fix --apply

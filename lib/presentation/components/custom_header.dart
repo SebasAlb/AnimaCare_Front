@@ -94,13 +94,18 @@ class _CustomHeaderState extends State<CustomHeader> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: const <BoxShadow>[
             BoxShadow(
-                color: Colors.black12, blurRadius: 6, offset: Offset(0, 2),),
+              color: Colors.black12,
+              blurRadius: 6,
+              offset: Offset(0, 2),
+            ),
           ],
         ),
         child: Row(
           children: <Widget>[
-            Icon(Icons.notifications_active,
-                color: theme.colorScheme.secondary,),
+            Icon(
+              Icons.notifications_active,
+              color: theme.colorScheme.secondary,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(

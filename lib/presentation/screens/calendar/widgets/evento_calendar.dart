@@ -1,5 +1,4 @@
 class EventoCalendar {
-
   EventoCalendar({
     required this.id,
     required this.titulo,
@@ -15,17 +14,17 @@ class EventoCalendar {
 
   /// Instancia desde JSON
   factory EventoCalendar.fromJson(Map<String, dynamic> json) => EventoCalendar(
-      id: json['id'].toString(),
-      titulo: json['titulo'],
-      hora: json['hora'],
-      fecha: json['fecha'],
-      mascota: json['mascota'],
-      veterinario: json['veterinario'],
-      tipo: json['tipo'],
-      categoria: json['categoria'],
-      estado: json['estado'],
-      descripcion: json['descripcion'],
-    );
+        id: json['id'].toString(),
+        titulo: json['titulo'],
+        hora: json['hora'],
+        fecha: json['fecha'],
+        mascota: json['mascota'],
+        veterinario: json['veterinario'],
+        tipo: json['tipo'],
+        categoria: json['categoria'],
+        estado: json['estado'],
+        descripcion: json['descripcion'],
+      );
   final String id;
   final String titulo;
   final String hora;
@@ -42,15 +41,15 @@ class EventoCalendar {
 
   /// Convierte a JSON
   Map<String, dynamic> toJson() => <String, dynamic>{
-      'id': id,
-      'titulo': titulo,
-      'hora': hora,
-      'fecha': fecha,
-      'mascota': mascota,
-      'veterinario': veterinario,
-      'tipo': tipo,
-      'categoria': categoria,
-      'estado': estado,
-      'descripcion': descripcion,
-    };
+        'id': id,
+        'titulo': titulo,
+        'hora': hora,
+        'fecha': fecha,
+        'mascota': mascota,
+        'veterinario': veterinario,
+        'tipo': tipo,
+        'categoria': categoria,
+        'estado': estado,
+        'descripcion': descripcion,
+      };
 }

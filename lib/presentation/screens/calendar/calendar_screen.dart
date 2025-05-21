@@ -88,13 +88,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const AgendarCitaScreen(),),
+                            builder: (_) => const AgendarCitaScreen(),
+                          ),
                         );
                       },
                       icon:
                           Icon(Icons.edit_calendar, color: colorScheme.primary),
-                      label: Text('Reagendar cita',
-                          style: TextStyle(color: colorScheme.primary),),
+                      label: Text(
+                        'Reagendar cita',
+                        style: TextStyle(color: colorScheme.primary),
+                      ),
                     ),
                     TextButton.icon(
                       onPressed: () {
@@ -107,8 +110,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         );
                       },
                       icon: const Icon(Icons.delete, color: Colors.redAccent),
-                      label: const Text('Cancelar cita',
-                          style: TextStyle(color: Colors.redAccent),),
+                      label: const Text(
+                        'Cancelar cita',
+                        style: TextStyle(color: Colors.redAccent),
+                      ),
                     ),
                   ],
                 ],
@@ -130,8 +135,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   void abrirFiltroModal(BuildContext context) {
     final List<EventoCalendar> eventos = controller.eventos;
-    final List<String> mascotas = eventos.map((e) => e.mascota).toSet().toList();
-    final List<String> veterinarios = eventos.map((e) => e.veterinario).toSet().toList();
+    final List<String> mascotas =
+        eventos.map((e) => e.mascota).toSet().toList();
+    final List<String> veterinarios =
+        eventos.map((e) => e.veterinario).toSet().toList();
     final List<String> categorias = eventos
         .where((e) => e.categoria != null)
         .map((e) => e.categoria!)
@@ -187,7 +194,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   Text(
                     '  |  ',
                     style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.6),),
+                      color: colorScheme.onSurface.withOpacity(0.6),
+                    ),
                   ),
                   GestureDetector(
                     onTap: () => setState(() => controller.cambiarModo(false)),

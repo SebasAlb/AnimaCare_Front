@@ -78,7 +78,10 @@ class EditarPerfilController extends GetxController {
                 const SizedBox(height: 20),
                 Obx(
                   () => _passwordInput(
-                      'Contraseña Actual', actual, visibleActual,),
+                    'Contraseña Actual',
+                    actual,
+                    visibleActual,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Obx(
