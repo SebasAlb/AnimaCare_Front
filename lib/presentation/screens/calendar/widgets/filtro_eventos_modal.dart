@@ -33,8 +33,7 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
   @override
   void initState() {
     super.initState();
-    final Map<String, dynamic> filtros =
-        widget.filtrosActuales ?? <String, dynamic>{};
+    final Map<String, dynamic> filtros = widget.filtrosActuales ?? <String, dynamic>{};
     mascotaSeleccionada = filtros['mascota'];
     veterinarioSeleccionado = filtros['veterinario'];
     tipoSeleccionado = filtros['tipo'];
@@ -108,14 +107,10 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
               hint: Text('Selecciona una mascota', style: textStyle),
               isExpanded: true,
               dropdownColor: theme.cardColor,
-              items: widget.mascotas
-                  .map(
-                    (e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(e, style: textStyle),
-                    ),
-                  )
-                  .toList(),
+              items: widget.mascotas.map((e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e, style: textStyle),
+                ),).toList(),
               onChanged: (value) => setState(() => mascotaSeleccionada = value),
             ),
             const SizedBox(height: 10),
@@ -125,14 +120,10 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
               hint: Text('Selecciona un veterinario', style: textStyle),
               isExpanded: true,
               dropdownColor: theme.cardColor,
-              items: widget.veterinarios
-                  .map(
-                    (e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(e, style: textStyle),
-                    ),
-                  )
-                  .toList(),
+              items: widget.veterinarios.map((e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e, style: textStyle),
+                ),).toList(),
               onChanged: (value) =>
                   setState(() => veterinarioSeleccionado = value),
             ),
@@ -143,14 +134,10 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
               hint: Text('Cita o Evento', style: textStyle),
               isExpanded: true,
               dropdownColor: theme.cardColor,
-              items: <String>['cita', 'evento']
-                  .map(
-                    (e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(e, style: textStyle),
-                    ),
-                  )
-                  .toList(),
+              items: <String>['cita', 'evento'].map((e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e, style: textStyle),
+                ),).toList(),
               onChanged: (value) => setState(() => tipoSeleccionado = value),
             ),
             const SizedBox(height: 10),
@@ -160,14 +147,10 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
               hint: Text('Selecciona una categoría', style: textStyle),
               isExpanded: true,
               dropdownColor: theme.cardColor,
-              items: widget.categorias
-                  .map(
-                    (e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(e, style: textStyle),
-                    ),
-                  )
-                  .toList(),
+              items: widget.categorias.map((e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e, style: textStyle),
+                ),).toList(),
               onChanged: (value) =>
                   setState(() => categoriaSeleccionada = value),
             ),

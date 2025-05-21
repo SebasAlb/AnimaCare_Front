@@ -1,8 +1,8 @@
-import 'package:animacare_front/models/mascota.dart';
 import 'package:flutter/material.dart';
+import 'package:animacare_front/models/mascota.dart';
 
-//Version 2
-// ✅ Ahora extiende de ChangeNotifier para que pueda notificar cambios
+enum VistaDetalleMascota { info, historial, eventos }
+
 class DetalleMascotaController extends ChangeNotifier {
   DetalleMascotaController(this.mascota) {
     _inicializarControllersDesdeMascota();
@@ -12,25 +12,28 @@ class DetalleMascotaController extends ChangeNotifier {
 
   int currentIndex = 0;
   String filtro = 'Todos';
-  bool _mostrarHistorial = false;
+  
+  VistaDetalleMascota _vistaActual = VistaDetalleMascota.info;
 
-  bool get mostrarHistorial => _mostrarHistorial;
+  VistaDetalleMascota get vistaActual => _vistaActual;
 
-  set mostrarHistorial(bool value) {
-    _mostrarHistorial = value;
-    notifyListeners(); // 🔄 Esto asegura que la UI se actualice
+  set vistaActual(VistaDetalleMascota vista) {
+    _vistaActual = vista;
+    notifyListeners();
   }
+
+
 
   final ScrollController filtroScrollController = ScrollController();
 
-  final Map<String, GlobalKey> filtroKeys = <String, GlobalKey<State<StatefulWidget>>>{
+  final Map<String, GlobalKey> filtroKeys = {
     'Todos': GlobalKey(),
     'Citas': GlobalKey(),
     'Vacunas': GlobalKey(),
     'Otros': GlobalKey(),
   };
 
-  final Map<String, TextEditingController> controllers = <String, TextEditingController>{
+  final Map<String, TextEditingController> controllers = {
     'Especie': TextEditingController(),
     'Raza': TextEditingController(),
     'Edad': TextEditingController(),
@@ -40,20 +43,20 @@ class DetalleMascotaController extends ChangeNotifier {
     'Sexo': TextEditingController(),
   };
 
-  final Map<String, List<Map<String, String>>> historialMedico = <String, List<Map<String, String>>>{
-    'Vacunas': <Map<String, String>>[
-      <String, String>{'fecha': '01/01/2023', 'descripcion': 'Vacuna contra moquillo'},
-      <String, String>{'fecha': '01/06/2023', 'descripcion': 'Vacuna contra rabia'},
+  final Map<String, List<Map<String, String>>> historialMedico = {
+    'Vacunas': [
+      {'fecha': '01/01/2023', 'descripcion': 'Vacuna contra moquillo'},
+      {'fecha': '01/06/2023', 'descripcion': 'Vacuna contra rabia'},
     ],
-    'Desparasitaciones': <Map<String, String>>[
-      <String, String>{'fecha': '15/03/2023', 'descripcion': 'Desparasitación interna'},
-      <String, String>{'fecha': '15/07/2023', 'descripcion': 'Desparasitación externa'},
+    'Desparasitaciones': [
+      {'fecha': '15/03/2023', 'descripcion': 'Desparasitación interna'},
+      {'fecha': '15/07/2023', 'descripcion': 'Desparasitación externa'},
     ],
-    'Controles Generales': <Map<String, String>>[
-      <String, String>{'fecha': '10/05/2023', 'descripcion': 'Chequeo general'},
+    'Controles Generales': [
+      {'fecha': '10/05/2023', 'descripcion': 'Chequeo general'},
     ],
-    'Cirugías': <Map<String, String>>[
-      <String, String>{'fecha': '12/12/2022', 'descripcion': 'Esterilización'},
+    'Cirugías': [
+      {'fecha': '12/12/2022', 'descripcion': 'Esterilización'},
     ],
   };
 
@@ -72,21 +75,19 @@ class DetalleMascotaController extends ChangeNotifier {
     mascota.raza = controllers['Raza']?.text ?? '';
     mascota.sexo = controllers['Sexo']?.text ?? '';
     mascota.peso = double.tryParse(
-          (controllers['Peso']?.text ?? '').replaceAll(' kg', ''),
-        ) ??
-        0;
+      (controllers['Peso']?.text ?? '').replaceAll(' kg', ''),
+    ) ?? 0;
 
     mascota.altura = double.tryParse(
-          (controllers['Altura']?.text ?? '').replaceAll(' cm', ''),
-        ) ??
-        0;
+      (controllers['Altura']?.text ?? '').replaceAll(' cm', ''),
+    ) ?? 0;
 
-    final String fechaTexto = controllers['Fecha de nacimiento']?.text ?? '';
+    final fechaTexto = controllers['Fecha de nacimiento']?.text ?? '';
     if (fechaTexto.contains('/')) {
-      final List<String> partes = fechaTexto.split('/');
+      final partes = fechaTexto.split('/');
       if (partes.length == 3) {
         try {
-          final DateTime nuevaFecha = DateTime(
+          final nuevaFecha = DateTime(
             int.parse(partes[2]),
             int.parse(partes[1]),
             int.parse(partes[0]),
@@ -103,7 +104,7 @@ class DetalleMascotaController extends ChangeNotifier {
   }
 
   void disposeControllers() {
-    for (final TextEditingController controller in controllers.values) {
+    for (final controller in controllers.values) {
       controller.dispose();
     }
     filtroScrollController.dispose();
@@ -113,8 +114,7 @@ class DetalleMascotaController extends ChangeNotifier {
     controllers['Especie']?.text = mascota.especie;
     controllers['Raza']?.text = mascota.raza;
     controllers['Edad']?.text = _calcularEdad(mascota.fechaNacimiento);
-    controllers['Fecha de nacimiento']?.text =
-        _formatoFecha(mascota.fechaNacimiento);
+    controllers['Fecha de nacimiento']?.text = _formatoFecha(mascota.fechaNacimiento);
     controllers['Peso']?.text = '${mascota.peso} kg';
     controllers['Altura']?.text = '${mascota.altura} cm';
     controllers['Sexo']?.text = mascota.sexo;
@@ -133,5 +133,9 @@ class DetalleMascotaController extends ChangeNotifier {
     return '$anios años y $meses meses';
   }
 
-  String _formatoFecha(DateTime fecha) => '${fecha.day.toString().padLeft(2, '0')}/${fecha.month.toString().padLeft(2, '0')}/${fecha.year}';
+  String _formatoFecha(DateTime fecha) {
+    return '${fecha.day.toString().padLeft(2, '0')}/${fecha.month.toString().padLeft(2, '0')}/${fecha.year}';
+  }
+
 }
+

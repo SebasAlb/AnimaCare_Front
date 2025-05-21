@@ -4,7 +4,11 @@ import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detall
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
+
+
 class MascotaInfoSection extends StatelessWidget {
+  final String nombre;
+  final String fotoUrl;
 
   const MascotaInfoSection({
     super.key,
@@ -16,8 +20,7 @@ class MascotaInfoSection extends StatelessWidget {
     required this.filtroScrollController,
     required this.filtroKeys,
   });
-  final String nombre;
-  final String fotoUrl;
+
 
   final Map<String, TextEditingController> controllers;
   final String filtro;
@@ -37,299 +40,6 @@ class MascotaInfoSection extends StatelessWidget {
     }
   }
 
-  void _abrirModalEdicion(BuildContext context) {
-    //version 4
-    final TextEditingController nombreController =
-        TextEditingController(text: nombre);
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    File? nuevaFoto;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (modalContext) {
-        final ThemeData theme = Theme.of(modalContext);
-
-        return Padding(
-          padding: EdgeInsets.only(
-            top: 24,
-            left: 20,
-            right: 20,
-            bottom: MediaQuery.of(modalContext).viewInsets.bottom + 24,
-          ),
-          child: Form(
-            key: formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    'Editar información',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  Stack(
-                    alignment: Alignment.bottomRight,
-                    children: <Widget>[
-                      Container(
-                        width: 90,
-                        height: 90,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: theme.colorScheme.primary.withOpacity(0.5),
-                            width: 2,
-                          ),
-                        ),
-                        child: CircleAvatar(
-                          radius: 45,
-                          backgroundImage: nuevaFoto != null
-                              ? FileImage(nuevaFoto!)
-                              : (fotoUrl.isNotEmpty
-                                  ? (fotoUrl.startsWith('/') ||
-                                          fotoUrl.startsWith('file')
-                                      ? FileImage(File(fotoUrl))
-                                      : NetworkImage(fotoUrl)) as ImageProvider
-                                  : const AssetImage(
-                                      'assets/images/perfil_mascota.png',)),
-                          backgroundColor: theme.cardColor,
-                        ),
-                      ),
-                      FloatingActionButton.small(
-                        backgroundColor: theme.colorScheme.primary,
-                        onPressed: () async {
-                          final ImagePicker picker = ImagePicker();
-                          final XFile? picked = await picker.pickImage(
-                              source: ImageSource.gallery,);
-                          if (picked != null) {
-                            nuevaFoto = File(picked.path);
-                            (modalContext as Element)
-                                .markNeedsBuild(); // 🔁 actualiza modal
-                          }
-                        },
-                        child: const Icon(Icons.edit, size: 18),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // 🐶 Nombre
-                  _campoTexto('Nombre', nombreController, theme),
-
-                  // 🧬 Especie y Raza
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: controllers['Especie']!.text.isNotEmpty
-                              ? controllers['Especie']!.text
-                              : null,
-                          style: theme.textTheme.titleMedium,
-                          decoration: _decoracionCampo(theme, label: 'Especie'),
-                          items: <String>['Perro', 'Gato', 'Otro']
-                              .map((e) =>
-                                  DropdownMenuItem(value: e, child: Text(e)),)
-                              .toList(),
-                          onChanged: (value) =>
-                              controllers['Especie']!.text = value ?? '',
-                          validator: (value) => (value == null || value.isEmpty)
-                              ? 'Campo requerido'
-                              : null,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _campoTexto('Raza', controllers['Raza']!, theme),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // ⚧ Sexo
-                  DropdownButtonFormField<String>(
-                    value: controllers['Sexo']!.text.isNotEmpty
-                        ? controllers['Sexo']!.text
-                        : null,
-                    style: theme.textTheme.titleMedium,
-                    decoration: _decoracionCampo(theme, label: 'Sexo'),
-                    items: <String>['Macho', 'Hembra']
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                    onChanged: (value) =>
-                        controllers['Sexo']!.text = value ?? '',
-                    validator: (value) => (value == null || value.isEmpty)
-                        ? 'Campo requerido'
-                        : null,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // 🎂 Cumpleaños (fecha)
-                  GestureDetector(
-                    onTap: () async {
-                      final DateTime? seleccionada = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2010),
-                        lastDate: DateTime(2035),
-                      );
-
-                      if (seleccionada != null) {
-                        final String fechaFormateada =
-                            '${seleccionada.day.toString().padLeft(2, '0')}/${seleccionada.month.toString().padLeft(2, '0')}/${seleccionada.year}';
-                        controllers['Fecha de nacimiento']!.text =
-                            fechaFormateada;
-                      }
-                    },
-                    child: AbsorbPointer(
-                      child: _campoTexto(
-                        'Cumpleaños',
-                        controllers['Fecha de nacimiento']!,
-                        theme,
-                      ),
-                    ),
-                  ),
-
-                  // ⚖️ Peso y Altura
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: _campoTexto(
-                          'Peso (kg)',
-                          controllers['Peso']!
-                            ..text =
-                                controllers['Peso']!.text.replaceAll(' kg', ''),
-                          theme,
-                          type: TextInputType.number,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _campoTexto(
-                          'Altura (cm)',
-                          controllers['Altura']!
-                            ..text = controllers['Altura']!
-                                .text
-                                .replaceAll(' cm', ''),
-                          theme,
-                          type: TextInputType.number,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.save),
-                    label: const Text('Guardar cambios'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    onPressed: () {
-                      final DetalleMascotaController controller =
-                          context.read<DetalleMascotaController>();
-
-                      if (!formKey.currentState!.validate()) {
-                        return; // ❌ No cerrar si hay errores
-                      }
-                      if (nuevaFoto != null) {
-                        controller.mascota.fotoUrl = nuevaFoto!.path;
-                      }
-
-                      // ✅ Si pasa validación
-                      controller.guardarCambiosDesdeFormulario(
-                        nuevoNombre: nombreController.text,
-                      );
-
-                      Navigator.pop(modalContext);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content:
-                              const Text('Cambios guardados correctamente'),
-                          backgroundColor: theme.colorScheme.primary,
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _campoTexto(
-    //version2
-    String label,
-    TextEditingController controller,
-    ThemeData theme, {
-    TextInputType type = TextInputType.text,
-  }) =>
-      Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: TextFormField(
-          controller: controller,
-          keyboardType: type,
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.textTheme.titleMedium?.color, // ✅ Se adapta al tema
-            fontWeight: FontWeight.w600,
-          ),
-          decoration: _decoracionCampo(theme, label: label),
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'Campo requerido';
-            }
-            return null;
-          },
-        ),
-      );
-
-  InputDecoration _decoracionCampo(ThemeData theme, {required String label}) =>
-      InputDecoration(
-        labelText: label,
-        filled: true,
-        fillColor: theme.cardColor,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.primary),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide:
-              BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.redAccent, width: 1.2),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
-        ),
-        errorStyle: const TextStyle(color: Colors.redAccent, fontSize: 12),
-      );
-
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -340,8 +50,12 @@ class MascotaInfoSection extends StatelessWidget {
         Center(
           child: Text(
             'Información de la mascota',
-            style: theme.textTheme.titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontSize: 21,
+              fontWeight: FontWeight.w800,
+              color: theme.colorScheme.primary,
+
+            ),
           ),
         ),
         const SizedBox(height: 20),
@@ -351,25 +65,26 @@ class MascotaInfoSection extends StatelessWidget {
               Stack(
                 alignment: Alignment.bottomRight,
                 children: <Widget>[
-                  Container(
-                    width: 90,
-                    height: 90,
+                  Container( //tamaño de la imagen
+                    width: 120,
+                    height: 120,
                     decoration: BoxDecoration(
                       color: theme.cardColor,
                       borderRadius: BorderRadius.circular(12),
+                      
                       image: fotoUrl.isNotEmpty
-                          ? DecorationImage(
-                              image: fotoUrl.startsWith('/') ||
-                                      fotoUrl.startsWith('file')
-                                  ? FileImage(File(fotoUrl))
-                                  : NetworkImage(fotoUrl) as ImageProvider,
-                              fit: BoxFit.cover,
-                            )
-                          : const DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/perfil_mascota.png',),
-                              fit: BoxFit.cover,
-                            ),
+                        ? DecorationImage(
+                            image: fotoUrl.startsWith('/') || fotoUrl.startsWith('file')
+                                ? FileImage(File(fotoUrl))
+                                : NetworkImage(fotoUrl) as ImageProvider,
+                            fit: BoxFit.cover,
+                          )
+                        : const DecorationImage(
+                            image: AssetImage('assets/images/perfil_mascota.png'),
+                            fit: BoxFit.cover,
+                          ),
+
+
                     ),
                   ),
                   Positioned(
@@ -381,69 +96,15 @@ class MascotaInfoSection extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       padding: const EdgeInsets.all(4),
-                      child: const Icon(
-                        Icons.photo_camera,
-                        size: 16,
-                        color: Colors.white,
-                      ),
+                      child: const Icon(Icons.photo_camera,
+                          size: 16, color: Colors.white,),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
-              Container(
-                width: 320,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: theme.cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 3,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 2,
-                      child: Center(
-                        child: Text(
-                          nombre, // ✅ uso correcto del valor dinámico
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.1,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () => _abrirModalEdicion(context),
-                        borderRadius: const BorderRadius.only(
-                          topRight: Radius.circular(16),
-                          bottomRight: Radius.circular(16),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primary,
-                            borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(16),
-                              bottomRight: Radius.circular(16),
-                            ),
-                          ),
-                          child: const Center(
-                            child:
-                                Icon(Icons.edit, color: Colors.white, size: 24),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
+              
               const SizedBox(height: 15),
             ],
           ),
@@ -456,8 +117,7 @@ class MascotaInfoSection extends StatelessWidget {
           mainAxisSpacing: 12,
           childAspectRatio: 0.95,
           children: controllers.entries.map((e) {
-            final String label =
-                e.key == 'Fecha de nacimiento' ? 'Cumpleaños' : e.key;
+            final String label = e.key == 'Fecha de nacimiento' ? 'Cumpleaños' : e.key;
             final String value = e.key == 'Fecha de nacimiento'
                 ? _formatearCumple(e.value.text)
                 : e.value.text;
@@ -470,134 +130,22 @@ class MascotaInfoSection extends StatelessWidget {
               theme: theme,
             );
           }).toList(),
+
         ),
-        const SizedBox(height: 30),
-        _buildEventosImportantes(theme),
         const SizedBox(height: 40),
       ],
     );
   }
-
+  
   String _formatearCumple(String fecha) {
-    final List<String> partes = fecha.split('/');
+    final partes = fecha.split('/');
     if (partes.length >= 2) {
       return '${partes[0].padLeft(2, '0')}/${partes[1].padLeft(2, '0')}';
     }
     return fecha;
   }
 
-  Widget _buildEventosImportantes(ThemeData theme) => Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: theme.cardColor,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Icon(Icons.event, color: theme.colorScheme.primary, size: 28),
-                const SizedBox(width: 10),
-                Text(
-                  'Eventos importantes',
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Buscar evento...',
-                hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
-                ),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: theme.colorScheme.onSurface
-                      .withOpacity(0.8), // ✅ color dinámico
-                ),
-                filled: true,
-                fillColor: theme.cardColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              controller: filtroScrollController,
-              child: Row(
-                children: filtroKeys.entries
-                    .map(
-                      (MapEntry<String, GlobalKey<State<StatefulWidget>>> entry,) =>
-                          AnimatedContainer(
-                        key: entry.value,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeOut,
-                        child: _FiltroChip(
-                          label: entry.key,
-                          selected: filtro == entry.key,
-                          onTap: () {
-                            onFiltroChange(entry.key);
-                            _scrollToFiltro(entry.key);
-                          },
-                          theme: theme,
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
-            const Divider(height: 20),
-            const _EventoCard(
-              icon: Icons.calendar_today,
-              title: 'Cita veterinaria',
-              date: '15 de mayo de 2025',
-            ),
-            const _EventoCard(
-              icon: Icons.vaccines,
-              title: 'Vacuna anual',
-              date: '1 de junio de 2025',
-            ),
-            const _EventoCard(
-              icon: Icons.cake,
-              title: 'Cumpleaños',
-              date: '10 de abril de 2026',
-            ),
-            const _EventoCard(
-              icon: Icons.medication,
-              title: 'Rutina de medicina',
-              date: 'Cada 8 horas',
-            ),
-            const _EventoCard(
-              icon: Icons.shower,
-              title: 'Día de baño',
-              date: 'Todos los sábados',
-            ),
-            const _EventoCard(
-              icon: Icons.cleaning_services,
-              title: 'Limpieza dental',
-              date: 'Mensual',
-            ),
-            const _EventoCard(
-              icon: Icons.directions_walk,
-              title: 'Paseo especial',
-              date: 'Domingo 9 AM',
-            ),
-          ],
-        ),
-      );
+  
 
   IconData _getIconForLabel(String label) {
     switch (label) {
@@ -638,25 +186,23 @@ class _InfoBoxEditable extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
-          color: theme.colorScheme.primary,
+          color: theme.cardColor, // Opacidad de los cuadros de info
           borderRadius: BorderRadius.circular(16),
         ),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(icon, color: Colors.white, size: 24),
+            Icon(icon, color: theme.colorScheme.primary, size: 24),
             const SizedBox(height: 6),
-            Text(
-              label,
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-            ),
+            Text(label,
+                style: TextStyle(color: theme.colorScheme.primary, fontSize: 12),),
             const SizedBox(height: 2),
             Flexible(
               child: Text(
                 value,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
@@ -699,19 +245,15 @@ class _EventoCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
+                Text(title,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,),),
                 const SizedBox(height: 4),
-                Text(
-                  date,
-                  style: const TextStyle(color: Colors.white70, fontSize: 14),
-                ),
+                Text(date,
+                    style:
+                        const TextStyle(color: Colors.white70, fontSize: 14),),
               ],
             ),
           ),
@@ -720,6 +262,7 @@ class _EventoCard extends StatelessWidget {
       ),
     );
   }
+  
 }
 
 class _FiltroChip extends StatelessWidget {
@@ -743,9 +286,7 @@ class _FiltroChip extends StatelessWidget {
           child: Chip(
             label: Text(label),
             labelStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+                fontWeight: FontWeight.bold, color: Colors.white,),
             backgroundColor: selected
                 ? theme.colorScheme.primary
                 : theme.colorScheme.primary.withOpacity(0.2),
@@ -756,3 +297,6 @@ class _FiltroChip extends StatelessWidget {
         ),
       );
 }
+
+
+

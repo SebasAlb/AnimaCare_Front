@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // 🧱 Fondos base
-  static const Color backgroundLight = Color(0xFF42BCCF); // Cyan vibrante
   static const Color backgroundDark = Color(0xFF047B8A); // Teal profundo
 
   // 🎨 Headers
