@@ -14,6 +14,7 @@ class ContactInfoScreen extends StatelessWidget {
     final ContactInfoController controller = ContactInfoController();
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: theme.colorScheme.primary,
       body: SafeArea(
         child: Column(

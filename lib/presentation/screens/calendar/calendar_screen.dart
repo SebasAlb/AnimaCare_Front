@@ -167,6 +167,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final ColorScheme colorScheme = theme.colorScheme;
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(

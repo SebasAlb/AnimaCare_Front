@@ -26,6 +26,7 @@ class LoginScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         backgroundColor: theme.scaffoldBackgroundColor,
         body: Center(
           child: SingleChildScrollView(

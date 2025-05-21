@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // 🧱 Fondos base
-  static const Color backgroundLight = Color(0xFF4DD0E2); // Cyan vibrante
+  static const Color backgroundLight = Color(0xFF20BBCF); // Cyan vibrante
   static const Color backgroundDark = Color(0xFF047B8A); // Teal profundo
 
   // 🎨 Headers
-  static const Color headerLight = Color(0xFF27069F); // Azul oscuro vibrante
-  static const Color headerDark = Color(0xFF376103); // Verde oscuro neutro
+  static const Color headerLight = Color(0xFF1CB0A2); // Azul oscuro vibrante
+  static const Color headerDark = Color(0xFF1CB0A2); // Verde oscuro neutro
 
   // 🧊 Colores de superficie
   static const Color cardBackground = Colors.white;

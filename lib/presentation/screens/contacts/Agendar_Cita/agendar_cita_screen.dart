@@ -29,6 +29,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: theme.colorScheme.primary,
       body: SafeArea(
         child: Stack(

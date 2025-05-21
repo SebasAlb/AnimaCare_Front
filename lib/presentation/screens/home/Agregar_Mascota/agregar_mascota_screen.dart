@@ -32,6 +32,7 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(

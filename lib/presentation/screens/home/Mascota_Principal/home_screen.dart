@@ -23,6 +23,7 @@ class HomeScreen extends StatelessWidget {
       },
       child: Consumer<HomeController>(
         builder: (context, controller, _) => Scaffold(
+          resizeToAvoidBottomInset: true,
             backgroundColor: theme.scaffoldBackgroundColor,
             body: SafeArea(
               child: Column(
