@@ -10,8 +10,7 @@ class AgregarMascotaController {
   final TextEditingController razaController = TextEditingController();
   final TextEditingController pesoController = TextEditingController();
   final TextEditingController alturaController = TextEditingController();
-  final TextEditingController fechaNacimientoController =
-      TextEditingController();
+  final TextEditingController fechaNacimientoController = TextEditingController();
   final TextEditingController fotoUrlController = TextEditingController();
 
   String sexo = 'Macho';
