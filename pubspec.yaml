@@ -1,0 +1,45 @@
+name: animacare_front
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Dependencias principales
+  google_maps_flutter: ^2.5.0
+  location: ^5.0.3
+  geolocator: ^9.0.2
+  http: ^1.2.1
+  get: ^4.6.5
+  provider: ^6.1.2
+  table_calendar: ^3.0.9
+  flutter_colorpicker: ^1.0.3
+  image_picker: ^1.1.2
+  get_storage: ^2.0.3
+
+  # Iconos estilo iOS
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
+  very_good_analysis: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icons/logo.png
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/logo.png"

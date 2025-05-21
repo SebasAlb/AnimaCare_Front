@@ -1,0 +1,94 @@
+import 'package:animacare_front/models/mascota.dart';
+import 'package:animacare_front/routes/app_routes.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:animacare_front/presentation/components/custom_header.dart';
+import 'package:animacare_front/presentation/components/custom_navbar.dart';
+import 'package:animacare_front/presentation/screens/home/Mascota_Principal/home_controller.dart';
+import 'package:animacare_front/presentation/screens/home/Mascota_Principal/widgets/pet_card.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return ChangeNotifierProvider(
+      create: (_) {
+        final HomeController controller = HomeController();
+        controller
+            .cargarMascotasIniciales(); // Datos quemados, reemplazables por DB
+        return controller;
+      },
+      child: Consumer<HomeController>(
+        builder: (context, controller, _) => Scaffold(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            body: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const CustomHeader(petName: 'Sebastián'),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12,),
+                    child: Text(
+                      'Mascotas ',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: theme.colorScheme.primary,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        children: controller.mascotas
+                            .map((Mascota m) => PetCard(mascota: m))
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () => controller.onAgregarMascota(context),
+              backgroundColor: theme.colorScheme.primary,
+              icon: Icon(Icons.add, color: theme.colorScheme.onPrimary),
+              label: Text(
+                'Agregar mascota',
+                style: TextStyle(
+                  color: theme.colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            bottomNavigationBar: CustomNavBar(
+              currentIndex: 0,
+              onTap: (int index) {
+                switch (index) {
+                  case 0:
+                    break;
+                  case 1:
+                    Navigator.pushNamed(context, AppRoutes.contactsP);
+                    break;
+                  case 2:
+                    Navigator.pushNamed(context, AppRoutes.calendar);
+                    break;
+                  case 3:
+                    Navigator.pushNamed(context, AppRoutes.settingsP);
+                    break;
+                }
+              },
+            ),
+          ),
+      ),
+    );
+  }
+}

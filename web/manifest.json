@@ -1,0 +1,45 @@
+{
+<<<<<<< HEAD
+<<<<<<< HEAD
+    "name": "mapa",
+    "short_name": "mapa",
+=======
+    "name": "historial",
+    "short_name": "historial",
+>>>>>>> 905a317050fcb6b6eb607bcee0094ef8735d2c5f
+=======
+    "name": "animacare_front",
+    "short_name": "animacare_front",
+>>>>>>> b1d7e4d560bfa8cd64d513e98d765d751ae95b86
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "A new Flutter project.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
