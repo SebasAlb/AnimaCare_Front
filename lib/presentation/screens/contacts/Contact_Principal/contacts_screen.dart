@@ -1,13 +1,15 @@
-import 'package:animacare_front/presentation/components/custom_navbar.dart';
-import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:animacare_front/models/veterinario.dart';
+import 'package:animacare_front/models/veterinario_excepcion.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
-import 'package:animacare_front/presentation/screens/contacts/Contact_Principal/widget/contact_card.dart';
+import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/presentation/screens/contacts/Contact_Principal/contacts_controller.dart';
+import 'package:animacare_front/presentation/screens/contacts/Contact_Principal/widget/contact_card.dart';
+import 'package:animacare_front/routes/app_routes.dart';
 
 class ContactsScreen extends StatelessWidget {
   const ContactsScreen({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     final ContactsController controller = ContactsController();
@@ -38,12 +40,14 @@ class ContactsScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: controller.contactos.length,
                 itemBuilder: (context, index) {
-                  final Map<String, String> contacto =
-                      controller.contactos[index];
+                  final Veterinario vet = controller.contactos[index];
+                  final List<VeterinarioExcepcion> excepciones =
+                      controller.excepciones;
+
                   return ContactCard(
-                    name: contacto['nombre']!,
-                    estado: contacto['estado']!,
-                    onTap: () => controller.abrirDetalle(context),
+                    veterinario: vet,
+                    excepciones: excepciones,
+                    onTap: () => controller.abrirDetalle(context, vet),
                   );
                 },
               ),
