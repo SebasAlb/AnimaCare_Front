@@ -1,4 +1,7 @@
 import 'package:animacare_front/models/mascota.dart';
+import 'package:animacare_front/models/veterinario.dart';
+import 'package:animacare_front/models/veterinario_excepcion.dart';
+
 import 'package:animacare_front/presentation/screens/calendar/calendar_screen.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_screen.dart';
 import 'package:animacare_front/presentation/screens/contacts/Contact_Principal/contacts_screen.dart';
@@ -41,20 +44,26 @@ class AppRoutes {
 
       case homeOwner:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-
       case detalleMascota:
         final Mascota mascota = settings.arguments as Mascota;
         return MaterialPageRoute(
           builder: (_) => DetalleMascotaScreen(mascota: mascota),
         );
-
       case homeAdd:
         return MaterialPageRoute(builder: (_) => const AgregarMascotaScreen());
 
       case contactsP:
         return MaterialPageRoute(builder: (_) => const ContactsScreen());
       case contactInfo:
-        return MaterialPageRoute(builder: (_) => const ContactInfoScreen());
+        final args = settings.arguments as Map<String, dynamic>;
+        final veterinario = args['veterinario'] as Veterinario;
+        final excepciones = args['excepciones'] as List<VeterinarioExcepcion>;
+        return MaterialPageRoute(
+          builder: (_) => ContactInfoScreen(
+            veterinario: veterinario,
+            excepciones: excepciones,
+          ),
+        );
       case agendarCita:
         return MaterialPageRoute(builder: (_) => const AgendarCitaScreen());
 
