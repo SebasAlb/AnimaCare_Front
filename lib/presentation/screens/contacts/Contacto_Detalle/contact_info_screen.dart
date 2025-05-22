@@ -1,21 +1,36 @@
-import 'package:animacare_front/presentation/components/custom_navbar.dart';
-import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:animacare_front/models/veterinario.dart';
+import 'package:animacare_front/models/veterinario_excepcion.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_screen.dart';
-import 'package:animacare_front/presentation/screens/contacts/Contacto_Detalle/contact_info_controller.dart';
+import 'package:intl/intl.dart';
+import 'package:animacare_front/presentation/components/list_extensions.dart';
 
 class ContactInfoScreen extends StatelessWidget {
-  const ContactInfoScreen({super.key});
+  final Veterinario veterinario;
+  final List<VeterinarioExcepcion> excepciones;
+
+  const ContactInfoScreen({
+    super.key,
+    required this.veterinario,
+    required this.excepciones,
+  });
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final ContactInfoController controller = ContactInfoController();
+    final now = DateTime.now();
+
+    final excepcionActual = excepciones.firstWhereOrNull(
+      (e) =>
+          e.veterinarioId == veterinario.id &&
+          now.isAfter(e.fechaInicio) &&
+          now.isBefore(e.fechaFin),
+    );
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: theme.colorScheme.primary,
+      backgroundColor: theme.cardColor, //original: colorScheme.primary
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -45,46 +60,71 @@ class ContactInfoScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        controller.nombre,
+                        veterinario.nombreCompleto,
                         style: theme.textTheme.titleMedium?.copyWith(
-                          color: theme.colorScheme.onPrimary,
+                          color: theme.colorScheme.primary, // original: theme.colorScheme.onPrimary,
                         ),
                       ),
                       const SizedBox(height: 25),
                       CircleAvatar(
                         radius: 65,
-                        backgroundColor: theme.cardColor,
-                        child: Icon(
-                          Icons.person,
-                          size: 60,
-                          color: theme.iconTheme.color,
-                        ),
+                        backgroundColor: theme.colorScheme.primary, //original: theme.cardColor,
+                        backgroundImage: veterinario.fotoUrl.isNotEmpty
+                            ? NetworkImage(veterinario.fotoUrl)
+                            : null,
+                        child: veterinario.fotoUrl.isEmpty
+                            ? Icon(Icons.person, size: 60, color: theme.cardColor /*color: theme.iconTheme.color*/)
+                            : null,
                       ),
                       const SizedBox(height: 25),
                       Column(
                         children: <Widget>[
-                          _infoLinea(theme, Icons.phone, controller.telefono),
+                          _infoLinea(theme, Icons.phone, veterinario.telefono),
                           const SizedBox(height: 8),
-                          _infoLinea(theme, Icons.email, controller.correo),
+                          _infoLinea(theme, Icons.email, veterinario.correo),
                         ],
                       ),
                       const SizedBox(height: 30),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Información adicional',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.colorScheme.secondary,
-                            fontWeight: FontWeight.bold,
+
+                      // ✅ Mostrar disponibilidad primero
+                      if (excepcionActual != null) ...[
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Disponibilidad',
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: Colors.redAccent,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      ...controller.infoExtra.map(
-                        (item) =>
-                            InfoItem(icon: item['icon'], text: item['text']),
-                      ),
-                      const SizedBox(height: 25),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.redAccent.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.error_outline, color: Colors.redAccent),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  'No disponible por: ${excepcionActual.motivo}\n'
+                                  'Desde: ${DateFormat('dd/MM/yyyy HH:mm').format(excepcionActual.fechaInicio)}\n'
+                                  'Hasta: ${DateFormat('dd/MM/yyyy HH:mm').format(excepcionActual.fechaFin)}',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: Colors.redAccent,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                      ],
+
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -99,10 +139,10 @@ class ContactInfoScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.onPrimary.withOpacity(0.1),
+                          color: theme.colorScheme.primary.withOpacity(0.1),/*original: theme.colorScheme.onPrimary*/
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: HorarioTable(horarios: controller.horarios),
+                        child: HorarioTable(horarios: veterinario.horario),
                       ),
                       const SizedBox(height: 90),
                     ],
@@ -139,7 +179,7 @@ class ContactInfoScreen extends StatelessWidget {
   Widget _infoLinea(ThemeData theme, IconData icon, String text) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(icon, color: theme.colorScheme.secondary, size: 20),
+          Icon(icon, color: theme.colorScheme.primary, /*original: theme.colorScheme.secondary,*/ size: 20),
           const SizedBox(width: 6),
           Text(
             text,
@@ -150,34 +190,6 @@ class ContactInfoScreen extends StatelessWidget {
           ),
         ],
       );
-}
-
-class InfoItem extends StatelessWidget {
-  const InfoItem({super.key, required this.icon, required this.text});
-  final IconData icon;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: <Widget>[
-          Icon(icon, color: theme.iconTheme.color?.withOpacity(0.7)),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class HorarioTable extends StatelessWidget {
@@ -199,14 +211,14 @@ class HorarioTable extends StatelessWidget {
                     entry.key,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onPrimary,
+                      color: theme.colorScheme.primary, //original: theme.colorScheme.onPrimary,
                     ),
                   ),
                   Text(
                     entry.value,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onPrimary,
+                      color: theme.colorScheme.primary, // original: theme.colorScheme.onPrimary,
                     ),
                   ),
                 ],
@@ -217,3 +229,5 @@ class HorarioTable extends StatelessWidget {
     );
   }
 }
+
+
