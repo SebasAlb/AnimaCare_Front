@@ -1,21 +1,128 @@
+import 'package:flutter/material.dart';
+import 'package:animacare_front/models/veterinario.dart';
+import 'package:animacare_front/models/veterinario_horario.dart';
+import 'package:animacare_front/models/veterinario_excepcion.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_screen.dart';
 import 'package:animacare_front/presentation/screens/contacts/Contacto_Detalle/contact_info_screen.dart';
-import 'package:flutter/material.dart';
 
 class ContactsController {
-  final List<Map<String, String>> contactos = <Map<String, String>>[
-    <String, String>{'nombre': 'Dra. Lazo', 'estado': 'Disponible'},
-    <String, String>{'nombre': 'Dr. Mario Paz', 'estado': 'Vacaciones'},
-    <String, String>{'nombre': 'Dra. Lucía Andrade', 'estado': 'No disponible'},
-    <String, String>{'nombre': 'Dr. Esteban Ortega', 'estado': 'Disponible'},
+  final List<Veterinario> contactos = [
+    Veterinario(
+      id: '1',
+      nombre: 'Lucía',
+      apellido: 'Andrade',
+      cedulaProfesional: 'VET123456',
+      telefono: '+593 987 654 321',
+      correo: 'lucia@vetcare.ec',
+      rol: 'Consulta general',
+      fechaIngreso: DateTime(2015, 3, 10),
+      fotoUrl: '',
+      estado: 'Disponible',
+      horario: {
+        'Lunes': '08:00 - 16:00',
+        'Martes': '08:00 - 16:00',
+        'Miércoles': '10:00 - 20:00',
+        'Jueves': '08:00 - 16:00',
+        'Viernes': '08:00 - 16:00',
+        'Sábado': '09:00 - 13:00',
+        'Domingo': 'Cerrado',
+      },
+      horariosDetalle: [
+        VeterinarioHorario(veterinarioId: '1', diaSemana: 'Lunes', horaInicio: '08:00', horaFin: '16:00'),
+        VeterinarioHorario(veterinarioId: '1', diaSemana: 'Martes', horaInicio: '08:00', horaFin: '16:00'),
+        VeterinarioHorario(veterinarioId: '1', diaSemana: 'Miércoles', horaInicio: '10:00', horaFin: '20:00'),
+        VeterinarioHorario(veterinarioId: '1', diaSemana: 'Jueves', horaInicio: '08:00', horaFin: '16:00'),
+        VeterinarioHorario(veterinarioId: '1', diaSemana: 'Viernes', horaInicio: '08:00', horaFin: '16:00'),
+      ],
+    ),
+    Veterinario(
+      id: '2',
+      nombre: 'Mario',
+      apellido: 'Paz',
+      cedulaProfesional: 'VET987654',
+      telefono: '+593 999 888 777',
+      correo: 'mario@vetcare.ec',
+      rol: 'Cirujano',
+      fechaIngreso: DateTime(2018, 6, 5),
+      fotoUrl: '',
+      estado: 'Disponible',
+      horario: {
+        'Lunes': '08:00 - 14:00',
+        'Martes': '08:00 - 14:00',
+        'Miércoles': '08:00 - 14:00',
+        'Jueves': '08:00 - 14:00',
+        'Viernes': '08:00 - 14:00',
+        'Sábado': 'Cerrado',
+        'Domingo': 'Cerrado',
+      },
+      horariosDetalle: [
+        VeterinarioHorario(veterinarioId: '2', diaSemana: 'Lunes', horaInicio: '08:00', horaFin: '14:00'),
+        VeterinarioHorario(veterinarioId: '2', diaSemana: 'Martes', horaInicio: '08:00', horaFin: '14:00'),
+        VeterinarioHorario(veterinarioId: '2', diaSemana: 'Miércoles', horaInicio: '08:00', horaFin: '14:00'),
+        VeterinarioHorario(veterinarioId: '2', diaSemana: 'Jueves', horaInicio: '08:00', horaFin: '14:00'),
+        VeterinarioHorario(veterinarioId: '2', diaSemana: 'Viernes', horaInicio: '08:00', horaFin: '14:00'),
+      ],
+    ),
+    Veterinario(
+      id: '3',
+      nombre: 'Esteban',
+      apellido: 'Ortega',
+      cedulaProfesional: 'VET246810',
+      telefono: '0 111 223 344',
+      correo: 'esteban@vetcare.ec',
+      rol: 'Emergencias',
+      fechaIngreso: DateTime(2020, 1, 12),
+      fotoUrl: '',
+      estado: 'Disponible',
+      horario: {
+        'Lunes': '10:00 - 20:00',
+        'Martes': '10:00 - 18:00',
+        'Miércoles': '10:00 - 18:00',
+        'Jueves': '10:00 - 18:00',
+        'Viernes': '10:00 - 18:00',
+        'Sábado': 'Cerrado',
+        'Domingo': 'Cerrado',
+      },
+      horariosDetalle: [
+        VeterinarioHorario(veterinarioId: '3', diaSemana: 'Lunes', horaInicio: '10:00', horaFin: '18:00'),
+        VeterinarioHorario(veterinarioId: '3', diaSemana: 'Martes', horaInicio: '10:00', horaFin: '18:00'),
+        VeterinarioHorario(veterinarioId: '3', diaSemana: 'Miércoles', horaInicio: '10:00', horaFin: '18:00'),
+        VeterinarioHorario(veterinarioId: '3', diaSemana: 'Jueves', horaInicio: '10:00', horaFin: '18:00'),
+        VeterinarioHorario(veterinarioId: '3', diaSemana: 'Viernes', horaInicio: '10:00', horaFin: '18:00'),
+      ],
+    ),
   ];
 
-  void abrirDetalle(BuildContext context) {
+  /// Excepciones aplicables: se evalúan en tiempo real según fecha/hora actual
+  final List<VeterinarioExcepcion> excepciones = [
+    VeterinarioExcepcion(
+      veterinarioId: '2',
+      fechaInicio: DateTime.now().subtract(const Duration(days: 1)),
+      fechaFin: DateTime.now().add(const Duration(days: 4)),
+      motivo: 'Vacaciones',
+      disponible: false,
+    ),
+    VeterinarioExcepcion(
+      veterinarioId: '3',
+      fechaInicio: DateTime.now().subtract(const Duration(hours: 2)),
+      fechaFin: DateTime.now().add(const Duration(hours: 5)),
+      motivo: 'Congreso médico',
+      disponible: false,
+    ),
+  ];
+
+  void abrirDetalle(BuildContext context, Veterinario veterinario) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const ContactInfoScreen()),
+      MaterialPageRoute(
+        builder: (_) => ContactInfoScreen(
+          veterinario: veterinario,
+          excepciones: excepciones, // <-- Excepciones definidas en el controller
+        ),
+      ),
     );
   }
+
 
   void abrirAgendarCita(BuildContext context) {
     Navigator.push(
