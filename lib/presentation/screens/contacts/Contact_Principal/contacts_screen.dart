@@ -57,12 +57,15 @@ class ContactsScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => controller.abrirAgendarCita(context),
-        backgroundColor: theme.colorScheme.secondary,
-        icon: const Icon(Icons.event_available, color: Color(0xFF4B1B3F)),
-        label: const Text(
+        backgroundColor: theme.colorScheme.primary,
+        icon: Icon(
+          Icons.event_available,
+          color: theme.colorScheme.onPrimary,
+        ),
+        label: Text(
           'Agendar Cita',
           style: TextStyle(
-            color: Color(0xFF4B1B3F),
+            color: theme.colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -88,3 +91,4 @@ class ContactsScreen extends StatelessWidget {
     );
   }
 }
+
