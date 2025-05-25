@@ -30,3 +30,4 @@ class ContactInfoController {
     'Domingo': 'Cerrado',
   };
 }
+
