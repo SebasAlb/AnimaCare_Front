@@ -21,12 +21,12 @@ class ContactInfoScreen extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final now = DateTime.now();
 
-    final excepcionActual = excepciones.firstWhereOrNull(
+    final excepcionesRelevantes = excepciones.where(
       (e) =>
-          e.veterinarioId == veterinario.id &&
-          now.isAfter(e.fechaInicio) &&
-          now.isBefore(e.fechaFin),
-    );
+        e.veterinarioId == veterinario.id &&
+        e.fechaFin.isAfter(DateTime.now()),
+    ).toList();
+
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -87,43 +87,52 @@ class ContactInfoScreen extends StatelessWidget {
                       const SizedBox(height: 30),
 
                       // ✅ Mostrar disponibilidad primero
-                      if (excepcionActual != null) ...[
+                      if (excepcionesRelevantes.isNotEmpty) ...[
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            'Disponibilidad',
+                            'Próximas ausencias',
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Colors.redAccent,
+                              color: theme.colorScheme.primary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.redAccent.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.error_outline, color: Colors.redAccent),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  'No disponible por: ${excepcionActual.motivo}\n'
-                                  'Desde: ${DateFormat('dd/MM/yyyy HH:mm').format(excepcionActual.fechaInicio)}\n'
-                                  'Hasta: ${DateFormat('dd/MM/yyyy HH:mm').format(excepcionActual.fechaFin)}',
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.redAccent,
+                        ...excepcionesRelevantes.map((e) {
+                          final bool esHoy = DateTime.now().isAfter(e.fechaInicio) && DateTime.now().isBefore(e.fechaFin);
+                          final Color fondo = esHoy ? Colors.redAccent.withOpacity(0.1) : Colors.amber.withOpacity(0.15);
+                          final Color icono = esHoy ? Colors.redAccent : Colors.amber[700]!;
+                          final String textoEstado = esHoy ? 'No disponible por' : 'No estará disponible por';
+
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: fondo,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.warning_amber_rounded, color: icono),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    '$textoEstado: ${e.motivo}\n'
+                                    'Desde: ${DateFormat('dd/MM/yyyy HH:mm').format(e.fechaInicio)}\n'
+                                    'Hasta: ${DateFormat('dd/MM/yyyy HH:mm').format(e.fechaFin)}',
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: icono,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
+                              ],
+                            ),
+                          );
+                        }),
                         const SizedBox(height: 25),
                       ],
+
 
                       Align(
                         alignment: Alignment.centerLeft,
@@ -229,5 +238,8 @@ class HorarioTable extends StatelessWidget {
     );
   }
 }
+
+
+
 
 
