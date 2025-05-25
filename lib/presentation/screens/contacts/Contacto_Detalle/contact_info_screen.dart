@@ -53,7 +53,7 @@ class ContactInfoScreen extends StatelessWidget {
                       Text(
                         'Veterinario',
                         style: theme.textTheme.titleLarge?.copyWith(
-                          color: theme.colorScheme.secondary,
+                          color: theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
                         ),
@@ -139,7 +139,7 @@ class ContactInfoScreen extends StatelessWidget {
                         child: Text(
                           'Horario de atención',
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.colorScheme.secondary,
+                            color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -167,8 +167,8 @@ class ContactInfoScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.only(right: 16, bottom: 16),
           child: FloatingActionButton.extended(
-            backgroundColor: const Color(0xFFFFE066),
-            foregroundColor: const Color(0xFF4B1B3F),
+            backgroundColor: theme.colorScheme.secondary,
+            foregroundColor: theme.colorScheme.onPrimary,
             icon: const Icon(Icons.event_available),
             label: const Text('Agendar Cita'),
             onPressed: () {
@@ -238,6 +238,11 @@ class HorarioTable extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
 
 
 
