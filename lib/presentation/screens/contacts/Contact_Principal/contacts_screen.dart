@@ -21,9 +21,9 @@ class ContactsScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            const CustomHeader(petName: 'Gato 1'),
+            const CustomHeader(petName: 'Sebastian'),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: 20),
               child: Center(
                 child: Text(
                   'Contactos',
