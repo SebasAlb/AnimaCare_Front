@@ -184,9 +184,9 @@ class AgendarCitaController {
   void confirmarCita(BuildContext context) {
     if (camposObligatoriosLlenos) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Cita agendada exitosamente'),
-          backgroundColor: Color(0xFF4B1B3F),
+        SnackBar(
+          content: const Text('Cita agendada exitosamente'),
+          backgroundColor: Theme.of(context).colorScheme.primary, // usa el theme
         ),
       );
     } else {
@@ -226,22 +226,20 @@ class AgendarCitaController {
   }
 
   String? obtenerMotivoExcepcion(DateTime dia) {
-  final vet = contactosController.obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
-  if (vet == null) return null;
+    final vet = contactosController.obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
+    if (vet == null) return null;
 
-  final excepcion = contactosController.excepciones.firstWhereOrNull(
-    (e) =>
-        e.veterinarioId == vet.id &&
-        !e.disponible &&
-        dia.isAfter(e.fechaInicio.subtract(const Duration(days: 1))) &&
-        dia.isBefore(e.fechaFin.add(const Duration(days: 1))) &&
-        _cubreTodoElDia(e, dia), // ✅ VERIFICA si bloquea todo el día
-  );
+    final excepcion = contactosController.excepciones.firstWhereOrNull(
+      (e) =>
+          e.veterinarioId == vet.id &&
+          !e.disponible &&
+          dia.isAfter(e.fechaInicio.subtract(const Duration(days: 1))) &&
+          dia.isBefore(e.fechaFin.add(const Duration(days: 1))) &&
+          _cubreTodoElDia(e, dia), // ✅ VERIFICA si bloquea todo el día
+    );
 
-  return excepcion?.motivo;
-}
-
-
-
+    return excepcion?.motivo;
+  }
 
 }
+
