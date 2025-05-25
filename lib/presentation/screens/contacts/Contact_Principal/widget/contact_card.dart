@@ -53,9 +53,9 @@ class ContactCard extends StatelessWidget {
   Color _estadoColor(BuildContext context, String estado) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     if (estado == 'Disponible') {
-      return isDark ? const Color(0xFF2E7D32) : const Color(0xFF81C784); // Verde
+      return isDark ? const Color(0xFF81C784) : const Color(0xFF2E7D32); // Verde
     } else {
-      return isDark ? const Color(0xFF37474F) : const Color(0xFFB0BEC5); // Gris
+      return isDark ? const Color(0xFFB0BEC5) : const Color(0xFF37474F); // Gris 2
     }
   }
 
@@ -75,7 +75,7 @@ class ContactCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        color: theme.colorScheme.primary,
+        color: theme.cardColor, // anterior: theme.colorScheme.primary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         margin: const EdgeInsets.symmetric(vertical: 10),
         elevation: 3,
@@ -89,12 +89,12 @@ class ContactCard extends StatelessWidget {
                     width: 60,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: theme.cardColor,
+                      color: theme.colorScheme.primary, // anterior: theme.cardColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
                       Icons.person,
-                      color: theme.iconTheme.color,
+                      color: theme.colorScheme.onPrimary, // anterior: theme.iconTheme.color, 
                       size: 30,
                     ),
                   ),
@@ -106,21 +106,21 @@ class ContactCard extends StatelessWidget {
                         Text(
                           'Veterinario',
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.onPrimary,
+                            color: theme.colorScheme.primary, // Anterior: theme.colorScheme.onPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           veterinario.nombreCompleto,
                           style: theme.textTheme.titleMedium?.copyWith(
-                            color: theme.colorScheme.onPrimary,
+                            color: theme.colorScheme.primary, // Anterior: theme.colorScheme.onPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Icon(Icons.info_outline, color: theme.colorScheme.onPrimary),
+                  Icon(Icons.info_outline, color: theme.colorScheme.primary, /* Anterior: theme.colorScheme.onPrimary,*/),
                 ],
               ),
               const SizedBox(height: 10),
@@ -151,7 +151,7 @@ class ContactCard extends StatelessWidget {
                       Text(
                         horarioHoy,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onPrimary.withOpacity(0.6),
+                          color: theme.colorScheme.primary.withOpacity(0.6),  // Anterior: theme.colorScheme.onPrimary
                         ),
                       ),
                   ],
