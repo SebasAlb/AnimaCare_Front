@@ -2,7 +2,6 @@ import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_controller.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/widgets/calendario_bottom_sheet.dart';
 
 class AgendarCitaScreen extends StatefulWidget {
@@ -14,36 +13,54 @@ class AgendarCitaScreen extends StatefulWidget {
 
 class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
   final AgendarCitaController controller = AgendarCitaController();
+  final ScrollController _scrollController = ScrollController();
+  bool _prevCamposLlenos = false;
 
-  InputDecoration _inputDecoration(String label, ThemeData theme) =>
-      InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: theme.colorScheme.primary ), // Anterior: theme.colorScheme.onPrimary
-        filled: true,
-        fillColor: theme.colorScheme.surface,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+  @override
+  void initState() {
+    super.initState();
+    _prevCamposLlenos = controller.camposObligatoriosLlenos;
+  }
+
+
+  Widget _buildFieldLabel(String label, ThemeData theme) => Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
+        ),
       );
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final actualLleno = controller.camposObligatoriosLlenos;
+      if (!_prevCamposLlenos && actualLleno) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOut,
+        );
+      }
+      _prevCamposLlenos = actualLleno;
+    });
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: theme.scaffoldBackgroundColor, // anterior: theme.colorScheme.primary,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Stack(
           children: <Widget>[
             Column(
               children: <Widget>[
-                const CustomHeader(
-                  nameScreen: 'Agendar Cita',
-                  isSecondaryScreen: true,
-                ),
+                const CustomHeader(nameScreen: 'Agendar Cita', isSecondaryScreen: true),
                 Expanded(
                   child: ListView(
+                    controller: _scrollController,
                     padding: const EdgeInsets.all(20),
                     children: <Widget>[
                       Center(
@@ -57,166 +74,220 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      DropdownButtonFormField<String>(
+
+                      _buildFieldLabel('Mascota', theme),
+                      DropdownButtonFormField<String>( // Seleccionar Mascota
                         value: controller.mascotaSeleccionada,
-                        decoration: _inputDecoration('Mascota', theme),
-                        dropdownColor: theme.colorScheme.onPrimary, // anterior: theme.colorScheme.surface,
-                        iconEnabledColor: theme.iconTheme.color,
-                        style: TextStyle(color: theme.colorScheme.primary), // anterior: theme.colorScheme.onPrimary
-                        items: controller.mascotas
-                            .map(
-                              (String m) => DropdownMenuItem(
-                                value: m,
-                                child: Text(
-                                  m,
-                                  style: TextStyle(
-                                    color: theme.colorScheme.primary, // anterior: theme.colorScheme.onPrimary,
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (String? value) => setState(
-                          () => controller.mascotaSeleccionada = value,
+                        decoration: InputDecoration(
+                          hintText: 'Seleccione una mascota',
+                          filled: true,
+                          fillColor: theme.colorScheme.surface,
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          prefixIcon: Icon(Icons.pets, color: theme.colorScheme.primary), // ✅ Ícono añadido
                         ),
+                        dropdownColor: theme.colorScheme.surface,
+                        iconEnabledColor: theme.iconTheme.color,
+                        style: TextStyle(color: theme.colorScheme.primary),
+                        items: controller.mascotas
+                            .map((String m) => DropdownMenuItem(value: m, child: Text(m)))
+                            .toList(),
+                        onChanged: (String? value) => setState(() => controller.mascotaSeleccionada = value),
                       ),
                       const SizedBox(height: 14),
+
+                      _buildFieldLabel('Razón de la cita', theme),
                       DropdownButtonFormField<String>(
                         value: controller.razonSeleccionada,
-                        decoration: _inputDecoration('Razón de la cita', theme),
-                        dropdownColor: theme.colorScheme.onPrimary, // anterior: theme.colorScheme.surface,
-                        iconEnabledColor: theme.iconTheme.color,
-                        style: TextStyle(color: theme.colorScheme.onPrimary),
-                        items: controller.razones
-                            .map(
-                              (String r) => DropdownMenuItem(
-                                value: r,
-                                child: Text(
-                                  r,
-                                  style: TextStyle(
-                                    color: theme.colorScheme.primary, // anterior: theme.colorScheme.onPrimary,
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (String? value) => setState(
-                          () => controller.razonSeleccionada = value,
+                        decoration: InputDecoration(
+                          hintText: 'Seleccione una razón',
+                          filled: true,
+                          fillColor: theme.colorScheme.surface,
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          prefixIcon: Icon(Icons.medical_services, color: theme.colorScheme.primary), // ✅ Ícono añadido
                         ),
+                        dropdownColor: theme.colorScheme.surface,
+                        iconEnabledColor: theme.iconTheme.color,
+                        style: TextStyle(color: theme.colorScheme.primary),
+                        items: controller.razones
+                            .map((String r) => DropdownMenuItem(value: r, child: Text(r)))
+                            .toList(),
+                        onChanged: (String? value) => setState(() => controller.razonSeleccionada = value),
                       ),
                       const SizedBox(height: 14),
+
+                      _buildFieldLabel('Veterinario', theme),
                       DropdownButtonFormField<String>(
                         value: controller.veterinarioSeleccionado,
-                        decoration: _inputDecoration('Veterinario', theme),
-                        dropdownColor: theme.colorScheme.onPrimary, // anterior: theme.colorScheme.surface,
+                        decoration: InputDecoration(
+                          hintText: 'Seleccione un veterinario',
+                          filled: true,
+                          fillColor: theme.colorScheme.surface,
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          prefixIcon: Icon(Icons.person_outline, color: theme.colorScheme.primary),
+                        ),
+                        dropdownColor: theme.colorScheme.surface,
                         iconEnabledColor: theme.iconTheme.color,
-                        style: TextStyle(color: theme.colorScheme.onPrimary),
+                        style: TextStyle(color: theme.colorScheme.primary),
                         items: controller.veterinariosDisponibles
-                            .map(
-                              (String v) => DropdownMenuItem(
-                                value: v,
-                                child: Text(
-                                  v,
-                                  style: TextStyle(
-                                    color: theme.colorScheme.primary, // anterior: theme.colorScheme.onPrimary,
-                                  ),
-                                ),
-                              ),
-                            )
+                            .map((String v) => DropdownMenuItem(value: v, child: Text(v)))
                             .toList(),
                         onChanged: (String? value) {
                           setState(() {
                             controller.veterinarioSeleccionado = value;
-                            controller.fechaSeleccionada = null; // Reinicia la fecha
-                            controller.horaSeleccionada = null;  // Opcional: reinicia la hora también
+                            controller.fechaSeleccionada = null;
+                            controller.horaSeleccionada = null;
                           });
                         },
-
                       ),
-                      
                       if (controller.sePuedeMostrarFechaYHora) ...[
                         const SizedBox(height: 14),
-                        
-                        ListTile(
-                          onTap: () async {
-                            await showModalBottomSheet(
-                              context: context,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                              ),
-                              builder: (_) => CalendarioBottomSheet(
-                                fechaSeleccionada: controller.fechaSeleccionada,
-                                esNoLaboral: controller.diaNoLaboral,
-                                obtenerMotivoExcepcion: controller.obtenerMotivoExcepcion, // ✅ LLAMADA LIMPIA
-                                onFechaSeleccionada: (fecha) {
-                                  setState(() {
-                                    controller.fechaSeleccionada = fecha;
-                                  });
-                                },
-                              ),
-                            );
-                          },
-                          tileColor: theme.colorScheme.surface,
-                          shape: RoundedRectangleBorder(
+                        _buildFieldLabel('Fecha', theme),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: theme.dividerColor),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          title: Text(
-                            'Fecha',
-                            style: TextStyle(color: theme.colorScheme.primary),
-                          ),
-                          subtitle: Text(
-                            controller.fechaSeleccionada != null
-                                ? DateFormat('dd/MM/yyyy').format(controller.fechaSeleccionada!)
-                                : 'No seleccionada',
-                            style: TextStyle(
-                              color: theme.colorScheme.primary.withOpacity(0.7),
+                          child: ListTile(
+                            onTap: () async {
+                              await showModalBottomSheet(
+                                context: context,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                ),
+                                builder: (_) => CalendarioBottomSheet(
+                                  fechaSeleccionada: controller.fechaSeleccionada,
+                                  esNoLaboral: controller.diaNoLaboral,
+                                  obtenerMotivoExcepcion: controller.obtenerMotivoExcepcion,
+                                  onFechaSeleccionada: (fecha) {
+                                    setState(() {
+                                      controller.fechaSeleccionada = fecha;
+                                      controller.horaSeleccionada = null; // ✅ Reinicia la hora
+                                    });
+                                  },
+                                ),
+                              );
+                            },
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            leading: Icon(Icons.calendar_today, color: theme.colorScheme.primary), // ✅ Ícono alineado
+                            title: Text(
+                              controller.fechaSeleccionada != null
+                                  ? DateFormat('dd/MM/yyyy').format(controller.fechaSeleccionada!)
+                                  : 'Seleccione una fecha',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.primary.withOpacity(0.7),
+                              ),
                             ),
                           ),
-                          trailing: Icon(Icons.calendar_today, color: theme.iconTheme.color),
                         ),
-
-
-                        
                         const SizedBox(height: 14),
-                        ListTile(
-                          onTap: () async {
-                            await controller.mostrarSelectorHora(
-                              context,
-                              () => setState(() {}),
-                            );
-                          },
-                          tileColor: theme.colorScheme.surface,
-                          shape: RoundedRectangleBorder(
+
+                        _buildFieldLabel('Hora', theme),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: theme.dividerColor),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          title: Text(
-                            'Hora',
-                            style: TextStyle(color: theme.colorScheme.primary),
-                          ),
-                          subtitle: Text(
-                            controller.horaSeleccionada ?? 'No seleccionada',
-                            style: TextStyle(
-                              color: theme.colorScheme.primary.withOpacity(0.7),
+                          child: ListTile(
+                            onTap: () async {
+                              await controller.mostrarSelectorHora(
+                                context,
+                                () => setState(() {}),
+                              );
+                            },
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            leading: Icon(Icons.access_time, color: theme.colorScheme.primary), // ✅ Ícono a la izquierda
+                            title: Text(
+                              controller.horaSeleccionada ?? 'Seleccione una hora',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.primary.withOpacity(0.7),
+                              ),
                             ),
                           ),
-                          trailing: Icon(Icons.access_time, color: theme.iconTheme.color),
                         ),
                       ],
-
-                      
                       const SizedBox(height: 14),
-                      TextField(
-                        controller: controller.notasController,
-                        maxLines: 3,
-                        style: TextStyle(color: theme.colorScheme.onPrimary),
-                        decoration: _inputDecoration(
-                          'Notas adicionales (opcional)',
-                          theme,
-                        ),
+
+                      _buildFieldLabel('Notas adicionales (opcional)', theme),
+                      ValueListenableBuilder<TextEditingValue>(
+                        valueListenable: controller.notasController,
+                        builder: (context, value, _) {
+                          final words = value.text.trim().isEmpty
+                              ? <String>[]
+                              : value.text.trim().split(RegExp(r'\s+'));
+
+                          final wordCount = words.length;
+                          final bool enLimite = wordCount == 20;
+                          final bool excedido = wordCount > 20;
+
+                          // ✅ Aplicar el límite solo si lo supera
+                          if (excedido) {
+                            final limitado = words.sublist(0, 20).join(' ');
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              controller.notasController.text = limitado;
+                              controller.notasController.selection =
+                                  TextSelection.collapsed(offset: limitado.length);
+                            });
+                          }
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 40), // deja espacio final para que no tape el teclado
+                            child: Stack(
+                              children: [
+                                TextField(
+                                  controller: controller.notasController,
+                                  maxLines: 3,
+                                  style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary),
+                                  decoration: InputDecoration(
+                                    hintText: 'Ingrese detalles adicionales si es necesario',
+                                    hintStyle: TextStyle(color: theme.hintColor),
+                                    filled: true,
+                                    fillColor: theme.colorScheme.surface,
+                                    prefixIcon: Icon(Icons.notes, color: theme.colorScheme.primary),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    contentPadding:
+                                        const EdgeInsets.fromLTRB(12, 16, 12, 48), // más espacio abajo
+                                  ),
+                                ),
+                                // ✅ Contador fijo
+                                Positioned(
+                                  bottom: 8,
+                                  right: 12,
+                                  child: Text(
+                                    '$wordCount / 20 palabras',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: enLimite ? Colors.redAccent : theme.colorScheme.primary,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                // ✅ Mensaje de advertencia solo si está exactamente en 20 palabras
+                                if (enLimite)
+                                  Positioned(
+                                    bottom: -18,
+                                    left: 4,
+                                    child: Text(
+                                      'Límite de 20 palabras alcanzado.',
+                                      style: const TextStyle(
+                                        color: Colors.redAccent,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                      const SizedBox(height: 30),
+
+
+
                       if (controller.camposObligatoriosLlenos)
                         ElevatedButton.icon(
                           onPressed: () => controller.confirmarCita(context),
@@ -230,7 +301,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                           ),
                           icon: const Icon(Icons.check),
                           label: const Text('Confirmar cita'),
-                        ), 
+                        ),
                     ],
                   ),
                 ),
@@ -241,6 +312,4 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
       ),
     );
   }
-  
-
 }
