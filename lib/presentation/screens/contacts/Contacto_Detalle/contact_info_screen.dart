@@ -4,6 +4,7 @@ import 'package:animacare_front/models/veterinario_excepcion.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:intl/intl.dart';
 import 'package:animacare_front/presentation/components/list_extensions.dart';
+import 'package:flutter/services.dart';
 
 class ContactInfoScreen extends StatelessWidget {
   final Veterinario veterinario;
@@ -92,8 +93,8 @@ class ContactInfoScreen extends StatelessWidget {
                       const SizedBox(height: 8),
                       ...excepcionesRelevantes.map((e) {
                         final bool esHoy = DateTime.now().isAfter(e.fechaInicio) && DateTime.now().isBefore(e.fechaFin);
-                        final Color fondo = esHoy ? Colors.redAccent.withOpacity(0.1) : Colors.amber.withOpacity(0.15);
-                        final Color icono = esHoy ? Colors.redAccent : Colors.amber[700]!;
+                        final Color fondo = esHoy ? const Color.fromARGB(255, 218, 71, 71) : Colors.amber.withOpacity(0.15);
+                        final Color icono = esHoy ? const Color.fromARGB(255, 255, 255, 255) : Colors.amber[700]!;
                         final String textoEstado = esHoy ? 'No disponible por' : 'No estará disponible por';
 
                         return Container(
@@ -137,7 +138,7 @@ class ContactInfoScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: HorarioTable(horarios: veterinario.horario),
@@ -157,20 +158,30 @@ class ContactInfoScreen extends StatelessWidget {
     );
   }
 
-  Widget _infoLinea(ThemeData theme, IconData icon, String text) => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Icon(icon, color: theme.colorScheme.primary, /*original: theme.colorScheme.secondary,*/ size: 20),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.secondary,
-              decoration: TextDecoration.underline,
+  Widget _infoLinea(ThemeData theme, IconData icon, String text) => Builder(
+    builder: (BuildContext context) {
+      return InkWell(
+        onTap: () async {
+          await Clipboard.setData(ClipboardData(text: text));
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(icon, color: theme.colorScheme.primary, size: 20),
+            const SizedBox(width: 6),
+            Text(
+              text,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.primary,
+                decoration: TextDecoration.underline,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
+    },
+  );
+
 }
 
 class HorarioTable extends StatelessWidget {
@@ -192,14 +203,14 @@ class HorarioTable extends StatelessWidget {
                     entry.key,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.primary, //original: theme.colorScheme.onPrimary,
+                      color: theme.colorScheme.onPrimary, //original: theme.colorScheme.onPrimary,
                     ),
                   ),
                   Text(
                     entry.value,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.primary, // original: theme.colorScheme.onPrimary,
+                      color: theme.colorScheme.onPrimary, // original: theme.colorScheme.onPrimary,
                     ),
                   ),
                 ],
@@ -210,6 +221,13 @@ class HorarioTable extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
+
 
 
 
