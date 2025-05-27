@@ -20,94 +20,105 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: SafeArea(
-        child: ListView(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Center(
-                child: Text(
-                  'Ajustes',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacementNamed(context, AppRoutes.homeOwner);
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: SafeArea(
+          child: ListView(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Center(
+                  child: Text(
+                    'Ajustes',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-            CircleAvatar(
-              radius: 45,
-              backgroundColor: theme.cardColor,
-              child: Icon(Icons.person, size: 50, color: theme.iconTheme.color),
-            ),
-            const SizedBox(height: 8),
-            Center(
-              child: Text(
-                'Mr. Del Conde Mayhoccer',
-                style: theme.textTheme.bodyMedium,
+              CircleAvatar(
+                radius: 45,
+                backgroundColor: theme.cardColor,
+                child: Icon(Icons.person, size: 50, color: theme.iconTheme.color),
               ),
-            ),
-            const SizedBox(height: 20),
-            _buildSectionTitle('Mi cuenta', theme),
-            _buildSettingCard(
-              context,
-              Icons.person,
-              'Mi perfil',
-              controller,
-              theme,
-            ),
-            _buildSectionTitle('Preferencias', theme),
-            _buildThemeSwitchCard(context, theme),
-            _buildSectionTitle('Sesión', theme),
-            _buildSettingCard(
-              context,
-              Icons.logout,
-              'Cerrar sesión',
-              controller,
-              theme,
-            ),
-            const SizedBox(height: 20),
-          ],
+              const SizedBox(height: 8),
+              Center(
+                child: Text(
+                  'Mr. Del Conde Mayhoccer',
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ),
+              const SizedBox(height: 20),
+              _buildSectionTitle('Mi cuenta', theme),
+              _buildSettingCard(
+                context,
+                Icons.person,
+                'Mi perfil',
+                controller,
+                theme,
+              ),
+              _buildSectionTitle('Preferencias', theme),
+              _buildThemeSwitchCard(context, theme),
+              _buildSectionTitle('Sesión', theme),
+              _buildSettingCard(
+                context,
+                Icons.logout,
+                'Cerrar sesión',
+                controller,
+                theme,
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: 3,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, AppRoutes.homeOwner);
-              break;
-            case 1:
-              Navigator.pushNamed(context, AppRoutes.contactsP);
-              break;
-            case 2:
-              Navigator.pushNamed(context, AppRoutes.calendar);
-              break;
-            case 3:
-              break;
-          }
-        },
+        bottomNavigationBar: CustomNavBar(
+          currentIndex: 3,
+          onTap: (index) {
+            if (index != 3) {
+              Navigator.pushReplacementNamed(
+                context,
+                _getRouteForIndex(index),
+              );
+            }
+          },
+        ),
       ),
     );
   }
 
+  String _getRouteForIndex(int index) {
+    switch (index) {
+      case 0:
+        return AppRoutes.homeOwner;
+      case 1:
+        return AppRoutes.contactsP;
+      case 2:
+        return AppRoutes.calendar;
+      default:
+        return AppRoutes.settingsP;
+    }
+  }
+
   Widget _buildSectionTitle(String title, ThemeData theme) => Padding(
-    padding: const EdgeInsets.only(left: 20, top: 18, bottom: 8),
-    child: Text(
-      title,
-      style:
-      theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
-    ),
-  );
+        padding: const EdgeInsets.only(left: 20, top: 18, bottom: 8),
+        child: Text(
+          title,
+          style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+        ),
+      );
 
   Widget _buildSettingCard(
-      BuildContext context,
-      IconData icon,
-      String title,
-      ConfPrincipalController controller,
-      ThemeData theme,
-      ) =>
+    BuildContext context,
+    IconData icon,
+    String title,
+    ConfPrincipalController controller,
+    ThemeData theme,
+  ) =>
       Card(
         color: theme.cardColor,
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
@@ -187,12 +198,10 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
     overlay.insert(overlayEntry);
     controller.forward();
 
-    // Solo después que termina la animación hacemos el cambio de tema
     controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         Get.find<ThemeController>().toggleTheme(isDark);
 
-        // Esperamos un pequeño delay antes de quitar el overlay
         Future.delayed(const Duration(milliseconds: 150), () {
           overlayEntry.remove();
           controller.dispose();
@@ -201,3 +210,4 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
     });
   }
 }
+
