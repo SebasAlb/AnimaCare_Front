@@ -46,7 +46,7 @@ class LoginController extends GetxController {
     Get.snackbar(
       title,
       message.replaceAll('Exception: ', ''),
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: (isError ? SnackPosition.BOTTOM : SnackPosition.TOP),
       colorText: Colors.black,
       icon: Icon(isError ? Icons.error : Icons.check_circle, color: isError ? Colors.red : Colors.green),
     );

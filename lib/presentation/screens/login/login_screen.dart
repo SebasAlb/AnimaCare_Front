@@ -57,19 +57,10 @@ class LoginScreen extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Image.network(
-                      'https://placeholder.net/300x200',
+                      'https://placedog.net/300/200',
                       height: size.height * 0.2,
                       width: size.width * 0.4,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        height: size.height * 0.2,
-                        width: size.width * 0.4,
-                        color: theme.colorScheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.image_not_supported,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
                     ),
                   ),
                   const SizedBox(height: 30),

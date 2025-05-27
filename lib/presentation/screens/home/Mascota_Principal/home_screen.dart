@@ -6,6 +6,8 @@ import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/presentation/screens/home/Mascota_Principal/home_controller.dart';
 import 'package:animacare_front/presentation/screens/home/Mascota_Principal/widgets/pet_card.dart';
+import 'package:animacare_front/presentation/components/exit_dialog.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -13,82 +15,93 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-
-    return ChangeNotifierProvider(
-      create: (_) {
-        final HomeController controller = HomeController();
-        controller
-            .cargarMascotasIniciales(); // Datos quemados, reemplazables por DB
-        return controller;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          final bool shouldExit = await ExitDialog.show();
+          if (shouldExit) {
+            Get.back();
+            // O quizás SystemNavigator.pop();
+          }
+        }
       },
-      child: Consumer<HomeController>(
-        builder: (context, controller, _) => Scaffold(
-          resizeToAvoidBottomInset: true,
-            backgroundColor: theme.scaffoldBackgroundColor,
-            body: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const CustomHeader(petName: 'Sebastián'),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12,),
-                    child: Text(
-                      'Mascotas ',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: theme.colorScheme.primary,
-                        letterSpacing: 1.2,
+      child: ChangeNotifierProvider(
+        create: (_) {
+          final HomeController controller = HomeController();
+          controller
+              .cargarMascotasIniciales(); // Datos quemados, reemplazables por DB
+          return controller;
+        },
+        child: Consumer<HomeController>(
+          builder: (context, controller, _) => Scaffold(
+            resizeToAvoidBottomInset: true,
+              backgroundColor: theme.scaffoldBackgroundColor,
+              body: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const CustomHeader(petName: 'Sebastián'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12,),
+                      child: Text(
+                        'Mascotas ',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: theme.colorScheme.primary,
+                          letterSpacing: 1.2,
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: GridView.count(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        children: controller.mascotas
-                            .map((Mascota m) => PetCard(mascota: m))
-                            .toList(),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          children: controller.mascotas
+                              .map((Mascota m) => PetCard(mascota: m))
+                              .toList(),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            floatingActionButton: FloatingActionButton.extended(
-              onPressed: () => controller.onAgregarMascota(context),
-              backgroundColor: theme.colorScheme.primary,
-              icon: Icon(Icons.add, color: theme.colorScheme.onPrimary),
-              label: Text(
-                'Agregar mascota',
-                style: TextStyle(
-                  color: theme.colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
+                  ],
                 ),
               ),
+              floatingActionButton: FloatingActionButton.extended(
+                onPressed: () => controller.onAgregarMascota(context),
+                backgroundColor: theme.colorScheme.primary,
+                icon: Icon(Icons.add, color: theme.colorScheme.onPrimary),
+                label: Text(
+                  'Agregar mascota',
+                  style: TextStyle(
+                    color: theme.colorScheme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              bottomNavigationBar: CustomNavBar(
+                currentIndex: 0,
+                onTap: (int index) {
+                  switch (index) {
+                    case 0:
+                      break;
+                    case 1:
+                      Navigator.pushNamed(context, AppRoutes.contactsP);
+                      break;
+                    case 2:
+                      Navigator.pushNamed(context, AppRoutes.calendar);
+                      break;
+                    case 3:
+                      Navigator.pushNamed(context, AppRoutes.settingsP);
+                      break;
+                  }
+                },
+              ),
             ),
-            bottomNavigationBar: CustomNavBar(
-              currentIndex: 0,
-              onTap: (int index) {
-                switch (index) {
-                  case 0:
-                    break;
-                  case 1:
-                    Navigator.pushNamed(context, AppRoutes.contactsP);
-                    break;
-                  case 2:
-                    Navigator.pushNamed(context, AppRoutes.calendar);
-                    break;
-                  case 3:
-                    Navigator.pushNamed(context, AppRoutes.settingsP);
-                    break;
-                }
-              },
-            ),
-          ),
+        ),
       ),
     );
   }
