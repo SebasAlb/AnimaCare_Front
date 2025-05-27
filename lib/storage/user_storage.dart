@@ -14,6 +14,11 @@ class UserStorage {
     return data != null ? Dueno.fromJson(Map<String, dynamic>.from(data)) : null;
   }
 
+  static void updateUser(Dueno updatedUser) {
+    // Reescribe todos los campos actualizados
+    _box.write(_key, updatedUser.toJson());
+  }
+
   static void clearUser() {
     _box.remove(_key);
   }

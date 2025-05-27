@@ -3,24 +3,24 @@ class Dueno {
   String nombre;
   String apellido;
   String cedula;
-  String telefono;
+  String? telefono;
   String correo;
-  String ciudad;
-  String direccion;
+  String? ciudad;
+  String? direccion;
   String contrasena;
-  String fotoUrl;
+  String? fotoUrl;
 
   Dueno({
     required this.id,
     required this.nombre,
     required this.apellido,
     required this.cedula,
-    required this.telefono,
+    this.telefono,
     required this.correo,
-    required this.ciudad,
-    required this.direccion,
+    this.ciudad,
+    this.direccion,
     required this.contrasena,
-    required this.fotoUrl,
+    this.fotoUrl,
   });
 
   factory Dueno.fromJson(Map<String, dynamic> json) => Dueno(
@@ -33,7 +33,7 @@ class Dueno {
     ciudad: json['ciudad'],
     direccion: json['direccion'],
     contrasena: json['contrasena'],
-    fotoUrl: json['foto_url'] ?? '', // CORREGIDO
+    fotoUrl: json['foto_url'],
   );
 
   Map<String, dynamic> toJson() => {
@@ -46,6 +46,6 @@ class Dueno {
     'ciudad': ciudad,
     'direccion': direccion,
     'contrasena': contrasena,
-    'foto_url': fotoUrl, // CORREGIDO
+    'foto_url': fotoUrl,
   };
 }

@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'package:animacare_front/services/owner_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:animacare_front/storage/user_storage.dart';
 import 'package:animacare_front/models/dueno.dart';
+import 'package:dio/dio.dart' as dio;
+
 
 class EditarPerfilController extends GetxController {
   final TextEditingController nombreController = TextEditingController();
@@ -17,6 +20,9 @@ class EditarPerfilController extends GetxController {
   final Rxn<File> selectedImage = Rxn<File>();
   String? fotoUrl;
 
+  static const String cloudName = 'debn6u09z';
+  static const String uploadPreset = 'ml_default';
+
   @override
   void onInit() {
     super.onInit();
@@ -25,10 +31,10 @@ class EditarPerfilController extends GetxController {
       nombreController.text = user.nombre;
       apellidoController.text = user.apellido;
       cedulaController.text = user.cedula;
-      telefonoController.text = user.telefono;
+      telefonoController.text = user.telefono!;
       correoController.text = user.correo;
-      ciudadController.text = user.ciudad;
-      direccionController.text = user.direccion;
+      ciudadController.text = user.ciudad!;
+      direccionController.text = user.direccion!;
       fotoUrl = user.fotoUrl;
     }
   }
@@ -41,7 +47,26 @@ class EditarPerfilController extends GetxController {
     }
   }
 
-  void onGuardar() {
+  Future<String?> uploadToCloudinary(File file) async {
+    final dioClient = dio.Dio();
+    final formData = dio.FormData.fromMap({
+      'file': await dio.MultipartFile.fromFile(file.path),
+      'upload_preset': uploadPreset,
+    });
+
+    try {
+      final response = await dioClient.post(
+        'https://api.cloudinary.com/v1_1/$cloudName/image/upload',
+        data: formData,
+      );
+      return response.data['secure_url'];
+    } catch (e) {
+      Get.snackbar('Error', 'No se pudo subir la imagen a Cloudinary');
+      return null;
+    }
+  }
+
+  void onGuardar() async {
     if (nombreController.text.isEmpty || correoController.text.isEmpty) {
       Get.snackbar(
         'Campos requeridos',
@@ -53,16 +78,48 @@ class EditarPerfilController extends GetxController {
       return;
     }
 
-    // Simular llamada al API
-    Future.delayed(const Duration(seconds: 1), () {
+    String? imageUrl = fotoUrl;
+    if (selectedImage.value != null) {
+      imageUrl = await uploadToCloudinary(selectedImage.value!);
+    }
+
+    final Dueno updatedUser = Dueno(
+      id: UserStorage.getUser()!.id,
+      nombre: nombreController.text.trim(),
+      apellido: apellidoController.text.trim(),
+      cedula: cedulaController.text.trim(),
+      telefono: telefonoController.text.trim(),
+      correo: correoController.text.trim(),
+      ciudad: ciudadController.text.trim(),
+      direccion: direccionController.text.trim(),
+      contrasena: UserStorage.getUser()!.contrasena,
+      fotoUrl: imageUrl ?? '',
+    );
+
+    try {
+      final Dueno? response = await OwnerService().actualizarDueno(updatedUser);
+
+      if (response != null) {
+        UserStorage.updateUser(response);
+        Get.snackbar(
+          'Perfil actualizado',
+          'Tus datos se guardaron correctamente.',
+          backgroundColor: Colors.white,
+          colorText: Colors.black,
+          icon: const Icon(Icons.check_circle, color: Colors.green),
+        );
+        UserStorage.updateUser(updatedUser);
+      } else {
+        throw Exception('Respuesta nula');
+      }
+    } catch (e) {
       Get.snackbar(
-        'Perfil actualizado',
-        'Tus datos se guardaron correctamente.',
+        'Error',
+        'Error al actualizar perfil: ${e.toString()}',
         backgroundColor: Colors.white,
-        colorText: Colors.black,
-        icon: const Icon(Icons.check_circle, color: Colors.green),
+        colorText: Colors.red,
       );
-    });
+    }
   }
 
   void abrirCambiarContrasena(BuildContext context) {
