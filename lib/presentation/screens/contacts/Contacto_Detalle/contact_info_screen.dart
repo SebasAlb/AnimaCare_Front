@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:animacare_front/models/veterinario.dart';
 import 'package:animacare_front/models/veterinario_excepcion.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
-import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:animacare_front/presentation/components/list_extensions.dart';
 
@@ -162,26 +161,8 @@ class ContactInfoScreen extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: Align(
-        alignment: Alignment.bottomRight,
-        child: Padding(
-          padding: const EdgeInsets.only(right: 16, bottom: 16),
-          child: FloatingActionButton.extended(
-            backgroundColor: theme.colorScheme.secondary,
-            foregroundColor: theme.colorScheme.onPrimary,
-            icon: const Icon(Icons.event_available),
-            label: const Text('Agendar Cita'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const AgendarCitaScreen(),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
+      
+
     );
   }
 
@@ -238,8 +219,6 @@ class HorarioTable extends StatelessWidget {
     );
   }
 }
-
-
 
 
 
