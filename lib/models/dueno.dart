@@ -33,7 +33,7 @@ class Dueno {
     ciudad: json['ciudad'],
     direccion: json['direccion'],
     contrasena: json['contrasena'],
-    fotoUrl: json['fotoUrl'],
+    fotoUrl: json['foto_url'] ?? '', // CORREGIDO
   );
 
   Map<String, dynamic> toJson() => {
@@ -46,6 +46,6 @@ class Dueno {
     'ciudad': ciudad,
     'direccion': direccion,
     'contrasena': contrasena,
-    'fotoUrl': fotoUrl,
+    'foto_url': fotoUrl, // CORREGIDO
   };
 }

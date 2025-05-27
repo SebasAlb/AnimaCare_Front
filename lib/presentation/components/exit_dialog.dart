@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Importa esto para cerrar la app
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class ExitDialog {
   static Future<bool> show() async =>
       await Get.dialog(
         AlertDialog(
-          title: const Text('¿Salir de la aplicación?'),
-          content: const Text('¿Estás seguro que deseas salir?'),
+          title: const Text('¿Salir de la aplicación?', style: TextStyle(color: Colors.black),),
+          content: const Text('¿Estás seguro que deseas salir?', style: TextStyle(color: Colors.black)),
           backgroundColor: Colors.white,
           actions: <Widget>[
             TextButton(

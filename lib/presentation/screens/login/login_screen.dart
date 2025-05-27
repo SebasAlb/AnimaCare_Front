@@ -18,9 +18,7 @@ class LoginScreen extends StatelessWidget {
         if (!didPop) {
           final bool shouldExit = await ExitDialog.show();
           if (shouldExit) {
-            // Si decides salir, puedes cerrar la app o ir a una pantalla anterior
-            // Depende de tu flujo de salida. Get.back() podría no funcionar aquí si es la primera pantalla.
-            // exit(0); // Considera usar esto o un plugin si Get.back no funciona como esperas en Android nativo
+            Get.back();
             // O quizás SystemNavigator.pop();
           }
         }
@@ -59,7 +57,7 @@ class LoginScreen extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Image.network(
-                      'https://via.placeholder.com/300x200',
+                      'https://placeholder.net/300x200',
                       height: size.height * 0.2,
                       width: size.width * 0.4,
                       fit: BoxFit.cover,

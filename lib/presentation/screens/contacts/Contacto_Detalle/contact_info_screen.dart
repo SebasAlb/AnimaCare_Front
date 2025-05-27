@@ -30,7 +30,7 @@ class ContactInfoScreen extends StatelessWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: theme.cardColor, //original: colorScheme.primary
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: <Widget>[

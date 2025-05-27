@@ -1,6 +1,7 @@
 import 'package:animacare_front/presentation/theme/theme_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:animacare_front/storage/user_storage.dart';
 
 class ConfPrincipalController extends GetxController {
   void onTapSetting(BuildContext context, String title) {
@@ -27,6 +28,7 @@ class ConfPrincipalController extends GetxController {
           // final _storage = GetStorage();
           // _storage.write('isDarkMode', false);
         }
+        UserStorage.clearUser();
         Get.offAllNamed('/login');
         break;
       case 'Notificaciones':

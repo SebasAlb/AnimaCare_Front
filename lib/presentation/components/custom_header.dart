@@ -7,12 +7,14 @@ class CustomHeader extends StatefulWidget {
     this.nameScreen = '',
     this.isSecondaryScreen = false,
     this.onBack,
+    this.userImageUrl,
   });
 
   final String petName;
   final String nameScreen;
   final bool isSecondaryScreen;
   final VoidCallback? onBack;
+  final String? userImageUrl;
 
   @override
   State<CustomHeader> createState() => _CustomHeaderState();
@@ -178,7 +180,20 @@ class _CustomHeaderState extends State<CustomHeader> {
         children: <Widget>[
           Row(
             children: <Widget>[
-              const CircleAvatar(radius: 20),
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.white24, // Color de fondo si no hay imagen
+              backgroundImage: widget.userImageUrl != null && widget.userImageUrl!.isNotEmpty
+                ? NetworkImage(widget.userImageUrl!) // Muestra la imagen del usuario si está disponible
+                : null, // No hay imagen de fondo si no hay URL
+              child: widget.userImageUrl == null || widget.userImageUrl!.isEmpty
+                ? const Icon(
+                  Icons.person, // Ícono de persona por defecto
+                  color: Colors.white,
+                  size: 24, // Ajusta el tamaño según sea necesario
+                )
+                : null, // No muestra el ícono si hay una imagen
+            ),
               const SizedBox(width: 10),
               Text(
                 widget.petName,

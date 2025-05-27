@@ -1,41 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:animacare_front/services/auth_service.dart';
+import 'package:animacare_front/models/dueno.dart';
+import 'package:animacare_front/storage/user_storage.dart';
 
 class LoginController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  void login() {
-    final String email = emailController.text.trim();
+  final AuthService _authService = AuthService();
+
+  void login() async {
+    final String correo = emailController.text.trim();
     final String password = passwordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Por favor, completa todos los campos.',
-        snackPosition: SnackPosition.BOTTOM,
-        colorText: Colors.black,
-        borderRadius: 12,
-        icon: const Icon(Icons.error, color: Colors.red),
-        isDismissible: true,
-      );
-
+    if (correo.isEmpty || password.isEmpty) {
+      _showSnackbar('Error', 'Por favor, completa todos los campos.', isError: true);
       return;
     }
 
-    Future.delayed(Duration.zero, () {
-      Get.snackbar(
-        'Éxito',
-        'Bienvenido $email',
-        snackPosition: SnackPosition.TOP,
-        colorText: Colors.black,
-        borderRadius: 12,
-        icon: const Icon(Icons.check_circle, color: Colors.green),
-        isDismissible: true,
-      );
-      resetFields();
-      Get.offAllNamed('/homeowner');
-    });
+    try {
+      final Dueno? user = await _authService.login(correo, password);
+      if (user != null) {
+        UserStorage.saveUser(user);
+        _showSnackbar('Éxito', 'Bienvenido ${user.nombre} ${user.apellido}');
+        resetFields();
+        Get.offAllNamed('/homeowner');
+      }
+    } catch (e) {
+      _showSnackbar('Error', e.toString(), isError: true);
+    }
   }
 
   void goToRegister() {
@@ -46,5 +40,15 @@ class LoginController extends GetxController {
   void resetFields() {
     emailController.clear();
     passwordController.clear();
+  }
+
+  void _showSnackbar(String title, String message, {bool isError = false}) {
+    Get.snackbar(
+      title,
+      message.replaceAll('Exception: ', ''),
+      snackPosition: SnackPosition.BOTTOM,
+      colorText: Colors.black,
+      icon: Icon(isError ? Icons.error : Icons.check_circle, color: isError ? Colors.red : Colors.green),
+    );
   }
 }

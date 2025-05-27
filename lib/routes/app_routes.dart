@@ -14,8 +14,11 @@ import 'package:animacare_front/presentation/screens/settings/Conf_Principal/con
 import 'package:animacare_front/presentation/screens/settings/Editar_Perfil/editar_perfil_screen.dart';
 import 'package:animacare_front/presentation/screens/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:animacare_front/presentation/screens/splash_screen.dart';
 
 class AppRoutes {
+  static const String splash = '/';
+
   static const String login = '/login';
   static const String signup = '/signup';
 
@@ -37,6 +40,9 @@ class AppRoutes {
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case splash:
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
+
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case signup:
