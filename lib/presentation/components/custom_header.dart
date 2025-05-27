@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:animacare_front/storage/user_storage.dart';
+import 'package:animacare_front/models/dueno.dart';
 
 class CustomHeader extends StatefulWidget {
   const CustomHeader({
@@ -7,39 +9,46 @@ class CustomHeader extends StatefulWidget {
     this.nameScreen = '',
     this.isSecondaryScreen = false,
     this.onBack,
-    this.userImageUrl,
+    this.mostrarMascota = false,
   });
 
   final String petName;
   final String nameScreen;
   final bool isSecondaryScreen;
   final VoidCallback? onBack;
-  final String? userImageUrl;
+  final bool mostrarMascota;
 
   @override
   State<CustomHeader> createState() => _CustomHeaderState();
 }
 
 class _CustomHeaderState extends State<CustomHeader> {
+  late final Dueno? dueno;
   bool notificacionesRevisadas = false;
 
-  final List<Map<String, String>> notificaciones = <Map<String, String>>[
-    <String, String>{
+  @override
+  void initState() {
+    super.initState();
+    dueno = UserStorage.getUser();
+  }
+
+  final List<Map<String, String>> notificaciones = [
+    {
       'hora': '09:00 AM',
       'descripcion': 'Cita médica para Luna',
       'veterinario': 'Dr. Pérez',
     },
-    <String, String>{
+    {
       'hora': '10:45 AM',
       'descripcion': 'Vacuna antirrábica para Max',
       'veterinario': 'Dra. López',
     },
-    <String, String>{
+    {
       'hora': '03:15 PM',
       'descripcion': 'Desparasitación programada para Coco',
       'veterinario': 'Dr. Gómez',
     },
-    <String, String>{
+    {
       'hora': '05:00 PM',
       'descripcion': 'Control postoperatorio para Rocky',
       'veterinario': 'Dra. Herrera',
@@ -61,9 +70,9 @@ class _CustomHeaderState extends State<CustomHeader> {
           padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
+            children: [
               Row(
-                children: <Widget>[
+                children: [
                   Expanded(
                     child: Text(
                       'Notificaciones',
@@ -76,7 +85,7 @@ class _CustomHeaderState extends State<CustomHeader> {
                 ],
               ),
               const SizedBox(height: 10),
-              for (final Map<String, String> notif in notificaciones)
+              for (final notif in notificaciones)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   child: _notificacionCard(notif, theme),
@@ -94,39 +103,23 @@ class _CustomHeaderState extends State<CustomHeader> {
         decoration: BoxDecoration(
           color: theme.cardColor,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: const <BoxShadow>[
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 6,
-              offset: Offset(0, 2),
-            ),
-          ],
+          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
         ),
         child: Row(
-          children: <Widget>[
-            Icon(
-              Icons.notifications_active,
-              color: theme.colorScheme.secondary,
-            ),
+          children: [
+            Icon(Icons.notifications_active, color: theme.colorScheme.secondary),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    notif['descripcion']!,
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w500),
-                  ),
+                children: [
+                  Text(notif['descripcion']!, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
                   const SizedBox(height: 4),
                   Row(
-                    children: <Widget>[
+                    children: [
                       Text(notif['hora']!, style: theme.textTheme.bodySmall),
                       const SizedBox(width: 12),
-                      Text(
-                        notif['veterinario']!,
-                        style: theme.textTheme.bodySmall,
-                      ),
+                      Text(notif['veterinario']!, style: theme.textTheme.bodySmall),
                     ],
                   ),
                 ],
@@ -139,17 +132,15 @@ class _CustomHeaderState extends State<CustomHeader> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
-
-    final Color background = theme.primaryColor;
     const Color textColor = Colors.white;
+    final Color background = theme.primaryColor;
 
     if (widget.isSecondaryScreen) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         color: background,
         child: Row(
-          children: <Widget>[
+          children: [
             IconButton(
               icon: const Icon(Icons.arrow_back, color: textColor),
               onPressed: widget.onBack ?? () => Navigator.pop(context),
@@ -159,55 +150,57 @@ class _CustomHeaderState extends State<CustomHeader> {
               child: Text(
                 widget.nameScreen,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
               ),
             ),
-            const SizedBox(width: 48), // Espacio para balancear diseño
+            const SizedBox(width: 48),
           ],
         ),
       );
     }
+
+    final String avatarUrl = dueno?.fotoUrl ?? '';
+    final String displayName = widget.mostrarMascota
+        ? widget.petName
+        : '${dueno?.nombre ?? ''} ${dueno?.apellido ?? ''}'.trim().isEmpty
+        ? 'Usuario'
+        : '${dueno!.nombre} ${dueno!.apellido}';
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(color: background),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
+        children: [
           Row(
-            children: <Widget>[
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.white24, // Color de fondo si no hay imagen
-              backgroundImage: widget.userImageUrl != null && widget.userImageUrl!.isNotEmpty
-                ? NetworkImage(widget.userImageUrl!) // Muestra la imagen del usuario si está disponible
-                : null, // No hay imagen de fondo si no hay URL
-              child: widget.userImageUrl == null || widget.userImageUrl!.isEmpty
-                ? const Icon(
-                  Icons.person, // Ícono de persona por defecto
-                  color: Colors.white,
-                  size: 24, // Ajusta el tamaño según sea necesario
-                )
-                : null, // No muestra el ícono si hay una imagen
-            ),
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.white24,
+                backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
+                child: avatarUrl.isEmpty
+                    ? const Icon(Icons.person, color: Colors.white, size: 24)
+                    : null,
+              ),
               const SizedBox(width: 10),
-              Text(
-                widget.petName,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: textColor,
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 180), // ajusta si necesitas más o menos
+                child: Text(
+                  displayName,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: textColor,
+                  ),
                 ),
               ),
             ],
           ),
           Stack(
             clipBehavior: Clip.none,
-            children: <Widget>[
+            children: [
               IconButton(
                 icon: const Icon(Icons.notifications, color: textColor),
                 onPressed: () => _mostrarNotificaciones(context),

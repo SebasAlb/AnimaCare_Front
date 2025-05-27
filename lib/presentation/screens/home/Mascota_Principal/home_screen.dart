@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const CustomHeader(petName: 'Sebastián'),
+                    const CustomHeader(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 12,),

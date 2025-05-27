@@ -172,7 +172,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            const CustomHeader(petName: 'Sebastian'),
+            const CustomHeader(),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

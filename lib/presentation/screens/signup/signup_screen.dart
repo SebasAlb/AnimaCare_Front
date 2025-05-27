@@ -87,23 +87,37 @@ class SignupScreen extends StatelessWidget {
                     theme: theme,
                   ),
                   const SizedBox(height: 20),
-                  _buildTextField(
+                  Obx(() => _buildTextField(
                     label: 'Contraseña',
                     hint: 'Ingrese una contraseña segura',
                     icon: Icons.lock,
                     controller: controller.passwordController,
-                    obscureText: true,
+                    obscureText: controller.obscurePassword.value,
                     theme: theme,
-                  ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        controller.obscurePassword.value ? Icons.visibility_off : Icons.visibility,
+                        color: theme.colorScheme.primary,
+                      ),
+                      onPressed: controller.togglePasswordVisibility,
+                    ),
+                  )),
                   const SizedBox(height: 20),
-                  _buildTextField(
+                  Obx(() => _buildTextField(
                     label: 'Confirmar Contraseña',
                     hint: 'Confirme su contraseña',
                     icon: Icons.lock_outline,
                     controller: controller.confirmPasswordController,
-                    obscureText: true,
+                    obscureText: controller.obscureConfirmPassword.value,
                     theme: theme,
-                  ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        controller.obscureConfirmPassword.value ? Icons.visibility_off : Icons.visibility,
+                        color: theme.colorScheme.primary,
+                      ),
+                      onPressed: controller.toggleConfirmPasswordVisibility,
+                    ),
+                  )),
                   const SizedBox(height: 30),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -136,6 +150,7 @@ class SignupScreen extends StatelessWidget {
     bool obscureText = false,
     required TextEditingController controller,
     required ThemeData theme,
+    Widget? suffixIcon,
   }) =>
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,8 +171,9 @@ class SignupScreen extends StatelessWidget {
             decoration: InputDecoration(
               hintText: hint,
               hintStyle:
-                  theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+              theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
               prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+              suffixIcon: suffixIcon,
               filled: true,
               fillColor: theme.cardColor,
               border: OutlineInputBorder(

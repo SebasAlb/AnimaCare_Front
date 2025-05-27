@@ -164,7 +164,8 @@ class _DetalleContenido extends StatelessWidget {
           child: Column(
             children: <Widget>[
               CustomHeader(
-                petName: controller.mascota.nombre, // ← usa el nombre actualizado
+                petName: controller.mascota.nombre,
+                mostrarMascota: true,
               ),
               _buildToggleTabs(),
               Expanded(

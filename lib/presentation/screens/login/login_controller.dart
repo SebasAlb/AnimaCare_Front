@@ -7,8 +7,8 @@ import 'package:animacare_front/storage/user_storage.dart';
 class LoginController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
   final AuthService _authService = AuthService();
+  var obscurePassword = true.obs;
 
   void login() async {
     final String correo = emailController.text.trim();
@@ -31,6 +31,11 @@ class LoginController extends GetxController {
       _showSnackbar('Error', e.toString(), isError: true);
     }
   }
+
+  void togglePasswordVisibility() {
+    obscurePassword.value = !obscurePassword.value;
+  }
+
 
   void goToRegister() {
     resetFields();

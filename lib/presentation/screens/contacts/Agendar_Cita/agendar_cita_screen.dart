@@ -57,7 +57,10 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
           children: <Widget>[
             Column(
               children: <Widget>[
-                const CustomHeader(nameScreen: 'Agendar Cita', isSecondaryScreen: true),
+                CustomHeader(
+                  nameScreen: 'Agendar Cita',
+                  isSecondaryScreen: true,
+                ),
                 Expanded(
                   child: ListView(
                     controller: _scrollController,

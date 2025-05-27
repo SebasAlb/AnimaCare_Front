@@ -12,6 +12,8 @@ class SignupController extends GetxController {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  var obscurePassword = true.obs;
+  var obscureConfirmPassword = true.obs;
 
   void signup() async {
     final String firstName = firstNameController.text.trim();
@@ -81,6 +83,14 @@ class SignupController extends GetxController {
         borderRadius: 12,
       );
     }
+  }
+
+  void togglePasswordVisibility() {
+    obscurePassword.value = !obscurePassword.value;
+  }
+
+  void toggleConfirmPasswordVisibility() {
+    obscureConfirmPassword.value = !obscureConfirmPassword.value;
   }
 
   void resetFields() {

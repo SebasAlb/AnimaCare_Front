@@ -73,14 +73,21 @@ class LoginScreen extends StatelessWidget {
                     controller: controller.emailController,
                   ),
                   const SizedBox(height: 20),
-                  _buildTextField(
+                  Obx(() => _buildTextField(
                     context: context,
                     label: 'Contraseña',
                     hint: 'Ingrese su contraseña',
                     icon: Icons.lock,
-                    obscureText: true,
+                    obscureText: controller.obscurePassword.value,
                     controller: controller.passwordController,
-                  ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        controller.obscurePassword.value ? Icons.visibility_off : Icons.visibility,
+                        color: theme.colorScheme.primary,
+                      ),
+                      onPressed: controller.togglePasswordVisibility,
+                    ),
+                  )),
                   const SizedBox(height: 30),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -124,6 +131,7 @@ class LoginScreen extends StatelessWidget {
     TextInputType type = TextInputType.text,
     bool obscureText = false,
     required TextEditingController controller,
+    Widget? suffixIcon,
   }) {
     final ThemeData theme = Theme.of(context);
     return Column(
@@ -144,6 +152,7 @@ class LoginScreen extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hint,
             prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+            suffixIcon: suffixIcon,
             filled: true,
             fillColor: theme.colorScheme.surfaceContainerHighest,
             border: OutlineInputBorder(
