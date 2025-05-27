@@ -8,7 +8,7 @@ class EditarPerfilScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final EditarPerfilController controller = Get.put(EditarPerfilController());
+    final EditarPerfilController controller = Get.find();
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
@@ -34,20 +34,24 @@ class EditarPerfilScreen extends StatelessWidget {
                       Center(
                         child: GestureDetector(
                           onTap: controller.pickImage,
-                          child: CircleAvatar(
+                          child: controller.selectedImage.value != null
+                              ? CircleAvatar(
+                            radius: 45,
+                            backgroundImage: FileImage(controller.selectedImage.value!),
+                          )
+                              : controller.fotoUrl != null && controller.fotoUrl!.isNotEmpty
+                              ? CircleAvatar(
+                            radius: 45,
+                            backgroundImage: NetworkImage(controller.fotoUrl!),
+                          )
+                              : CircleAvatar(
                             radius: 45,
                             backgroundColor: theme.cardColor,
-                            backgroundImage:
-                                controller.selectedImage.value != null
-                                    ? FileImage(controller.selectedImage.value!)
-                                    : null,
-                            child: controller.selectedImage.value == null
-                                ? Icon(
-                                    Icons.camera_alt,
-                                    color: theme.colorScheme.primary,
-                                    size: 30,
-                                  )
-                                : null,
+                            child: Icon(
+                              Icons.camera_alt,
+                              color: theme.colorScheme.primary,
+                              size: 30,
+                            ),
                           ),
                         ),
                       ),

@@ -4,6 +4,8 @@ import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/screens/settings/Conf_Principal/conf_principal_controller.dart';
 import 'package:get/get.dart';
+import 'package:animacare_front/storage/user_storage.dart';
+import 'package:animacare_front/models/dueno.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -15,6 +17,13 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStateMixin {
   final ConfPrincipalController controller = ConfPrincipalController();
   final ThemeController themeController = Get.find();
+  late final Dueno? dueno;
+
+  @override
+  void initState() {
+    super.initState();
+    dueno = UserStorage.getUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +58,7 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
               const SizedBox(height: 8),
               Center(
                 child: Text(
-                  'Mr. Del Conde Mayhoccer',
+                  '${dueno?.nombre ?? ''} ${dueno?.apellido ?? ''}',
                   style: theme.textTheme.bodyMedium,
                 ),
               ),

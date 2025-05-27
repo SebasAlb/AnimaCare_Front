@@ -11,10 +11,12 @@ import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detall
 import 'package:animacare_front/presentation/screens/home/Mascota_Principal/home_screen.dart';
 import 'package:animacare_front/presentation/screens/login/login_screen.dart';
 import 'package:animacare_front/presentation/screens/settings/Conf_Principal/conf_principal_screen.dart';
+import 'package:animacare_front/presentation/screens/settings/Editar_Perfil/editar_perfil_controller.dart';
 import 'package:animacare_front/presentation/screens/settings/Editar_Perfil/editar_perfil_screen.dart';
 import 'package:animacare_front/presentation/screens/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/screens/splash_screen.dart';
+import 'package:get/get.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -79,7 +81,13 @@ class AppRoutes {
       case settingsP:
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
       case settingsEditProfile:
-        return MaterialPageRoute(builder: (_) => const EditarPerfilScreen());
+        return GetPageRoute(
+          page: () => const EditarPerfilScreen(),
+          binding: BindingsBuilder(() {
+            Get.put(EditarPerfilController());
+          }),
+        );
+
 
       default:
         return MaterialPageRoute(

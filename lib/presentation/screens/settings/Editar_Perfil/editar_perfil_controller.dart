@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:animacare_front/storage/user_storage.dart';
+import 'package:animacare_front/models/dueno.dart';
 
 class EditarPerfilController extends GetxController {
   final TextEditingController nombreController = TextEditingController();
@@ -13,6 +15,23 @@ class EditarPerfilController extends GetxController {
   final TextEditingController direccionController = TextEditingController();
 
   final Rxn<File> selectedImage = Rxn<File>();
+  String? fotoUrl;
+
+  @override
+  void onInit() {
+    super.onInit();
+    final Dueno? user = UserStorage.getUser();
+    if (user != null) {
+      nombreController.text = user.nombre;
+      apellidoController.text = user.apellido;
+      cedulaController.text = user.cedula;
+      telefonoController.text = user.telefono;
+      correoController.text = user.correo;
+      ciudadController.text = user.ciudad;
+      direccionController.text = user.direccion;
+      fotoUrl = user.fotoUrl;
+    }
+  }
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -159,8 +178,21 @@ class EditarPerfilController extends GetxController {
         ),
       );
 
+  void resetearEstado() {
+    nombreController.clear();
+    apellidoController.clear();
+    cedulaController.clear();
+    telefonoController.clear();
+    correoController.clear();
+    ciudadController.clear();
+    direccionController.clear();
+    selectedImage.value = null;
+    fotoUrl = null;
+  }
+
   @override
   void onClose() {
+    resetearEstado();
     nombreController.dispose();
     apellidoController.dispose();
     cedulaController.dispose();
