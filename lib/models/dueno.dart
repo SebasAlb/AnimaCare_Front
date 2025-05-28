@@ -1,5 +1,5 @@
 class Dueno {
-  String id;
+  int id;
   String nombre;
   String apellido;
   String cedula;
@@ -24,7 +24,7 @@ class Dueno {
   });
 
   factory Dueno.fromJson(Map<String, dynamic> json) => Dueno(
-    id: json['id'].toString(),
+    id: json['id'],
     nombre: json['nombre'],
     apellido: json['apellido'],
     cedula: json['cedula'],
@@ -48,4 +48,17 @@ class Dueno {
     'contrasena': contrasena,
     'foto_url': fotoUrl,
   };
+
+  Map<String, dynamic> toJsonWithoutPassword() => {
+    'id': id,
+    'nombre': nombre,
+    'apellido': apellido,
+    'cedula': cedula,
+    'telefono': telefono,
+    'correo': correo,
+    'ciudad': ciudad,
+    'direccion': direccion,
+    'foto_url': fotoUrl,
+  };
+
 }

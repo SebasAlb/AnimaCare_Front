@@ -50,10 +50,19 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
                   ),
                 ),
               ),
-              CircleAvatar(
+              dueno?.fotoUrl != null && dueno!.fotoUrl!.isNotEmpty
+                  ? CircleAvatar(
+                radius: 45,
+                backgroundImage: NetworkImage(dueno!.fotoUrl!),
+              )
+                  : CircleAvatar(
                 radius: 45,
                 backgroundColor: theme.cardColor,
-                child: Icon(Icons.person, size: 50, color: theme.iconTheme.color),
+                child: Icon(
+                  Icons.person,
+                  size: 50,
+                  color: theme.iconTheme.color,
+                ),
               ),
               const SizedBox(height: 8),
               Center(

@@ -8,15 +8,12 @@ class OwnerService {
   final String _baseUrl = ApiConfig.baseUrl;
 
   Future<Dueno?> actualizarDueno(Dueno dueno) async {
-    print('------------ACTUALIZANDO DUENO: ${dueno.toJson()}');
     try {
-      final response = await _dio.put(
+      final response = await _dio.post(
         '$_baseUrl/v1/owner/update/${dueno.id}',
-        data: dueno.toJson(),
+        data: dueno.toJsonWithoutPassword(),
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
-      print('>>> response.data.runtimeType = ${response.data.runtimeType}');
-      print('>>> response.data = ${response.data}');
 
       final parsed = response.data is String
           ? jsonDecode(response.data)

@@ -42,7 +42,21 @@ class EditarPerfilController extends GetxController {
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
     if (image != null) {
+      final allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+      final ext = image.path.split('.').last.toLowerCase();
+
+      if (!allowedExtensions.contains(ext)) {
+        Get.snackbar(
+          'Archivo no válido',
+          'Solo se permiten imágenes JPG, JPEG, PNG o WebP',
+          backgroundColor: Colors.white,
+          colorText: Colors.red,
+        );
+        return;
+      }
+
       selectedImage.value = File(image.path);
     }
   }
@@ -59,9 +73,24 @@ class EditarPerfilController extends GetxController {
         'https://api.cloudinary.com/v1_1/$cloudName/image/upload',
         data: formData,
       );
-      return response.data['secure_url'];
+
+      if (response.statusCode == 200) {
+        final url = response.data['secure_url'];
+        print('[Cloudinary] Imagen subida: $url');
+        return url;
+      } else {
+        print('[Cloudinary] Código inesperado: ${response.statusCode}');
+        Get.snackbar('Error', 'Error al subir imagen: ${response.statusMessage}');
+        return null;
+      }
+    } on dio.DioException catch (e) {
+      final msg = e.response?.data ?? e.message;
+      print('[Cloudinary] Error Dio: $msg');
+      Get.snackbar('Error', 'Error al subir imagen: $msg');
+      return null;
     } catch (e) {
-      Get.snackbar('Error', 'No se pudo subir la imagen a Cloudinary');
+      print('[Cloudinary] Error general: $e');
+      Get.snackbar('Error', 'Error inesperado al subir imagen.');
       return null;
     }
   }
@@ -80,7 +109,11 @@ class EditarPerfilController extends GetxController {
 
     String? imageUrl = fotoUrl;
     if (selectedImage.value != null) {
-      imageUrl = await uploadToCloudinary(selectedImage.value!);
+      final result = await uploadToCloudinary(selectedImage.value!);
+      if (result == null) {
+        return;
+      }
+      imageUrl = result;
     }
 
     final Dueno updatedUser = Dueno(
@@ -108,7 +141,7 @@ class EditarPerfilController extends GetxController {
           colorText: Colors.black,
           icon: const Icon(Icons.check_circle, color: Colors.green),
         );
-        UserStorage.updateUser(updatedUser);
+        Get.offAllNamed('/settings');
       } else {
         throw Exception('Respuesta nula');
       }
@@ -149,7 +182,7 @@ class EditarPerfilController extends GetxController {
               children: <Widget>[
                 const Text(
                   'Cambiar Contraseña',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
                 ),
                 const SizedBox(height: 20),
                 Obx(
@@ -217,8 +250,10 @@ class EditarPerfilController extends GetxController {
       TextField(
         controller: controller,
         obscureText: !visible.value,
+        style: const TextStyle(color: Colors.black),
         decoration: InputDecoration(
           labelText: label,
+          labelStyle: const TextStyle(color: Colors.black),
           filled: true,
           fillColor: const Color(0xFFF0F4F8),
           border: OutlineInputBorder(
