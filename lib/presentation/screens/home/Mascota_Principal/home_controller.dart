@@ -1,47 +1,40 @@
-import 'package:animacare_front/models/mascota.dart';
-import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agregar_mascota_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:animacare_front/models/mascota.dart';
+import 'package:animacare_front/services/pet_service.dart';
+import 'package:animacare_front/storage/user_storage.dart';
+import 'package:animacare_front/models/dueno.dart';
+import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agregar_mascota_screen.dart';
 
 class HomeController extends ChangeNotifier {
-  final List<Mascota> _mascotas = <Mascota>[];
+  final List<Mascota> _mascotas = [];
+  bool _isLoading = true;
+
+  final PetService _petService = PetService();
 
   List<Mascota> get mascotas => _mascotas;
+  bool get isLoading => _isLoading;
 
-  void cargarMascotasIniciales() {
-    _mascotas.clear();
-    _mascotas.addAll(<Mascota>[
-      Mascota(
-        id: '1',
-        nombre: 'Michi',
-        especie: 'Gato',
-        raza: 'Siames',
-        fechaNacimiento: DateTime(2021, 5, 10),
-        sexo: 'Macho',
-        peso: 4.2,
-        altura: 30.0,
-        fotoUrl: '', // puedes usar un asset de momento
-      ),
-      Mascota(
-        id: '2',
-        nombre: 'Firulais',
-        especie: 'Perro',
-        raza: 'Labrador',
-        fechaNacimiento: DateTime(2020, 2, 3),
-        sexo: 'Hembra',
-        peso: 20.5,
-        altura: 60.0,
-        fotoUrl: '',
-      ),
-    ]);
+  Future<void> cargarMascotasDesdeApi() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final Dueno? dueno = UserStorage.getUser();
+      if (dueno == null) throw Exception("Usuario no autenticado");
+
+      final List<Mascota> lista = await _petService.obtenerMascotasPorDueno(dueno.id);
+      _mascotas
+        ..clear()
+        ..addAll(lista);
+    } catch (e) {
+      print("Error al obtener mascotas: $e");
+    }
+
+    _isLoading = false;
     notifyListeners();
   }
 
-  void agregarMascota(Mascota nueva) {
-    _mascotas.add(nueva);
-    notifyListeners();
-  }
-
-  void onAgregarMascota(BuildContext context) async {
+  Future<void> onAgregarMascota(BuildContext context) async {
     final Mascota? nueva = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -50,7 +43,8 @@ class HomeController extends ChangeNotifier {
     );
 
     if (nueva != null) {
-      agregarMascota(nueva);
+      _mascotas.add(nueva);
+      notifyListeners();
     }
   }
 }
