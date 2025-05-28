@@ -29,8 +29,7 @@ class HomeScreen extends StatelessWidget {
       child: ChangeNotifierProvider(
         create: (_) {
           final HomeController controller = HomeController();
-          controller
-              .cargarMascotasIniciales(); // Datos quemados, reemplazables por DB
+          controller.cargarMascotasDesdeApi();// Datos quemados, reemplazables por DB
           return controller;
         },
         child: Consumer<HomeController>(
@@ -54,19 +53,26 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: GridView.count(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          children: controller.mascotas
-                              .map((Mascota m) => PetCard(mascota: m))
-                              .toList(),
-                        ),
-                      ),
+                      child: controller.isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : controller.mascotas.isEmpty
+                              ? const Center(child: Text('No tienes mascotas registradas'))
+                              : Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  child: GridView.count(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 16,
+                                    mainAxisSpacing: 16,
+                                    children: controller.mascotas
+                                        .map((Mascota m) => PetCard(mascota: m))
+                                        .toList(),
+                                  ),
+                                ),
                     ),
+
+
                   ],
                 ),
               ),
@@ -106,3 +112,4 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
