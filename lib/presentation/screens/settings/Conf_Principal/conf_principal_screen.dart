@@ -1,6 +1,7 @@
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/presentation/theme/theme_controller.dart';
 import 'package:animacare_front/routes/app_routes.dart';
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/screens/settings/Conf_Principal/conf_principal_controller.dart';
 import 'package:get/get.dart';
@@ -181,8 +182,10 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
   }
 
   void _mostrarAnimacionCascada(BuildContext context, bool isDark) {
+    SoundService.playLoading();
     final overlay = Overlay.of(context);
     late final OverlayEntry overlayEntry;
+
     final controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -216,14 +219,14 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
     overlay.insert(overlayEntry);
     controller.forward();
 
-    controller.addStatusListener((status) {
+    controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
         Get.find<ThemeController>().toggleTheme(isDark);
-
-        Future.delayed(const Duration(milliseconds: 150), () {
-          overlayEntry.remove();
-          controller.dispose();
-        });
+        await Future.delayed(const Duration(milliseconds: 300));
+        controller.reverse(); // hace que suba
+      } else if (status == AnimationStatus.dismissed) {
+        overlayEntry.remove();
+        controller.dispose();
       }
     });
   }

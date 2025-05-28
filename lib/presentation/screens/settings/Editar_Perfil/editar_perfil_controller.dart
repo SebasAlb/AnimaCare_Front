@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:animacare_front/services/owner_service.dart';
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,12 +17,13 @@ class EditarPerfilController extends GetxController {
   final TextEditingController correoController = TextEditingController();
   final TextEditingController ciudadController = TextEditingController();
   final TextEditingController direccionController = TextEditingController();
-
+  final RxBool isLoading = false.obs;
   final Rxn<File> selectedImage = Rxn<File>();
   String? fotoUrl;
 
   static const String cloudName = 'debn6u09z';
   static const String uploadPreset = 'ml_default';
+  final theme = Theme.of(Get.context!);
 
   @override
   void onInit() {
@@ -48,11 +50,13 @@ class EditarPerfilController extends GetxController {
       final ext = image.path.split('.').last.toLowerCase();
 
       if (!allowedExtensions.contains(ext)) {
+        SoundService.playWarning();
         Get.snackbar(
           'Archivo no válido',
           'Solo se permiten imágenes JPG, JPEG, PNG o WebP',
-          backgroundColor: Colors.white,
-          colorText: Colors.red,
+          backgroundColor: Colors.white30,
+          colorText: theme.colorScheme.onBackground,
+          icon: const Icon(Icons.warning, color: Colors.redAccent),
         );
         return;
       }
@@ -80,35 +84,118 @@ class EditarPerfilController extends GetxController {
         return url;
       } else {
         print('[Cloudinary] Código inesperado: ${response.statusCode}');
-        Get.snackbar('Error', 'Error al subir imagen: ${response.statusMessage}');
+        SoundService.playWarning();
+        Get.snackbar(
+          'Error al subir imagen',
+          'Respuesta inesperada: ${response.statusMessage}',
+          backgroundColor: Colors.white30,
+          colorText: theme.colorScheme.onBackground,
+          icon: const Icon(Icons.warning, color: Colors.redAccent),
+        );
         return null;
       }
     } on dio.DioException catch (e) {
       final msg = e.response?.data ?? e.message;
       print('[Cloudinary] Error Dio: $msg');
-      Get.snackbar('Error', 'Error al subir imagen: $msg');
+      final theme = Theme.of(Get.context!);
+      SoundService.playWarning();
+      Get.snackbar(
+        'Error al subir imagen',
+        '$msg',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
       return null;
     } catch (e) {
       print('[Cloudinary] Error general: $e');
-      Get.snackbar('Error', 'Error inesperado al subir imagen.');
+      final theme = Theme.of(Get.context!);
+      SoundService.playWarning();
+      Get.snackbar(
+        'Error inesperado',
+        'No se pudo subir la imagen.',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
       return null;
     }
   }
 
-  void onGuardar() async {
-    if (nombreController.text.isEmpty || correoController.text.isEmpty) {
+  bool validarCamposObligatorios() {
+    final nombre = nombreController.text.trim();
+    final apellido = apellidoController.text.trim();
+    final cedula = cedulaController.text.trim();
+    final correo = correoController.text.trim();
+    final direccion = direccionController.text.trim();
+
+    final List<String> errores = [];
+
+    if (nombre.isEmpty) errores.add('Nombre');
+    if (apellido.isEmpty) errores.add('Apellido');
+    if (cedula.isEmpty) errores.add('Cédula');
+    if (correo.isEmpty) errores.add('Correo');
+
+    if (errores.isNotEmpty) {
+      final theme = Theme.of(Get.context!);
+      SoundService.playWarning();
       Get.snackbar(
         'Campos requeridos',
-        'Nombre y correo electrónico son obligatorios.',
-        backgroundColor: Colors.white,
-        colorText: Colors.black,
+        'Debe completar: ${errores.join(', ')}.',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
         icon: const Icon(Icons.warning, color: Colors.redAccent),
       );
-      return;
+      return false;
     }
+
+    // Validaciones específicas
+    if (nombre.length > 60) {
+      _mostrarError('Nombre no debe superar los 60 caracteres.');
+      return false;
+    }
+
+    if (apellido.length > 60) {
+      _mostrarError('Apellido no debe superar los 60 caracteres.');
+      return false;
+    }
+
+    if (!RegExp(r'^\d{10}$').hasMatch(cedula)) {
+      _mostrarError('La cédula debe tener exactamente 10 dígitos numéricos.');
+      return false;
+    }
+
+    if (!correo.contains('@')) {
+      _mostrarError('El correo debe contener el carácter "@".');
+      return false;
+    }
+
+    if (direccion.length > 150) {
+      _mostrarError('La dirección no debe superar los 150 caracteres.');
+      return false;
+    }
+
+    return true;
+  }
+
+  void _mostrarError(String mensaje) {
+    SoundService.playWarning();
+    Get.snackbar(
+      'Validación',
+      mensaje,
+      backgroundColor: Colors.white30,
+      colorText: theme.colorScheme.onBackground,
+      icon: const Icon(Icons.warning, color: Colors.redAccent),
+    );
+  }
+
+  void onGuardar() async {
+    if (!validarCamposObligatorios()) return;
+    isLoading.value = true;
 
     String? imageUrl = fotoUrl;
     if (selectedImage.value != null) {
+      SoundService.playSuccess();
       final result = await uploadToCloudinary(selectedImage.value!);
       if (result == null) {
         return;
@@ -134,11 +221,12 @@ class EditarPerfilController extends GetxController {
 
       if (response != null) {
         UserStorage.updateUser(response);
+        SoundService.playSuccess();
         Get.snackbar(
           'Perfil actualizado',
           'Tus datos se guardaron correctamente.',
-          backgroundColor: Colors.white,
-          colorText: Colors.black,
+          backgroundColor: Colors.white30,
+          colorText: theme.colorScheme.onBackground,
           icon: const Icon(Icons.check_circle, color: Colors.green),
         );
         Get.offAllNamed('/settings');
@@ -146,16 +234,22 @@ class EditarPerfilController extends GetxController {
         throw Exception('Respuesta nula');
       }
     } catch (e) {
+      SoundService.playWarning();
       Get.snackbar(
         'Error',
         'Error al actualizar perfil: ${e.toString()}',
-        backgroundColor: Colors.white,
-        colorText: Colors.red,
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
       );
+    } finally {
+      isLoading.value = false;
     }
   }
 
   void abrirCambiarContrasena(BuildContext context) {
+    SoundService.playButton();
+    final theme = Theme.of(context);
     final TextEditingController actual = TextEditingController();
     final TextEditingController nueva = TextEditingController();
     final TextEditingController confirmar = TextEditingController();
@@ -171,62 +265,100 @@ class EditarPerfilController extends GetxController {
         expand: false,
         builder: (context, scrollController) => Container(
           padding: const EdgeInsets.all(8),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: SingleChildScrollView(
             controller: scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
+                Text(
                   'Cambiar Contraseña',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 20),
-                Obx(
-                  () => _passwordInput(
-                    'Contraseña Actual',
-                    actual,
-                    visibleActual,
-                  ),
-                ),
+                Obx(() => _passwordInput('Contraseña Actual', actual, visibleActual, theme)),
                 const SizedBox(height: 12),
-                Obx(
-                  () => _passwordInput('Nueva Contraseña', nueva, visibleNueva),
-                ),
+                Obx(() => _passwordInput('Nueva Contraseña', nueva, visibleNueva, theme)),
                 const SizedBox(height: 12),
-                Obx(
-                  () => _passwordInput(
-                    'Confirmar Contraseña',
-                    confirmar,
-                    visibleConfirmar,
-                  ),
-                ),
+                Obx(() => _passwordInput('Confirmar Contraseña', confirmar, visibleConfirmar, theme)),
                 const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (nueva.text != confirmar.text) {
+                    onPressed: () async {
+                      if (nueva.text.trim() != confirmar.text.trim()) {
+                        cerrarDialogoDeCarga();
+                        SoundService.playWarning();
                         Get.snackbar(
                           'Error',
                           'Las contraseñas no coinciden.',
-                          backgroundColor: Colors.white,
-                          colorText: Colors.red,
+                          backgroundColor: Colors.white30,
+                          colorText: theme.colorScheme.onBackground,
+                          icon: const Icon(Icons.warning, color: Colors.redAccent),
                         );
                         return;
                       }
-                      Get.back();
-                      Get.snackbar(
-                        'Éxito',
-                        'Contraseña cambiada correctamente.',
-                        backgroundColor: Colors.white,
-                        colorText: Colors.black,
+
+                      if (actual.text.trim().isEmpty) {
+                        cerrarDialogoDeCarga();
+                        SoundService.playWarning();
+                        Get.snackbar(
+                          'Campos requeridos',
+                          'Debe completar: Contraseña Actual.',
+                          backgroundColor: Colors.white30,
+                          colorText: theme.colorScheme.onBackground,
+                          icon: const Icon(Icons.warning, color: Colors.redAccent),
+                        );
+                        return;
+                      }
+
+                      Get.dialog(
+                        Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const CircularProgressIndicator(),
+                          ),
+                        ),
+                        barrierDismissible: false,
                       );
+
+                      try {
+                        await Future.delayed(const Duration(milliseconds: 800)); // simula proceso
+                        cerrarDialogoDeCarga();
+                        Get.back(); // Cierra el diálogo de carga
+                        Get.back(); // Cierra el bottom sheet
+                        SoundService.playSuccess();
+                        Get.snackbar(
+                          'Éxito',
+                          'Contraseña cambiada correctamente.',
+                          backgroundColor: Colors.white30,
+                          colorText: theme.colorScheme.onBackground,
+                          icon: const Icon(Icons.check_circle, color: Colors.green),
+                        );
+                      } catch (e) {
+                        cerrarDialogoDeCarga();
+                        SoundService.playWarning();
+                        Get.snackbar(
+                          'Error',
+                          'No se pudo cambiar la contraseña.',
+                          backgroundColor: Colors.white30,
+                          colorText: theme.colorScheme.onBackground,
+                          icon: const Icon(Icons.warning, color: Colors.redAccent),
+                        );
+                      } finally {
+                        cerrarDialogoDeCarga();
+                      }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF301B92),
+                      backgroundColor: theme.colorScheme.primary,
                     ),
                     child: const Text(
                       'Guardar',
@@ -243,19 +375,20 @@ class EditarPerfilController extends GetxController {
   }
 
   Widget _passwordInput(
-    String label,
-    TextEditingController controller,
-    RxBool visible,
-  ) =>
+      String label,
+      TextEditingController controller,
+      RxBool visible,
+      ThemeData theme,
+      ) =>
       TextField(
         controller: controller,
         obscureText: !visible.value,
-        style: const TextStyle(color: Colors.black),
+        style: theme.textTheme.bodyMedium,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(color: Colors.black),
+          labelStyle: theme.textTheme.labelLarge,
           filled: true,
-          fillColor: const Color(0xFFF0F4F8),
+          fillColor: theme.cardColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -263,12 +396,22 @@ class EditarPerfilController extends GetxController {
           suffixIcon: IconButton(
             icon: Icon(
               visible.value ? Icons.visibility_off : Icons.visibility,
-              color: Colors.grey,
+              color: theme.iconTheme.color,
             ),
-            onPressed: () => visible.value = !visible.value,
+            onPressed: () => {
+              visible.value = !visible.value,
+              SoundService.playButton()
+            }
           ),
         ),
       );
+
+  void cerrarDialogoDeCarga() {
+    if (Get.isDialogOpen ?? false) {
+      Get.back();
+    }
+  }
+
 
   void resetearEstado() {
     nombreController.clear();

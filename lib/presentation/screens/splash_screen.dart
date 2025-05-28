@@ -8,7 +8,9 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 500), () {
+    final theme = Theme.of(context);
+
+    Future.delayed(const Duration(milliseconds: 600), () {
       final isLoggedIn = UserStorage.isLoggedIn();
       if (isLoggedIn) {
         Get.offAllNamed(AppRoutes.homeOwner);
@@ -17,10 +19,12 @@ class SplashScreen extends StatelessWidget {
       }
     });
 
-    return const Scaffold(
-      backgroundColor: Colors.white,
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: theme.colorScheme.primary,
+        ),
       ),
     );
   }

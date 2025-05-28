@@ -1,5 +1,6 @@
 import 'package:animacare_front/presentation/components/exit_dialog.dart';
 import 'package:animacare_front/presentation/screens/login/login_controller.dart';
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -85,7 +86,10 @@ class LoginScreen extends StatelessWidget {
                         controller.obscurePassword.value ? Icons.visibility_off : Icons.visibility,
                         color: theme.colorScheme.primary,
                       ),
-                      onPressed: controller.togglePasswordVisibility,
+                      onPressed: () {
+                        controller.togglePasswordVisibility();
+                        SoundService.playButton();
+                      },
                     ),
                   )),
                   const SizedBox(height: 30),

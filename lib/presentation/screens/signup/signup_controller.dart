@@ -1,3 +1,4 @@
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:animacare_front/services/auth_service.dart';
@@ -21,33 +22,78 @@ class SignupController extends GetxController {
     final String email = emailController.text.trim();
     final String password = passwordController.text.trim();
     final String confirmPassword = confirmPasswordController.text.trim();
+    final theme = Theme.of(Get.context!);
     final AuthService _authService = AuthService();
 
-    if (email.isEmpty ||
-        password.isEmpty ||
-        firstName.isEmpty ||
-        lastName.isEmpty ||
-        confirmPassword.isEmpty) {
+    if (firstName.isEmpty || lastName.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      SoundService.playWarning();
       Get.snackbar(
-        'Error',
+        'Campos requeridos',
         'Por favor, completa todos los campos.',
-        snackPosition: SnackPosition.BOTTOM,
-        colorText: Colors.black,
-        borderRadius: 12,
-        icon: const Icon(Icons.error, color: Colors.red),
-        isDismissible: true,
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
       );
       return;
     }
-    if (password != confirmPassword) {
+
+    // Validaciones específicas
+    if (firstName.length > 60) {
+      SoundService.playWarning();
       Get.snackbar(
-        'Error',
-        'Por favor, asegúrate de que las contraseñas coincidan.',
-        snackPosition: SnackPosition.BOTTOM,
-        colorText: Colors.black,
-        borderRadius: 12,
-        icon: const Icon(Icons.error, color: Colors.red),
-        isDismissible: true,
+        'Validación',
+        'Nombre no debe superar los 60 caracteres.',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
+      return;
+    }
+
+    if (lastName.length > 60) {
+      SoundService.playWarning();
+      Get.snackbar(
+        'Validación',
+        'Apellido no debe superar los 60 caracteres.',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
+      return;
+    }
+
+    if (!email.contains('@')) {
+      SoundService.playWarning();
+      Get.snackbar(
+        'Correo inválido',
+        'El correo debe contener el carácter "@".',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
+      return;
+    }
+
+    if (password.length < 6) {
+      SoundService.playWarning();
+      Get.snackbar(
+        'Contraseña inválida',
+        'La contraseña debe tener al menos 6 caracteres.',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
+      return;
+    }
+
+    if (password != confirmPassword) {
+      SoundService.playWarning();
+      Get.snackbar(
+        'Contraseñas no coinciden',
+        'Por favor, asegúrate de que las contraseñas sean iguales.',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
       );
       return;
     }
@@ -61,35 +107,38 @@ class SignupController extends GetxController {
       );
 
       if (newUser != null) {
+        SoundService.playSuccess();
         UserStorage.saveUser(newUser);
         Get.snackbar(
           'Registro exitoso',
           'Bienvenido ${newUser.nombre} ${newUser.apellido}!',
-          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.white30,
+          colorText: theme.colorScheme.onBackground,
           icon: const Icon(Icons.check_circle, color: Colors.green),
-          colorText: Colors.black,
-          borderRadius: 12,
         );
         resetFields();
         Get.offAllNamed('/homeowner');
       }
     } catch (e) {
+      SoundService.playWarning();
       Get.snackbar(
         'Error',
         e.toString().replaceAll('Exception: ', ''),
-        snackPosition: SnackPosition.BOTTOM,
-        icon: const Icon(Icons.error, color: Colors.red),
-        colorText: Colors.black,
-        borderRadius: 12,
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
       );
     }
   }
 
+
   void togglePasswordVisibility() {
+    SoundService.playButton();
     obscurePassword.value = !obscurePassword.value;
   }
 
   void toggleConfirmPasswordVisibility() {
+    SoundService.playButton();
     obscureConfirmPassword.value = !obscureConfirmPassword.value;
   }
 
@@ -102,6 +151,7 @@ class SignupController extends GetxController {
   }
 
   void goBack() {
+    SoundService.playButton();
     resetFields();
     Get.back();
   }

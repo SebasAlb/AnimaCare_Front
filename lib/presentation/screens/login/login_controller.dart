@@ -1,3 +1,4 @@
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:animacare_front/services/auth_service.dart';
@@ -9,26 +10,60 @@ class LoginController extends GetxController {
   final TextEditingController passwordController = TextEditingController();
   final AuthService _authService = AuthService();
   var obscurePassword = true.obs;
+  final theme = Theme.of(Get.context!);
 
   void login() async {
     final String correo = emailController.text.trim();
     final String password = passwordController.text.trim();
 
     if (correo.isEmpty || password.isEmpty) {
-      _showSnackbar('Error', 'Por favor, completa todos los campos.', isError: true);
+      SoundService.playWarning();
+      Get.snackbar(
+        'Error',
+        'Por favor, completa todos los campos.',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
+      return;
+    }
+
+    if (!correo.contains('@')) {
+      SoundService.playWarning();
+      Get.snackbar(
+        'Correo inválido',
+        'El correo debe contener el carácter "@".',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
       return;
     }
 
     try {
       final Dueno? user = await _authService.login(correo, password);
       if (user != null) {
+        SoundService.playSuccess();
         UserStorage.saveUser(user);
-        _showSnackbar('Éxito', 'Bienvenido ${user.nombre} ${user.apellido}');
+        Get.snackbar(
+          'Éxito',
+          'Bienvenido ${user.nombre} ${user.apellido}',
+          backgroundColor: Colors.white30,
+          colorText: theme.colorScheme.onBackground,
+          icon: const Icon(Icons.check_circle, color: Colors.green),
+        );
         resetFields();
         Get.offAllNamed('/homeowner');
       }
     } catch (e) {
-      _showSnackbar('Error', e.toString(), isError: true);
+      SoundService.playWarning();
+      Get.snackbar(
+        'Error',
+        'Ocurrió un error inesperado.',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
     }
   }
 
@@ -36,8 +71,8 @@ class LoginController extends GetxController {
     obscurePassword.value = !obscurePassword.value;
   }
 
-
   void goToRegister() {
+    SoundService.playButton();
     resetFields();
     Get.toNamed('/signup');
   }
@@ -45,15 +80,5 @@ class LoginController extends GetxController {
   void resetFields() {
     emailController.clear();
     passwordController.clear();
-  }
-
-  void _showSnackbar(String title, String message, {bool isError = false}) {
-    Get.snackbar(
-      title,
-      message.replaceAll('Exception: ', ''),
-      snackPosition: (isError ? SnackPosition.BOTTOM : SnackPosition.TOP),
-      colorText: Colors.black,
-      icon: Icon(isError ? Icons.error : Icons.check_circle, color: isError ? Colors.red : Colors.green),
-    );
   }
 }

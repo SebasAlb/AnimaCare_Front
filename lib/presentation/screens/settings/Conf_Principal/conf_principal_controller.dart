@@ -1,4 +1,5 @@
 import 'package:animacare_front/presentation/theme/theme_controller.dart';
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:animacare_front/storage/user_storage.dart';
@@ -7,9 +8,11 @@ class ConfPrincipalController extends GetxController {
   void onTapSetting(BuildContext context, String title) {
     switch (title) {
       case 'Mi perfil':
+        SoundService.playButton();
         Get.toNamed('/settings/editProfile');
         break;
       case 'Cerrar sesión':
+        SoundService.playButton();
         if (Get.isRegistered<ThemeController>()) {
           Get.find<ThemeController>().toggleTheme(false);
         } else {
