@@ -2,6 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/models/mascota.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:animacare_front/services/pet_service.dart';
+import 'package:animacare_front/storage/user_storage.dart';
+import 'package:animacare_front/models/dueno.dart';
+import 'package:animacare_front/presentation/screens/home/cloudinary_service.dart';
+
 
 class AgregarMascotaController {
   final TextEditingController nombreController = TextEditingController();
@@ -67,49 +72,47 @@ class AgregarMascotaController {
     }
   }
 
-  /*
-  Future<String?> _subirImagenACloudinary(File imageFile) async {
-    const String cloudName = 'TU_CLOUDINARY_USER';
-    const String uploadPreset = 'TU_UPLOAD_PRESET';
 
-    final url = Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload');
+  Future<Mascota?> guardarMascota() async {
+    final Dueno? dueno = UserStorage.getUser();
+    if (dueno == null) return null;
 
-    final request = http.MultipartRequest('POST', url)
-      ..fields['upload_preset'] = uploadPreset
-      ..files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+    final PetService petService = PetService();
 
-    final response = await request.send();
+    try {
+      String imageUrl = '';
 
-    if (response.statusCode == 200) {
-      final respStr = await response.stream.bytesToString();
-      final jsonData = json.decode(respStr);
-      return jsonData['secure_url'];
-    } else {
+      if (fotoLocal != null) {
+        final String? subida = await CloudinaryService.uploadImage(fotoLocal!);
+        if (subida != null) {
+          imageUrl = subida;
+        } else {
+          print('❌ No se pudo subir la imagen a Cloudinary.');
+          return null;
+        }
+      }
+
+      final Mascota nuevaMascota = Mascota(
+        id: '', // será asignado por backend
+        nombre: nombreController.text,
+        especie: especie,
+        raza: razaController.text,
+        fechaNacimiento: _parseFecha(fechaNacimientoController.text),
+        sexo: sexo,
+        peso: double.tryParse(pesoController.text) ?? 0,
+        altura: double.tryParse(alturaController.text) ?? 0,
+        fotoUrl: imageUrl, // ✅ URL remota
+      );
+
+      final Mascota mascotaCreada =
+          await petService.crearMascota(nuevaMascota, dueno.id);
+      return mascotaCreada;
+    } catch (e) {
+      print('Error al guardar mascota: $e');
       return null;
     }
   }
-  */
 
-  Future<Mascota?> guardarMascota() async {
-    // String? imageUrl;
-
-    // if (fotoLocal != null) {
-    //   imageUrl = await _subirImagenACloudinary(fotoLocal!);
-    //   if (imageUrl == null) return null;
-    // }
-
-    return Mascota(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      nombre: nombreController.text,
-      especie: especie,
-      raza: razaController.text,
-      fechaNacimiento: _parseFecha(fechaNacimientoController.text),
-      sexo: sexo,
-      peso: double.tryParse(pesoController.text) ?? 0,
-      altura: double.tryParse(alturaController.text) ?? 0,
-      fotoUrl: fotoLocal?.path ?? '', // ✅ solo almacena el path local por ahora
-    );
-  }
 
   DateTime _parseFecha(String fecha) {
     final List<String> partes = fecha.split('/');
@@ -120,3 +123,4 @@ class AgregarMascotaController {
     );
   }
 }
+
