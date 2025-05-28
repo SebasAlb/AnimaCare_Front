@@ -25,21 +25,24 @@ class EditarPerfilController extends GetxController {
   static const String uploadPreset = 'ml_default';
   final theme = Theme.of(Get.context!);
 
+  late Dueno _initial;                    // ← ya NO es final (puede cambiar)
+  final hasChanges = false.obs;           // flag observable
+
   @override
   void onInit() {
     super.onInit();
-    final Dueno? user = UserStorage.getUser();
-    if (user != null) {
-      nombreController.text = user.nombre;
-      apellidoController.text = user.apellido;
-      cedulaController.text = user.cedula;
-      telefonoController.text = user.telefono!;
-      correoController.text = user.correo;
-      ciudadController.text = user.ciudad!;
-      direccionController.text = user.direccion!;
-      fotoUrl = user.fotoUrl;
-    }
+    _initial = UserStorage.getUser()!;
+    final u = _initial;
+    nombreController..text = u.nombre   ..addListener(_markChanged);
+    apellidoController..text = u.apellido..addListener(_markChanged);
+    cedulaController..text = u.cedula   ..addListener(_markChanged);
+    telefonoController..text = u.telefono ?? '' ..addListener(_markChanged);
+    correoController..text = u.correo   ..addListener(_markChanged);
+    ciudadController..text = u.ciudad ?? ''     ..addListener(_markChanged);
+    direccionController..text = u.direccion ?? '' ..addListener(_markChanged);
+    fotoUrl = u.fotoUrl;
   }
+  void _markChanged() => hasChanges.value = true;
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -62,6 +65,7 @@ class EditarPerfilController extends GetxController {
       }
 
       selectedImage.value = File(image.path);
+      hasChanges.value = true;
     }
   }
 
@@ -189,13 +193,12 @@ class EditarPerfilController extends GetxController {
     );
   }
 
-  void onGuardar() async {
+  Future<void> onGuardar() async {
     if (!validarCamposObligatorios()) return;
     isLoading.value = true;
 
     String? imageUrl = fotoUrl;
     if (selectedImage.value != null) {
-      SoundService.playSuccess();
       final result = await uploadToCloudinary(selectedImage.value!);
       if (result == null) {
         return;
@@ -220,8 +223,10 @@ class EditarPerfilController extends GetxController {
       final Dueno? response = await OwnerService().actualizarDueno(updatedUser);
 
       if (response != null) {
+        _initial = response;                // ← estado base actualizado
+        hasChanges.value = false;           // ya no hay cambios pendientes
+        selectedImage.value = null;
         UserStorage.updateUser(response);
-        SoundService.playSuccess();
         Get.snackbar(
           'Perfil actualizado',
           'Tus datos se guardaron correctamente.',
@@ -230,6 +235,7 @@ class EditarPerfilController extends GetxController {
           icon: const Icon(Icons.check_circle, color: Colors.green),
         );
         Get.offAllNamed('/settings');
+        SoundService.playSuccess();
       } else {
         throw Exception('Respuesta nula');
       }
@@ -383,10 +389,10 @@ class EditarPerfilController extends GetxController {
       TextField(
         controller: controller,
         obscureText: !visible.value,
-        style: theme.textTheme.bodyMedium,
+        style: theme.textTheme.labelSmall,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: theme.textTheme.labelLarge,
+          labelStyle: theme.textTheme.labelSmall,
           filled: true,
           fillColor: theme.cardColor,
           border: OutlineInputBorder(
@@ -427,6 +433,7 @@ class EditarPerfilController extends GetxController {
 
   @override
   void onClose() {
+    SoundService.playButton();
     resetearEstado();
     nombreController.dispose();
     apellidoController.dispose();

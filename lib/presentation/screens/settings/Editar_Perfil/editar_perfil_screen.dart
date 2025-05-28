@@ -12,155 +12,196 @@ class EditarPerfilScreen extends StatelessWidget {
     final EditarPerfilController controller = Get.find();
     final ThemeData theme = Theme.of(context);
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: Stack(
-        children: [
-          SafeArea(
-            child: Column(
-              children: <Widget>[
-                const CustomHeader(
-                  nameScreen: 'Editar Perfil',
-                  isSecondaryScreen: true,
-                ),
-                Expanded(
-                  child: Obx(
-                    () => SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 24,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Center(
-                            child: GestureDetector(
-                              onTap: controller.pickImage,
-                              child: controller.selectedImage.value != null
-                                  ? CircleAvatar(
-                                radius: 45,
-                                backgroundImage: FileImage(controller.selectedImage.value!),
-                              )
-                                  : controller.fotoUrl != null && controller.fotoUrl!.isNotEmpty
-                                  ? CircleAvatar(
-                                radius: 45,
-                                backgroundImage: NetworkImage(controller.fotoUrl!),
-                              )
-                                  : CircleAvatar(
-                                radius: 45,
-                                backgroundColor: theme.cardColor,
-                                child: Icon(
-                                  Icons.camera_alt,
-                                  color: theme.colorScheme.primary,
-                                  size: 30,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-                          _buildTextField(
-                            'Nombre',
-                            'Ingrese su nombre',
-                            Icons.person,
-                            controller.nombreController,
-                            theme,
-                          ),
-                          _buildTextField(
-                            'Apellido',
-                            'Ingrese su apellido',
-                            Icons.person_outline,
-                            controller.apellidoController,
-                            theme,
-                          ),
-                          _buildTextField(
-                            'Cédula',
-                            'Ingrese su número de cédula',
-                            Icons.credit_card,
-                            controller.cedulaController,
-                            theme,
-                          ),
-                          _buildTextField(
-                            'Teléfono',
-                            'Ingrese su número',
-                            Icons.phone,
-                            controller.telefonoController,
-                            theme,
-                            type: TextInputType.phone,
-                          ),
-                          _buildTextField(
-                            'Correo Electrónico',
-                            'Ingrese su correo',
-                            Icons.email,
-                            controller.correoController,
-                            theme,
-                            type: TextInputType.emailAddress,
-                          ),
-                          _buildTextField(
-                            'Ciudad',
-                            'Ingrese su ciudad',
-                            Icons.location_city,
-                            controller.ciudadController,
-                            theme,
-                          ),
-                          _buildTextField(
-                            'Dirección',
-                            'Ingrese su dirección',
-                            Icons.home,
-                            controller.direccionController,
-                            theme,
-                          ),
-                          const SizedBox(height: 12),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: TextButton(
-                              onPressed: () =>
-                                  controller.abrirCambiarContrasena(context),
-                              child: const Text(
-                                'Cambiar Contraseña',
-                                style: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.primary,
-                              minimumSize: const Size(double.infinity, 50),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            onPressed: () {
-                              SoundService.playButton();
-                              controller.onGuardar();
-                            },
-                            child: const Text(
-                              'Guardar',
-                              style: TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
+      return WillPopScope(
+        onWillPop: () async {
+          // ⬇️ Si NO hay cambios pendientes se sale directo
+          if (!controller.hasChanges.value) return true;
+          SoundService.playButton();
+          final res = await Get.dialog<bool>(
+            AlertDialog(
+              title: const Text('¿Seguro que desea salir?'),
+              content: Row(
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'Si sales ahora perderás los cambios realizados.',
+                      style: TextStyle(color: Colors.red),
                     ),
                   ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Get.back(result: false),
+                  child: const Text('Si'),
+                ),
+                TextButton(
+                  onPressed: () => Get.back(result: null),
+                  child: const Text('No'),
                 ),
               ],
             ),
-          ),
-          Obx(() => controller.isLoading.value
-              ? Container(
-            color: Colors.black.withOpacity(0.5),
-            child: const Center(
-              child: CircularProgressIndicator(),
+            barrierDismissible: false,
+          );
+
+          // true  => ya guardó; allow pop
+          // false => salir sin guardar; allow pop
+          // null  => canceló; stay
+          return res != null;
+        },
+
+        child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: Stack(
+          children: [
+            SafeArea(
+              child: Column(
+                children: <Widget>[
+                  const CustomHeader(
+                    nameScreen: 'Editar Perfil',
+                    isSecondaryScreen: true,
+                  ),
+                  Expanded(
+                    child: Obx(
+                      () => SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 24,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Center(
+                              child: GestureDetector(
+                                onTap: controller.pickImage,
+                                child: controller.selectedImage.value != null
+                                    ? CircleAvatar(
+                                  radius: 45,
+                                  backgroundImage: FileImage(controller.selectedImage.value!),
+                                )
+                                    : controller.fotoUrl != null && controller.fotoUrl!.isNotEmpty
+                                    ? CircleAvatar(
+                                  radius: 45,
+                                  backgroundImage: NetworkImage(controller.fotoUrl!),
+                                )
+                                    : CircleAvatar(
+                                  radius: 45,
+                                  backgroundColor: theme.cardColor,
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    color: theme.colorScheme.primary,
+                                    size: 30,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 30),
+                            _buildTextField(
+                              'Nombre',
+                              'Ingrese su nombre',
+                              Icons.person,
+                              controller.nombreController,
+                              theme,
+                            ),
+                            _buildTextField(
+                              'Apellido',
+                              'Ingrese su apellido',
+                              Icons.person_outline,
+                              controller.apellidoController,
+                              theme,
+                            ),
+                            _buildTextField(
+                              'Cédula',
+                              'Ingrese su número de cédula',
+                              Icons.credit_card,
+                              controller.cedulaController,
+                              theme,
+                            ),
+                            _buildTextField(
+                              'Teléfono',
+                              'Ingrese su número',
+                              Icons.phone,
+                              controller.telefonoController,
+                              theme,
+                              type: TextInputType.phone,
+                            ),
+                            _buildTextField(
+                              'Correo Electrónico',
+                              'Ingrese su correo',
+                              Icons.email,
+                              controller.correoController,
+                              theme,
+                              type: TextInputType.emailAddress,
+                            ),
+                            _buildTextField(
+                              'Ciudad',
+                              'Ingrese su ciudad',
+                              Icons.location_city,
+                              controller.ciudadController,
+                              theme,
+                            ),
+                            _buildTextField(
+                              'Dirección',
+                              'Ingrese su dirección',
+                              Icons.home,
+                              controller.direccionController,
+                              theme,
+                            ),
+                            const SizedBox(height: 12),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: TextButton(
+                                onPressed: () =>
+                                    controller.abrirCambiarContrasena(context),
+                                child: const Text(
+                                  'Cambiar Contraseña',
+                                  style: TextStyle(
+                                    color: Colors.redAccent,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.colorScheme.primary,
+                                minimumSize: const Size(double.infinity, 50),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              onPressed: () {
+                                SoundService.playButton();
+                                controller.onGuardar();
+                              },
+                              child: const Text(
+                                'Guardar',
+                                style: TextStyle(fontSize: 16, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )
-              : const SizedBox.shrink(),
-          ),
-        ],
+            Obx(() => controller.isLoading.value
+                ? Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+                : const SizedBox.shrink(),
+            ),
+          ],
+        ),
       ),
     );
   }
