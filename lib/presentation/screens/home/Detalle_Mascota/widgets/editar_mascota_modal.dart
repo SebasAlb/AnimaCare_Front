@@ -4,6 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:animacare_front/models/mascota.dart';
 import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detalle_mascota_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:animacare_front/services/pet_service.dart';
+import 'package:animacare_front/presentation/screens/home/cloudinary_service.dart';
 
 class EditarMascotaModal {
   static void show(
@@ -146,7 +148,8 @@ class EditarMascotaModal {
                       ),
                       minimumSize: const Size(double.infinity, 50),
                     ),
-                    onPressed: () {
+
+                    onPressed: () async {
                       if (!_formKey.currentState!.validate()) return;
 
                       mascota.nombre = nombreController.text;
@@ -166,18 +169,33 @@ class EditarMascotaModal {
                       }
 
                       if (nuevaFoto != null) {
-                        mascota.fotoUrl = nuevaFoto!.path;
+                        final url = await CloudinaryService.uploadImage(nuevaFoto!);
+                        if (url != null) {
+                          mascota.fotoUrl = url;
+                        }
+                      } 
+
+
+                      try {
+                        // 🔁 Guarda en local
+                        onGuardar(mascota);
+
+                        // 🌐 ACTUALIZA en backend
+                        await PetService().actualizarMascota(mascota, int.parse(mascota.id));
+
+                        // 🔄 Actualiza UI
+                        context.read<DetalleMascotaController>().guardarCambiosDesdeFormulario(
+                          nuevoNombre: mascota.nombre,
+                        );
+
+                        Navigator.pop(modalContext);
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error al actualizar: $e')),
+                        );
                       }
-
-                      onGuardar(mascota);
-
-                      // 🔁 Asegura que la edad se recalcula también
-                      context.read<DetalleMascotaController>().guardarCambiosDesdeFormulario(
-                        nuevoNombre: mascota.nombre,
-                      );
-
-                      Navigator.pop(modalContext);
                     },
+
 
                   ),
                 ],
@@ -265,3 +283,4 @@ class EditarMascotaModal {
     );
   }
 }
+
