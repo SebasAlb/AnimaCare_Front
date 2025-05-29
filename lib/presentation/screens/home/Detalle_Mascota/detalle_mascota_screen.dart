@@ -11,8 +11,8 @@ import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detall
 import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/widgets/editar_mascota_modal.dart';
 
 import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/widgets/mascota_eventos_section.dart';
+import 'package:animacare_front/services/sound_service.dart';
 
-// Version 2
 class DetalleMascotaScreen extends StatelessWidget {
   const DetalleMascotaScreen({super.key, required this.mascota});
 
@@ -143,20 +143,27 @@ class _DetalleContenido extends StatelessWidget {
 
         // ✅ BOTÓN FLOTANTE FIJO
         floatingActionButton: controller.vistaActual == VistaDetalleMascota.info
-          ? FloatingActionButton(
-              backgroundColor: theme.colorScheme.primary,
+          ? FloatingActionButton.extended(
               onPressed: () {
-                EditarMascotaModal.show(
-                  context,
-                  mascota: controller.mascota,
-                  controllers: controller.controllers,
-                  onGuardar: (m) {
-                    controller.mascota = m;
-                    controller.notifyListeners();
-                  },
-                );
+                SoundService.playButton();
+                Future.microtask(() { // Este contenedor asegura que se cumpla la función del botón
+                  EditarMascotaModal.show(
+                    context,
+                    mascota: controller.mascota,
+                    controllers: controller.controllers,
+                    onGuardar: (m) {
+                      controller.mascota = m;
+                      controller.notifyListeners();
+                    },
+                  );
+                });
               },
-              child: const Icon(Icons.edit, color: Colors.white),
+              backgroundColor: theme.colorScheme.primary,
+              icon: const Icon(Icons.edit),
+              label: const Text(
+                'Editar',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             )
           : null,
 
@@ -204,6 +211,9 @@ class _DetalleContenido extends StatelessWidget {
 
   }
 }
+
+
+
 
 
 
