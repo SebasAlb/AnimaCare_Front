@@ -44,7 +44,7 @@ class AgregarMascotaController {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2010),
-      lastDate: DateTime(2035),
+      lastDate: DateTime.now(), // ✅ evita fechas futuras
       builder: (context, child) => Theme(
         data: ThemeData.light().copyWith(
           colorScheme: ColorScheme.light(
@@ -94,15 +94,16 @@ class AgregarMascotaController {
 
       final Mascota nuevaMascota = Mascota(
         id: '', // será asignado por backend
-        nombre: nombreController.text,
+        nombre: nombreController.text.trim(),
         especie: especie,
-        raza: razaController.text,
-        fechaNacimiento: _parseFecha(fechaNacimientoController.text),
+        raza: razaController.text.trim().isEmpty ? '' : razaController.text.trim(),
+        fechaNacimiento: _parseFecha(fechaNacimientoController.text.trim()),
         sexo: sexo,
-        peso: double.tryParse(pesoController.text) ?? 0,
-        altura: double.tryParse(alturaController.text) ?? 0,
-        fotoUrl: imageUrl, // ✅ URL remota
+        peso: double.tryParse(pesoController.text.trim()) ?? 0,
+        altura: double.tryParse(alturaController.text.trim()) ?? 0,
+        fotoUrl: imageUrl,
       );
+
 
       final Mascota mascotaCreada =
           await petService.crearMascota(nuevaMascota, dueno.id);
@@ -123,6 +124,8 @@ class AgregarMascotaController {
     );
   }
 }
+
+
 
 
 
