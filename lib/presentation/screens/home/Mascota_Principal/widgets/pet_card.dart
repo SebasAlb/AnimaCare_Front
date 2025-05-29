@@ -4,6 +4,7 @@ import 'package:animacare_front/models/mascota.dart';
 import 'package:animacare_front/presentation/theme/colors.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:animacare_front/services/sound_service.dart';
 
 class PetCard extends StatefulWidget {
   const PetCard({super.key, required this.mascota});
@@ -27,12 +28,15 @@ class _PetCardState extends State<PetCard> {
     final ThemeData theme = Theme.of(context);
 
     return GestureDetector(
+      
       onTap: () async {
+        SoundService.playButton();
         final Object? resultado = await Navigator.pushNamed(
           context,
           AppRoutes.detalleMascota,
           arguments: mascotaActual,
         );
+        SoundService.playButton(); // Sonido al regresar a Home
 
         if (resultado is Mascota) {
           setState(() {
@@ -40,6 +44,7 @@ class _PetCardState extends State<PetCard> {
           });
         }
       },
+
       child: Container(
         decoration: BoxDecoration(
           color: theme.cardColor,
