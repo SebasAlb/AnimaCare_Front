@@ -81,39 +81,49 @@ class EditarMascotaModal {
                                   Row(
                                     children: [
                                       Expanded(
-                                        child: DropdownButtonFormField<String>(
-                                          value: controllers['Especie']!.text,
-                                          decoration: _decoracionCampo(theme, label: 'Especie'),
-                                          items: ['Perro', 'Gato', 'Otro']
-                                              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                                              .toList(),
-                                          onChanged: (val) => controllers['Especie']!.text = val ?? '',
-                                          validator: (val) => val == null || val.isEmpty ? 'Campo requerido' : null,
-                                        ),
+                                        child: _dropdownValidado(
+  label: 'Especie',
+  theme: theme,
+  icono: Icons.category,
+  valorActual: controllers['Especie']!.text,
+  opciones: ['Perro', 'Gato', 'Otro'],
+  onChanged: (val) => controllers['Especie']!.text = val ?? '',
+),
+
                                       ),
                                       const SizedBox(width: 12),
                                       Expanded(child: _campoTexto('Raza', controllers['Raza']!, theme)),
                                     ],
                                   ),
-                                  const SizedBox(height: 16),
-                                  DropdownButtonFormField<String>(
-                                    value: controllers['Sexo']!.text,
-                                    decoration: _decoracionCampo(theme, label: 'Sexo'),
-                                    items: ['Macho', 'Hembra']
-                                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                                        .toList(),
-                                    onChanged: (val) => controllers['Sexo']!.text = val ?? '',
-                                    validator: (val) => val == null || val.isEmpty ? 'Campo requerido' : null,
-                                  ),
-                                  const SizedBox(height: 16),
+
+                                  _dropdownValidado(
+  label: 'Sexo',
+  theme: theme,
+  icono: Icons.male,
+  valorActual: controllers['Sexo']!.text,
+  opciones: ['Macho', 'Hembra'],
+  onChanged: (val) => controllers['Sexo']!.text = val ?? '',
+),
+
+
                                   GestureDetector(
                                     onTap: () async {
-                                      final seleccionada = await showDatePicker(
+                                      final DateTime? seleccionada = await showDatePicker(
                                         context: context,
                                         initialDate: DateTime.now(),
                                         firstDate: DateTime(2010),
-                                        lastDate: DateTime(2035),
+                                        lastDate: DateTime.now(), // ✅ evita fechas futuras
+                                        builder: (context, child) => Theme(
+                                          data: ThemeData.light().copyWith(
+                                            colorScheme: ColorScheme.light(
+                                              primary: const Color(0xFF14746F), // o usa tu color exacto `primario` si lo tienes declarado
+                                              onSurface: const Color(0xFF14746F),
+                                            ),
+                                          ),
+                                          child: child!,
+                                        ),
                                       );
+
                                       if (seleccionada != null) {
                                         controllers['Fecha de nacimiento']!.text =
                                             '${seleccionada.day.toString().padLeft(2, '0')}/${seleccionada.month.toString().padLeft(2, '0')}/${seleccionada.year}';
@@ -160,7 +170,10 @@ class EditarMascotaModal {
                                     ),
                                     onPressed: () async {
                                       //SoundService.playButton();
-                                      if (!_formKey.currentState!.validate()) return;
+                                      if (!_formKey.currentState!.validate()) {
+                                        SoundService.playWarning();
+                                        return;
+                                      }
                                       
                                       showDialog(
                                         context: context,
@@ -173,7 +186,7 @@ class EditarMascotaModal {
                                       );
 
                                       try {
-                                        SoundService.playLoading();
+                                        SoundService.playButton();
 
                                         mascota.nombre = nombreController.text;
                                         mascota.especie = controllers['Especie']!.text;
@@ -265,21 +278,156 @@ class EditarMascotaModal {
 
   }
 
-  static Widget _campoTexto(String label, TextEditingController controller,
-      ThemeData theme,
-      {TextInputType type = TextInputType.text}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: type,
-        decoration: _decoracionCampo(theme, label: label),
-        style: theme.textTheme.titleMedium,
-        validator: (value) =>
-            value == null || value.trim().isEmpty ? 'Campo requerido' : null,
-      ),
-    );
-  }
+  static Widget _campoTexto(
+  String label,
+  TextEditingController controller,
+  ThemeData theme, {
+  TextInputType type = TextInputType.text,
+}) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        const SizedBox(height: 2),
+        ValueBuilder<String?>( // manejo visual de errores
+          initialValue: null,
+          builder: (errorText, updater) {
+            final showError = errorText != null;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormField(
+                  controller: controller,
+                  keyboardType: type,
+                  style: theme.textTheme.bodyMedium,
+                  decoration: InputDecoration(
+                    hintText: 'Ingrese $label',
+                    hintStyle: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                    prefixIcon: Icon(
+                      label == 'Peso (kg)'
+                          ? Icons.monitor_weight
+                          : label == 'Altura (cm)'
+                              ? Icons.height
+                              : Icons.pets,
+                      color: theme.colorScheme.primary,
+                    ),
+                    filled: true,
+                    fillColor: theme.cardColor,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: showError
+                            ? Colors.red
+                            : theme.colorScheme.primary.withOpacity(0.5),
+                        width: 1.5,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: showError
+                            ? Colors.red
+                            : theme.colorScheme.primary.withOpacity(0.5),
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: showError ? Colors.red : theme.colorScheme.primary,
+                        width: 1.5,
+                      ),
+                    ),
+                    errorText: showError ? '' : null,
+                    errorStyle: const TextStyle(fontSize: 0, height: 0),
+                  ),
+                  validator: (value) {
+                    final val = value?.trim() ?? '';
+
+                    // Nombre: obligatorio
+                    if (label == 'Nombre') {
+                      if (val.isEmpty) {
+                        updater('Campo requerido');
+                        return '';
+                      }
+                    }
+
+                    // Raza: solo letras si hay algo escrito
+                    if (label == 'Raza' && val.isNotEmpty) {
+                      if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$').hasMatch(val)) {
+                        updater('Solo se permiten letras');
+                        return '';
+                      }
+                    }
+
+                    // Peso / Altura: número válido si hay algo
+                    if ((label.contains('Peso') || label.contains('Altura')) && val.isNotEmpty) {
+                      if (!RegExp(r'^\d+(\.\d+)?$').hasMatch(val)) {
+                        updater('Ingrese un número válido (ej. 12.5)');
+                        return '';
+                      } else if (double.tryParse(val)! <= 0) {
+                        updater('Debe ser un número mayor a 0');
+                        return '';
+                      }
+                    }
+
+                    updater(null);
+                    return null;
+                  },
+                  onChanged: (value) {
+                    final val = value.trim();
+
+                    if (label == 'Raza') {
+                      if (val.isNotEmpty && !RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$').hasMatch(val)) {
+                        updater('Solo se permiten letras');
+                      } else {
+                        updater(null);
+                      }
+                    } else if ((label.contains('Peso') || label.contains('Altura')) && val.isNotEmpty) {
+                      if (!RegExp(r'^\d+(\.\d+)?$').hasMatch(val)) {
+                        updater('Ingrese un número válido (ej. 12.5)');
+                      } else if (double.tryParse(val)! <= 0) {
+                        updater('Debe ser un número mayor a 0');
+                      } else {
+                        updater(null);
+                      }
+                    } else if (label == 'Nombre') {
+                      updater(val.isEmpty ? 'Campo requerido' : null);
+                    } else {
+                      updater(null);
+                    }
+                  },
+                ),
+                const SizedBox(height: 6),
+                SizedBox(
+                  height: 18,
+                  child: showError
+                      ? Text(
+                          errorText!,
+                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+
 
   static InputDecoration _decoracionCampo(ThemeData theme,
       {required String label}) {
@@ -339,7 +487,98 @@ class EditarMascotaModal {
       ],
     );
   }
+  static _dropdownValidado({
+  required String label,
+  required ThemeData theme,
+  required IconData icono,
+  required String valorActual,
+  required List<String> opciones,
+  required void Function(String?) onChanged,
+}) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 5),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        const SizedBox(height: 2),
+        ValueBuilder<bool?>(
+          initialValue: false,
+          builder: (hasError, updater) {
+            final showError = hasError ?? false;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DropdownButtonFormField<String>(
+                  value: valorActual.isNotEmpty ? valorActual : null,
+                  items: opciones.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                  onChanged: onChanged,
+                  decoration: InputDecoration(
+  isDense: true,
+  contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+  filled: true,
+  fillColor: theme.cardColor,
+  prefixIcon: Icon(icono, color: theme.colorScheme.primary),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: BorderSide(
+      color: showError ? Colors.red : theme.colorScheme.primary.withOpacity(0.5),
+      width: 1.5,
+    ),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: BorderSide(
+      color: showError ? Colors.red : theme.colorScheme.primary,
+      width: 1.5,
+    ),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: Colors.red),
+  ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: Colors.red, width: 1.5),
+  ),
+),
+
+
+                  validator: (val) {
+                    final isValid = val != null && val.isNotEmpty;
+                    updater(!isValid);
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 0),
+                SizedBox(
+                  height: 18,
+                  child: showError
+                      ? const Text(
+                          'Campo requerido',
+                          style: TextStyle(color: Colors.red, fontSize: 12),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
+    ),
+  );
 }
+
+}
+
+
+
 
 
 
