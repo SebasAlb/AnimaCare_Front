@@ -14,17 +14,17 @@ class EditarPerfilScreen extends StatelessWidget {
 
       return WillPopScope(
         onWillPop: () async {
-          // ⬇️ Si NO hay cambios pendientes se sale directo
+          if (controller.isLoading.value) return false; // ← bloquea back físico
           if (!controller.hasChanges.value) return true;
           SoundService.playButton();
           final res = await Get.dialog<bool>(
             AlertDialog(
               title: const Text('¿Seguro que desea salir?'),
-              content: Row(
+              content: const Row(
                 children: [
-                  const Icon(Icons.error_outline, color: Colors.red),
-                  const SizedBox(width: 8),
-                  const Expanded(
+                  Icon(Icons.error_outline, color: Colors.red),
+                  SizedBox(width: 8),
+                  Expanded(
                     child: Text(
                       'Si sales ahora perderás los cambios realizados.',
                       style: TextStyle(color: Colors.red),
@@ -34,22 +34,18 @@ class EditarPerfilScreen extends StatelessWidget {
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Get.back(result: false),
+                  onPressed: () => Get.back(result: true),
                   child: const Text('Si'),
                 ),
                 TextButton(
-                  onPressed: () => Get.back(result: null),
+                  onPressed: () => Get.back(result: false),
                   child: const Text('No'),
                 ),
               ],
             ),
             barrierDismissible: false,
           );
-
-          // true  => ya guardó; allow pop
-          // false => salir sin guardar; allow pop
-          // null  => canceló; stay
-          return res != null;
+          return res ?? false;
         },
 
         child: Scaffold(
@@ -60,9 +56,44 @@ class EditarPerfilScreen extends StatelessWidget {
             SafeArea(
               child: Column(
                 children: <Widget>[
-                  const CustomHeader(
+                  CustomHeader(
                     nameScreen: 'Editar Perfil',
                     isSecondaryScreen: true,
+                    onBackConfirm: () async {
+                      if (!controller.hasChanges.value) return true;
+
+                      SoundService.playButton();
+                      final salir = await Get.dialog<bool>(
+                        AlertDialog(
+                          title: const Text('¿Seguro que desea salir?'),
+                          content: Row(
+                            children: const [
+                              Icon(Icons.error_outline, color: Colors.red),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Si sales ahora perderás los cambios realizados.',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Get.back(result: true),
+                              child: const Text('Sí'),
+                            ),
+                            TextButton(
+                              onPressed: () => Get.back(result: false),
+                              child: const Text('No'),
+                            ),
+                          ],
+                        ),
+                        barrierDismissible: false,
+                      );
+
+                      return salir ?? false;
+                    },
                   ),
                   Expanded(
                     child: Obx(

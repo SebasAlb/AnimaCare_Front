@@ -1,3 +1,4 @@
+import 'package:animacare_front/storage/veterinarian_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/models/veterinario.dart';
 import 'package:animacare_front/models/veterinario_excepcion.dart';
@@ -7,13 +8,37 @@ import 'package:animacare_front/presentation/screens/contacts/Contact_Principal/
 import 'package:animacare_front/presentation/screens/contacts/Contact_Principal/widget/contact_card.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 
-class ContactsScreen extends StatelessWidget {
+class ContactsScreen extends StatefulWidget {
   const ContactsScreen({super.key});
-  
+
+  @override
+  State<ContactsScreen> createState() => _ContactsScreenState();
+}
+
+class _ContactsScreenState extends State<ContactsScreen> {
+  final ContactsController controller = ContactsController();
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    cargarDatos();
+  }
+
+  Future<void> cargarDatos() async {
+    try {
+      await controller.cargarVeterinarios();
+    } catch (e) {
+      print('Error al cargar veterinarios: $e');
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final ContactsController controller = ContactsController();
-    final ThemeData theme = Theme.of(context);
+    final theme = Theme.of(context);
 
     return WillPopScope(
       onWillPop: () async {
@@ -21,7 +46,6 @@ class ContactsScreen extends StatelessWidget {
         return false;
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: true,
         backgroundColor: theme.scaffoldBackgroundColor,
         body: SafeArea(
           child: Column(
@@ -41,20 +65,27 @@ class ContactsScreen extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: controller.contactos.length,
-                  itemBuilder: (context, index) {
-                    final Veterinario vet = controller.contactos[index];
-                    final List<VeterinarioExcepcion> excepciones =
-                        controller.excepciones;
-
-                    return ContactCard(
-                      veterinario: vet,
-                      excepciones: excepciones,
-                      onTap: () => controller.abrirDetalle(context, vet),
-                    );
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : RefreshIndicator(
+                  onRefresh: () async {
+                    setState(() => isLoading = true);
+                    // Limpia la caché para forzar recarga desde el backend
+                    VeterinariosStorage.clearVeterinarios();
+                    await cargarDatos();
                   },
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: controller.contactos.length,
+                    itemBuilder: (context, index) {
+                      final vet = controller.contactos[index];
+                      return ContactCard(
+                        veterinario: vet,
+                        excepciones: controller.excepciones,
+                        onTap: () => controller.abrirDetalle(context, vet),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
@@ -63,10 +94,7 @@ class ContactsScreen extends StatelessWidget {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () => controller.abrirAgendarCita(context),
           backgroundColor: theme.colorScheme.primary,
-          icon: Icon(
-            Icons.event_available,
-            color: theme.colorScheme.onPrimary,
-          ),
+          icon: Icon(Icons.event_available, color: theme.colorScheme.onPrimary),
           label: Text(
             'Agendar Cita',
             style: TextStyle(
@@ -81,8 +109,6 @@ class ContactsScreen extends StatelessWidget {
             switch (index) {
               case 0:
                 Navigator.pushReplacementNamed(context, AppRoutes.homeOwner);
-                break;
-              case 1:
                 break;
               case 2:
                 Navigator.pushReplacementNamed(context, AppRoutes.calendar);

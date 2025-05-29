@@ -1,4 +1,5 @@
 import 'package:animacare_front/presentation/components/custom_header.dart';
+import 'package:animacare_front/storage/veterinarian_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_controller.dart';
@@ -15,13 +16,22 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
   final AgendarCitaController controller = AgendarCitaController();
   final ScrollController _scrollController = ScrollController();
   bool _prevCamposLlenos = false;
+  bool _cargandoVeterinarios = true;
 
   @override
   void initState() {
     super.initState();
     _prevCamposLlenos = controller.camposObligatoriosLlenos;
-  }
 
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final veterinarios = await VeterinariosStorage.getVeterinarios();
+      setState(() {
+        controller.contactosExternos = veterinarios;
+        _cargandoVeterinarios = false;
+      });
+    });
+
+  }
 
   Widget _buildFieldLabel(String label, ThemeData theme) => Padding(
         padding: const EdgeInsets.only(bottom: 6),
@@ -37,6 +47,11 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    if (_cargandoVeterinarios) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final actualLleno = controller.camposObligatoriosLlenos;
       if (!_prevCamposLlenos && actualLleno) {

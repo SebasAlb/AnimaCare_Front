@@ -12,7 +12,7 @@ class AuthService {
       final response = await _dio.post(
         '$_baseUrl/v1/auth/login',
         data: {
-          'correo': correo, // CORRECTO
+          'correo': correo,
           'contrasena': contrasena,
         },
         options: Options(headers: {'Content-Type': 'application/json'}),
@@ -53,6 +53,30 @@ class AuthService {
       return Dueno.fromJson(userJson);
     } on DioException catch (e) {
       final error = e.response?.data['error'] ?? 'Error de red o del servidor';
+      throw Exception(error);
+    }
+  }
+
+  Future<String> changePassword({
+    required int userId,
+    required String contrasenaActual,
+    required String nuevaContrasena,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/v1/auth/changePassword/${userId}',
+        data: {
+          'contrasenaActual': contrasenaActual,
+          'nuevaContrasena': nuevaContrasena,
+        },
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+      return response.data['message'];
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      final error = data is Map && data['error'] is String
+          ? data['error']
+          : 'Error al cambiar la contraseña';
       throw Exception(error);
     }
   }

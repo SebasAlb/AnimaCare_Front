@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:animacare_front/presentation/screens/contacts/Contact_Principal/contacts_controller.dart';
 import 'package:animacare_front/models/veterinario.dart';
 import 'package:animacare_front/models/veterinario_excepcion.dart';
 import 'package:animacare_front/presentation/components/list_extensions.dart';
 
-
 class AgendarCitaController {
   final List<String> mascotas = <String>['Firulais', 'Pelusa', 'Max'];
+
   final List<String> razones = <String>[
     'Consulta general',
     'Vacunación',
@@ -16,33 +15,38 @@ class AgendarCitaController {
     'Chequeo geriátrico',
   ];
 
-  final ContactsController contactosController = ContactsController();
-  List<String> get veterinariosDisponibles => contactosController.contactos.map((v) => v.nombreCompleto).toList();
+  // ✅ Se reemplaza ContactsController por una lista real de veterinarios
+  List<Veterinario> contactosExternos = [];
+
+  List<String> get veterinariosDisponibles =>
+      contactosExternos.map((v) => v.nombreCompleto).toList();
+
+  Veterinario? obtenerVeterinarioPorNombre(String nombre) =>
+      contactosExternos.firstWhereOrNull((v) => v.nombreCompleto == nombre);
 
   String? mascotaSeleccionada;
   String? razonSeleccionada;
   String? veterinarioSeleccionado;
   DateTime? fechaSeleccionada;
   String? horaSeleccionada;
+
   final TextEditingController notasController = TextEditingController();
 
   Future<void> seleccionarFecha(BuildContext context) async {
     final DateTime hoy = DateTime.now();
 
-    // Encuentra el primer día hábil que no esté bloqueado por excepción
     DateTime fechaInicial = hoy;
     while (estaDiaBloqueadoPorExcepcion(fechaInicial) || diaNoLaboral(fechaInicial)) {
       fechaInicial = fechaInicial.add(const Duration(days: 1));
     }
-
 
     final DateTime? fecha = await showDatePicker(
       context: context,
       initialDate: fechaInicial,
       firstDate: hoy,
       lastDate: hoy.add(const Duration(days: 90)),
-      selectableDayPredicate: (day) => !estaDiaBloqueadoPorExcepcion(day) && !diaNoLaboral(day),
-
+      selectableDayPredicate: (day) =>
+      !estaDiaBloqueadoPorExcepcion(day) && !diaNoLaboral(day),
       builder: (context, child) => Theme(
         data: ThemeData.light().copyWith(
           colorScheme: const ColorScheme.light(
@@ -59,28 +63,32 @@ class AgendarCitaController {
     }
   }
 
-
   bool estaDiaBloqueadoPorExcepcion(DateTime dia) {
-    final vet = contactosController.obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
+    final vet = obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
     if (vet == null) return false;
 
-    return contactosController.excepciones.any((e) =>
-      e.veterinarioId == vet.id &&
-      !e.disponible &&
-      dia.isAfter(e.fechaInicio.subtract(const Duration(days: 1))) &&
-      dia.isBefore(e.fechaFin.add(const Duration(days: 1))) &&
-      _cubreTodoElDia(e, dia)
-    );
+    return vet.excepciones.any((e) {
+      if (!e.disponible) {
+        final inicio = _combinarFechaHora(e.fecha, e.horaInicio);
+        final fin = _combinarFechaHora(e.fecha, e.horaFin);
+        return dia.isAfter(inicio.subtract(const Duration(days: 1))) &&
+            dia.isBefore(fin.add(const Duration(days: 1))) &&
+            _cubreTodoElDia(e, dia);
+      }
+      return false;
+    });
   }
 
   bool _cubreTodoElDia(VeterinarioExcepcion e, DateTime dia) {
-    final inicio = DateTime(dia.year, dia.month, dia.day, 0, 0);
-    final fin = DateTime(dia.year, dia.month, dia.day, 23, 59);
-    return e.fechaInicio.isBefore(inicio) && e.fechaFin.isAfter(fin);
+    final diaCompletoInicio = DateTime(dia.year, dia.month, dia.day, 0, 0);
+    final diaCompletoFin = DateTime(dia.year, dia.month, dia.day, 23, 59);
+    final inicio = _combinarFechaHora(e.fecha, e.horaInicio);
+    final fin = _combinarFechaHora(e.fecha, e.horaFin);
+    return inicio.isBefore(diaCompletoInicio) && fin.isAfter(diaCompletoFin);
   }
 
   bool horaBloqueadaPorExcepcion(DateTime fecha, String hora) {
-    final vet = contactosController.obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
+    final vet = obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
     if (vet == null) return false;
 
     final DateTime horaActual = DateTime(
@@ -90,30 +98,40 @@ class AgendarCitaController {
       int.parse(hora.split(':')[0]),
     );
 
-    return contactosController.excepciones.any((e) =>
-      e.veterinarioId == vet.id &&
-      !e.disponible &&
-      horaActual.isAfter(e.fechaInicio) &&
-      horaActual.isBefore(e.fechaFin)
-    );
+    return vet.excepciones.any((e) {
+      if (!e.disponible) {
+        final inicio = _combinarFechaHora(e.fecha, e.horaInicio);
+        final fin = _combinarFechaHora(e.fecha, e.horaFin);
+        return horaActual.isAfter(inicio) && horaActual.isBefore(fin);
+      }
+      return false;
+    });
+  }
+
+  DateTime _combinarFechaHora(DateTime fecha, String horaISO) {
+    final hora = DateTime.parse(horaISO);
+    return DateTime(fecha.year, fecha.month, fecha.day, hora.hour, hora.minute);
   }
 
   Future<void> mostrarSelectorHora(
-    BuildContext context,
-    VoidCallback refreshUI,
-  ) async {
+      BuildContext context,
+      VoidCallback refreshUI,
+      ) async {
     if (veterinarioSeleccionado == null || fechaSeleccionada == null) return;
 
     final ThemeData theme = Theme.of(context);
+    final vet = obtenerVeterinarioPorNombre(veterinarioSeleccionado!);
+    if (vet == null) return;
 
-    final List<String> horasDisponibles = contactosController.obtenerHorasDisponiblesParaFecha(
-      nombreVeterinario: veterinarioSeleccionado!,
-      fechaSeleccionada: fechaSeleccionada!,
-      horasOcupadasSimuladas: ['10:00', '12:00'],
+    final List<String> horasDisponibles = _obtenerHorasDisponiblesParaFecha(
+      vet,
+      fechaSeleccionada!,
+      horasOcupadasSimuladas: ['10:00', '12:00'], // Simulación
     );
 
     final String nombreDia = _nombreDia(fechaSeleccionada!.weekday);
-    final String fechaFormateada = '${fechaSeleccionada!.day}/${fechaSeleccionada!.month}/${fechaSeleccionada!.year}';
+    final String fechaFormateada =
+        '${fechaSeleccionada!.day}/${fechaSeleccionada!.month}/${fechaSeleccionada!.year}';
 
     await showModalBottomSheet(
       context: context,
@@ -138,10 +156,7 @@ class AgendarCitaController {
             const SizedBox(height: 16),
             const Text(
               'Selecciona una hora',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Center(
@@ -150,15 +165,16 @@ class AgendarCitaController {
                 spacing: 8,
                 runSpacing: 8,
                 children: horasDisponibles.map((String hora) {
-                  final bloqueada = horaBloqueadaPorExcepcion(fechaSeleccionada!, hora);
+                  final bloqueada =
+                  horaBloqueadaPorExcepcion(fechaSeleccionada!, hora);
                   return ElevatedButton(
                     onPressed: bloqueada
                         ? null
                         : () {
-                            horaSeleccionada = hora;
-                            Navigator.pop(context);
-                            refreshUI();
-                          },
+                      horaSeleccionada = hora;
+                      Navigator.pop(context);
+                      refreshUI();
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: bloqueada
                           ? Colors.red[300]
@@ -180,13 +196,12 @@ class AgendarCitaController {
     );
   }
 
-
   void confirmarCita(BuildContext context) {
     if (camposObligatoriosLlenos) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Cita agendada exitosamente'),
-          backgroundColor: Theme.of(context).colorScheme.primary, // usa el theme
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
     } else {
@@ -199,47 +214,75 @@ class AgendarCitaController {
     }
   }
 
-
-
   bool get sePuedeMostrarFechaYHora => veterinarioSeleccionado != null;
 
   bool get camposObligatoriosLlenos =>
       mascotaSeleccionada != null &&
-      razonSeleccionada != null &&
-      veterinarioSeleccionado != null &&
-      fechaSeleccionada != null &&
-      horaSeleccionada != null;
+          razonSeleccionada != null &&
+          veterinarioSeleccionado != null &&
+          fechaSeleccionada != null &&
+          horaSeleccionada != null;
+
   String _nombreDia(int weekday) {
-  const dias = [
-    'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'
-  ];
-  return dias[weekday - 1];
-}
+    const dias = [
+      'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'
+    ];
+    return dias[weekday - 1];
+  }
 
   bool diaNoLaboral(DateTime dia) {
-    final vet = contactosController.obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
+    final vet = obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
     if (vet == null) return false;
 
-    final String nombreDia = _nombreDia(dia.weekday); // Ej: "Lunes"
-    final horario = vet.horario[nombreDia]?.toLowerCase() ?? '';
-    return horario == 'cerrado';
+    final String nombreDia = _nombreDia(dia.weekday);
+    final detalle =
+    vet.horarios.firstWhereOrNull((h) => h.diaSemana == nombreDia);
+    if (detalle == null) return true;
+
+    final horaInicio = DateTime.parse(detalle.horaInicio);
+    final horaFin = DateTime.parse(detalle.horaFin);
+    return horaInicio == horaFin;
   }
 
   String? obtenerMotivoExcepcion(DateTime dia) {
-    final vet = contactosController.obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
+    final vet = obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
     if (vet == null) return null;
 
-    final excepcion = contactosController.excepciones.firstWhereOrNull(
-      (e) =>
-          e.veterinarioId == vet.id &&
-          !e.disponible &&
-          dia.isAfter(e.fechaInicio.subtract(const Duration(days: 1))) &&
-          dia.isBefore(e.fechaFin.add(const Duration(days: 1))) &&
-          _cubreTodoElDia(e, dia), // ✅ VERIFICA si bloquea todo el día
-    );
+    final excepcion = vet.excepciones.firstWhereOrNull((e) {
+      if (!e.disponible) {
+        final inicio = _combinarFechaHora(e.fecha, e.horaInicio);
+        final fin = _combinarFechaHora(e.fecha, e.horaFin);
+        return dia.isAfter(inicio.subtract(const Duration(days: 1))) &&
+            dia.isBefore(fin.add(const Duration(days: 1))) &&
+            _cubreTodoElDia(e, dia);
+      }
+      return false;
+    });
 
     return excepcion?.motivo;
   }
 
-}
+  List<String> _obtenerHorasDisponiblesParaFecha(
+      Veterinario vet,
+      DateTime fechaSeleccionada, {
+        required List<String> horasOcupadasSimuladas,
+      }) {
+    final diaNombre = _nombreDia(fechaSeleccionada.weekday);
+    final horario = vet.horarios.firstWhereOrNull((h) => h.diaSemana == diaNombre);
+    if (horario == null) return [];
 
+    final start = DateTime.parse(horario.horaInicio).hour;
+    final end = DateTime.parse(horario.horaFin).hour;
+    final bloques = <String>[];
+
+    for (int i = start; i < end; i++) {
+      final inicio = '${i.toString().padLeft(2, '0')}:00';
+      final fin = '${(i + 1).toString().padLeft(2, '0')}:00';
+      if (inicio != '12:00') {
+        bloques.add('$inicio - $fin');
+      }
+    }
+
+    return bloques.where((b) => !horasOcupadasSimuladas.contains(b)).toList();
+  }
+}

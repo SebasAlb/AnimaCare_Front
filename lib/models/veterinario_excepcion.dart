@@ -1,30 +1,38 @@
 class VeterinarioExcepcion {
-  String veterinarioId;
-  DateTime fechaInicio;
-  DateTime fechaFin;
+  int id;
+  int veterinarioId;
+  DateTime fecha;
+  String horaInicio;
+  String horaFin;
   String motivo;
   bool disponible;
 
   VeterinarioExcepcion({
+    required this.id,
     required this.veterinarioId,
-    required this.fechaInicio,
-    required this.fechaFin,
+    required this.fecha,
+    required this.horaInicio,
+    required this.horaFin,
     required this.motivo,
     required this.disponible,
   });
 
   factory VeterinarioExcepcion.fromJson(Map<String, dynamic> json) => VeterinarioExcepcion(
-    veterinarioId: json['veterinarioId'],
-    fechaInicio: DateTime.parse(json['fechaInicio']),
-    fechaFin: DateTime.parse(json['fechaFin']),
+    id: json['id'],
+    veterinarioId: json['veterinario_id'],
+    fecha: DateTime.parse(json['fecha']),
+    horaInicio: json['hora_inicio'],
+    horaFin: json['hora_fin'],
     motivo: json['motivo'],
     disponible: json['disponible'],
   );
 
   Map<String, dynamic> toJson() => {
-    'veterinarioId': veterinarioId,
-    'fechaInicio': fechaInicio.toIso8601String(),
-    'fechaFin': fechaFin.toIso8601String(),
+    'id': id,
+    'veterinario_id': veterinarioId,
+    'fecha': fecha.toIso8601String(),
+    'hora_inicio': horaInicio,
+    'hora_fin': horaFin,
     'motivo': motivo,
     'disponible': disponible,
   };

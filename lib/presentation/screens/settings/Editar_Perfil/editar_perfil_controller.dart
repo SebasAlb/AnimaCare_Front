@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:animacare_front/services/auth_service.dart';
 import 'package:animacare_front/services/owner_service.dart';
 import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class EditarPerfilController extends GetxController {
   final TextEditingController correoController = TextEditingController();
   final TextEditingController ciudadController = TextEditingController();
   final TextEditingController direccionController = TextEditingController();
+  final AuthService _authService = AuthService();
   final RxBool isLoading = false.obs;
   final Rxn<File> selectedImage = Rxn<File>();
   String? fotoUrl;
@@ -25,8 +27,8 @@ class EditarPerfilController extends GetxController {
   static const String uploadPreset = 'ml_default';
   final theme = Theme.of(Get.context!);
 
-  late Dueno _initial;                    // ← ya NO es final (puede cambiar)
-  final hasChanges = false.obs;           // flag observable
+  late Dueno _initial;
+  final hasChanges = false.obs;
 
   @override
   void onInit() {
@@ -269,114 +271,128 @@ class EditarPerfilController extends GetxController {
         minChildSize: 0.3,
         maxChildSize: 0.8,
         expand: false,
-        builder: (context, scrollController) => Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: theme.scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Cambiar Contraseña',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+        builder: (context, scrollController) => WillPopScope(
+          onWillPop: () async => !isLoading.value,
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Cambiar Contraseña',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                Obx(() => _passwordInput('Contraseña Actual', actual, visibleActual, theme)),
-                const SizedBox(height: 12),
-                Obx(() => _passwordInput('Nueva Contraseña', nueva, visibleNueva, theme)),
-                const SizedBox(height: 12),
-                Obx(() => _passwordInput('Confirmar Contraseña', confirmar, visibleConfirmar, theme)),
-                const SizedBox(height: 20),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (nueva.text.trim() != confirmar.text.trim()) {
-                        cerrarDialogoDeCarga();
-                        SoundService.playWarning();
-                        Get.snackbar(
-                          'Error',
-                          'Las contraseñas no coinciden.',
-                          backgroundColor: Colors.white30,
-                          colorText: theme.colorScheme.onBackground,
-                          icon: const Icon(Icons.warning, color: Colors.redAccent),
-                        );
-                        return;
-                      }
+                  const SizedBox(height: 20),
+                  Obx(() => _passwordInput('Contraseña Actual', actual, visibleActual, theme)),
+                  const SizedBox(height: 12),
+                  Obx(() => _passwordInput('Nueva Contraseña', nueva, visibleNueva, theme)),
+                  const SizedBox(height: 12),
+                  Obx(() => _passwordInput('Confirmar Contraseña', confirmar, visibleConfirmar, theme)),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (nueva.text.trim() != confirmar.text.trim()) {
+                          cerrarDialogoDeCarga();
+                          SoundService.playWarning();
+                          Get.snackbar(
+                            'Error',
+                            'Las contraseñas no coinciden.',
+                            backgroundColor: Colors.white30,
+                            colorText: theme.colorScheme.onBackground,
+                            icon: const Icon(Icons.warning, color: Colors.redAccent),
+                          );
+                          return;
+                        }
 
-                      if (actual.text.trim().isEmpty) {
-                        cerrarDialogoDeCarga();
-                        SoundService.playWarning();
-                        Get.snackbar(
-                          'Campos requeridos',
-                          'Debe completar: Contraseña Actual.',
-                          backgroundColor: Colors.white30,
-                          colorText: theme.colorScheme.onBackground,
-                          icon: const Icon(Icons.warning, color: Colors.redAccent),
-                        );
-                        return;
-                      }
+                        if (actual.text.trim().isEmpty || nueva.text.trim().isEmpty || confirmar.text.trim().isEmpty) {
+                          cerrarDialogoDeCarga();
+                          SoundService.playWarning();
+                          Get.snackbar(
+                            'Campos requeridos',
+                            'Debe completar todos los campos.',
+                            backgroundColor: Colors.white30,
+                            colorText: theme.colorScheme.onBackground,
+                            icon: const Icon(Icons.warning, color: Colors.redAccent),
+                          );
+                          return;
+                        }
 
-                      Get.dialog(
-                        Center(
-                          child: Container(
-                            padding: const EdgeInsets.all(24),
-                            decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
+                        Get.dialog(
+                          Center(
+                            child: Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const CircularProgressIndicator(),
                             ),
-                            child: const CircularProgressIndicator(),
                           ),
-                        ),
-                        barrierDismissible: false,
-                      );
+                          barrierDismissible: false,
+                        );
 
-                      try {
-                        await Future.delayed(const Duration(milliseconds: 800)); // simula proceso
-                        cerrarDialogoDeCarga();
-                        Get.back(); // Cierra el diálogo de carga
-                        Get.back(); // Cierra el bottom sheet
-                        SoundService.playSuccess();
-                        Get.snackbar(
-                          'Éxito',
-                          'Contraseña cambiada correctamente.',
-                          backgroundColor: Colors.white30,
-                          colorText: theme.colorScheme.onBackground,
-                          icon: const Icon(Icons.check_circle, color: Colors.green),
-                        );
-                      } catch (e) {
-                        cerrarDialogoDeCarga();
-                        SoundService.playWarning();
-                        Get.snackbar(
-                          'Error',
-                          'No se pudo cambiar la contraseña.',
-                          backgroundColor: Colors.white30,
-                          colorText: theme.colorScheme.onBackground,
-                          icon: const Icon(Icons.warning, color: Colors.redAccent),
-                        );
-                      } finally {
-                        cerrarDialogoDeCarga();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                    ),
-                    child: const Text(
-                      'Guardar',
-                      style: TextStyle(color: Colors.white),
+                        try {
+                          final response = await _authService.changePassword(
+                            userId: UserStorage.getUser()!.id,
+                            contrasenaActual: actual.text.trim(),
+                            nuevaContrasena: nueva.text.trim(),
+                          );
+                          print("////" + response.toString());
+                          if (response != null) {
+                            cerrarDialogoDeCarga();
+                            Get.back(); // Cierra el diálogo de carga
+                            Get.back(); // Cierra el bottom sheet
+                            Get.snackbar(
+                              'Éxito',
+                              '${response}',
+                              backgroundColor: Colors.white30,
+                              colorText: theme.colorScheme.onBackground,
+                              icon: const Icon(Icons.check_circle, color: Colors.green),
+                            );
+                            SoundService.playSuccess();
+                          }
+                        } catch (e) {
+                          cerrarDialogoDeCarga();
+                          SoundService.playWarning();
+                          Get.snackbar(
+                            'Error',
+                            e.toString().replaceAll('Exception: ', ''),
+                            backgroundColor: Colors.white30,
+                            colorText: theme.colorScheme.onBackground,
+                            icon: const Icon(Icons.warning, color: Colors.redAccent),
+                          );
+                        } finally {
+                          cerrarDialogoDeCarga();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                      ),
+                      child: const Text(
+                        'Guardar',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
+      isDismissible: false,
+      enableDrag: false,
+      ignoreSafeArea: false,
+      backgroundColor: Colors.transparent,
     );
   }
 
@@ -389,10 +405,10 @@ class EditarPerfilController extends GetxController {
       TextField(
         controller: controller,
         obscureText: !visible.value,
-        style: theme.textTheme.labelSmall,
+        style: theme.textTheme.labelMedium,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: theme.textTheme.labelSmall,
+          labelStyle: theme.textTheme.labelMedium,
           filled: true,
           fillColor: theme.cardColor,
           border: OutlineInputBorder(
@@ -418,7 +434,6 @@ class EditarPerfilController extends GetxController {
     }
   }
 
-
   void resetearEstado() {
     nombreController.clear();
     apellidoController.clear();
@@ -433,7 +448,6 @@ class EditarPerfilController extends GetxController {
 
   @override
   void onClose() {
-    SoundService.playButton();
     resetearEstado();
     nombreController.dispose();
     apellidoController.dispose();

@@ -25,30 +25,54 @@ class ContactCard extends StatelessWidget {
 
   String? _horarioDeHoy() {
     final diaHoy = _nombreDiaHoy();
-    final detalle = veterinario.horariosDetalle?.firstWhereOrNull(
-      (h) => h.diaSemana == diaHoy,
+    final detalle = veterinario.horarios.firstWhereOrNull(
+          (h) => h.diaSemana == diaHoy,
     );
-    if (detalle != null && detalle.horaInicio.isNotEmpty) {
-      return '${detalle.horaInicio} - ${detalle.horaFin}';
+    if (detalle != null) {
+      final inicio = DateTime.parse(detalle.horaInicio).toLocal();
+      final fin = DateTime.parse(detalle.horaFin).toLocal();
+      return '${_formatoHora(inicio)} - ${_formatoHora(fin)}';
     }
     return null;
   }
 
   String _estadoHoy() {
     final ahora = DateTime.now();
-    final excepcion = excepciones.firstWhereOrNull(
-      (e) =>
-          e.veterinarioId == veterinario.id &&
-          ahora.isAfter(e.fechaInicio) &&
-          ahora.isBefore(e.fechaFin),
+    final diaHoy = _nombreDiaHoy();
+
+    final horario = veterinario.horarios.firstWhereOrNull(
+          (h) => h.diaSemana == diaHoy,
     );
 
-    if (excepcion != null && !excepcion.disponible) {
-      return 'No disponible';
-    }
+    if (horario == null) return 'No disponible';
 
+    final horaInicio = DateTime(ahora.year, ahora.month, ahora.day,
+        DateTime.parse(horario.horaInicio).hour, DateTime.parse(horario.horaInicio).minute);
+    final horaFin = DateTime(ahora.year, ahora.month, ahora.day,
+        DateTime.parse(horario.horaFin).hour, DateTime.parse(horario.horaFin).minute);
+
+    final estaEnHorario = ahora.isAfter(horaInicio) && ahora.isBefore(horaFin);
+
+    final tieneExcepcion = excepciones.any((e) =>
+    e.veterinarioId == veterinario.id &&
+        e.fecha.year == ahora.year &&
+        e.fecha.month == ahora.month &&
+        e.fecha.day == ahora.day &&
+        ahora.isAfter(DateTime(ahora.year, ahora.month, ahora.day,
+            DateTime.parse(e.horaInicio).hour, DateTime.parse(e.horaInicio).minute)) &&
+        ahora.isBefore(DateTime(ahora.year, ahora.month, ahora.day,
+            DateTime.parse(e.horaFin).hour, DateTime.parse(e.horaFin).minute)) &&
+        e.disponible == false);
+
+    if (!estaEnHorario || tieneExcepcion) return 'No disponible';
     return 'Disponible';
   }
+
+
+  String _formatoHora(DateTime hora) {
+    return '${hora.hour.toString().padLeft(2, '0')}:${hora.minute.toString().padLeft(2, '0')}';
+  }
+
 
   Color _estadoColor(BuildContext context, String estado) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
@@ -89,14 +113,22 @@ class ContactCard extends StatelessWidget {
                     width: 60,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary, // anterior: theme.cardColor,
                       borderRadius: BorderRadius.circular(8),
+                      color: theme.colorScheme.primary,
+                      image: veterinario.fotoUrl != null && veterinario.fotoUrl!.isNotEmpty
+                          ? DecorationImage(
+                        image: NetworkImage(veterinario.fotoUrl!),
+                        fit: BoxFit.cover,
+                      )
+                          : null,
                     ),
-                    child: Icon(
+                    child: veterinario.fotoUrl == null || veterinario.fotoUrl!.isEmpty
+                        ? Icon(
                       Icons.person,
-                      color: theme.colorScheme.onPrimary, // anterior: theme.iconTheme.color, 
+                      color: theme.colorScheme.onPrimary,
                       size: 30,
-                    ),
+                    )
+                        : null,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -104,7 +136,7 @@ class ContactCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Veterinario',
+                          'Veterinario - ${veterinario.rol}',
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: theme.colorScheme.primary, // Anterior: theme.colorScheme.onPrimary,
                           ),

@@ -1,3 +1,4 @@
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/storage/user_storage.dart';
 import 'package:animacare_front/models/dueno.dart';
@@ -9,6 +10,7 @@ class CustomHeader extends StatefulWidget {
     this.nameScreen = '',
     this.isSecondaryScreen = false,
     this.onBack,
+    this.onBackConfirm,
     this.mostrarMascota = false,
   });
 
@@ -16,6 +18,7 @@ class CustomHeader extends StatefulWidget {
   final String nameScreen;
   final bool isSecondaryScreen;
   final VoidCallback? onBack;
+  final Future<bool> Function()? onBackConfirm;
   final bool mostrarMascota;
 
   @override
@@ -143,7 +146,25 @@ class _CustomHeaderState extends State<CustomHeader> {
           children: [
             IconButton(
               icon: const Icon(Icons.arrow_back, color: textColor),
-              onPressed: widget.onBack ?? () => Navigator.pop(context),
+              onPressed: () async {
+                SoundService.playButton();
+                if (widget.onBackConfirm != null) {
+                  final canExit = await widget.onBackConfirm!();
+                  if (canExit) {
+                    if (widget.onBack != null) {
+                      widget.onBack!();
+                    } else {
+                      Navigator.pop(context);
+                    }
+                  }
+                } else {
+                  if (widget.onBack != null) {
+                    widget.onBack!();
+                  } else {
+                    Navigator.pop(context);
+                  }
+                }
+              },
             ),
             const SizedBox(width: 8),
             Expanded(
