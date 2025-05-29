@@ -4,6 +4,7 @@ import 'package:animacare_front/services/pet_service.dart';
 import 'package:animacare_front/storage/user_storage.dart';
 import 'package:animacare_front/models/dueno.dart';
 import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agregar_mascota_screen.dart';
+import 'package:animacare_front/services/sound_service.dart';
 
 class HomeController extends ChangeNotifier {
   final List<Mascota> _mascotas = [];
@@ -35,16 +36,19 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> onAgregarMascota(BuildContext context) async {
+    SoundService.playButton();
     final Mascota? nueva = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => const AgregarMascotaScreen(),
       ),
     );
-
+    SoundService.playButton(); 
     if (nueva != null) {
       _mascotas.add(nueva);
       notifyListeners();
     }
   }
+  
 }
+
