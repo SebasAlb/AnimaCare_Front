@@ -43,7 +43,7 @@ class HomeController extends ChangeNotifier {
         builder: (_) => const AgregarMascotaScreen(),
       ),
     );
-    SoundService.playButton(); 
+    
     if (nueva != null) {
       _mascotas.add(nueva);
       notifyListeners();
@@ -51,4 +51,5 @@ class HomeController extends ChangeNotifier {
   }
   
 }
+
 
