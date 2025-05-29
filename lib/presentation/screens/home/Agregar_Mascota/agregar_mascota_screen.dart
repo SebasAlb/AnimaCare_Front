@@ -2,6 +2,8 @@ import 'package:animacare_front/models/mascota.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agregar_mascota_controller.dart';
+import 'package:get/get.dart';
+import 'package:animacare_front/services/sound_service.dart';
 
 class AgregarMascotaScreen extends StatefulWidget {
   const AgregarMascotaScreen({super.key, this.isSecondaryScreen = false});
@@ -14,6 +16,7 @@ class AgregarMascotaScreen extends StatefulWidget {
 class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
   final AgregarMascotaController controller = AgregarMascotaController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final RxBool isLoading = false.obs;
 
   @override
   void initState() {
@@ -31,172 +34,196 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const CustomHeader(
-              nameScreen: 'Agregar Mascota',
-              isSecondaryScreen: true,
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Center(
-                        child: GestureDetector(
-                          onTap: () async {
-                            await controller.pickImage();
-                            setState(() {});
-                          },
-                          child: CircleAvatar(
-                            radius: 45,
-                            backgroundColor: theme.cardColor,
-                            backgroundImage: controller.fotoLocal != null
-                                ? FileImage(controller.fotoLocal!)
-                                : null,
-                            child: controller.fotoLocal == null
-                                ? Icon(
-                              Icons.camera_alt,
-                              color: theme.colorScheme.primary,
-                              size: 30,
-                            )
-                                : null,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      _buildTextField(
-                        'Nombre',
-                        'Ingrese el nombre de la mascota',
-                        Icons.pets,
-                        controller.nombreController,
-                        theme,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildDropdownField(
-                              'Especie',
-                              Icons.category,
-                              theme,
-                              controller.especie,
-                              ['Perro', 'Gato', 'Otro'],
-                                  (val) => setState(() => controller.especie = val!),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _buildTextField(
-                              'Raza',
-                              'Ingrese la raza',
-                              Icons.pets_outlined,
-                              controller.razaController,
-                              theme,
-                            ),
-                          ),
-                        ],
-                      ),
-                      _buildDropdownField(
-                        'Sexo',
-                        Icons.male,
-                        theme,
-                        controller.sexo,
-                        ['Macho', 'Hembra'],
-                            (val) => setState(() => controller.sexo = val!),
-                      ),
-                      GestureDetector(
-                        onTap: () => controller.seleccionarFecha(context, (String fecha) {
-                          setState(() {
-                            controller.fechaNacimientoController.text = fecha;
-                          });
-                        }),
-                        child: AbsorbPointer(
-                          child: _buildTextField(
-                            'Fecha de nacimiento',
-                            'Seleccione la fecha',
-                            Icons.cake,
-                            controller.fechaNacimientoController,
-                            theme,
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: _buildTextField(
-                              'Peso (kg)',
-                              'Ej. 12.5',
-                              Icons.monitor_weight,
-                              controller.pesoController,
-                              theme,
-                              type: TextInputType.number,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _buildTextField(
-                              'Altura (cm)',
-                              'Ej. 50',
-                              Icons.height,
-                              controller.alturaController,
-                              theme,
-                              type: TextInputType.number,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primary,
-                          minimumSize: const Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            final Mascota? nueva = await controller.guardarMascota();
-                            if (nueva != null) {
-                              Navigator.pop(context, nueva);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text('Mascota guardada exitosamente'),
-                                  backgroundColor: controller.primario,
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Error al subir imagen'),
-                                  backgroundColor: Colors.redAccent,
-                                ),
-                              );
-                            }
-                          }
-                        },
-                        child: const Text(
-                          'Guardar Mascota',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                    ],
+    return WillPopScope(
+      onWillPop: () async => !isLoading.value,
+      child: Obx(() => Stack(
+        children: [
+          Scaffold(
+            resizeToAvoidBottomInset: true,
+            backgroundColor: theme.scaffoldBackgroundColor,
+            body: SafeArea(
+              child: Column(
+                children: <Widget>[
+                  const CustomHeader(
+                    nameScreen: 'Agregar Mascota',
+                    isSecondaryScreen: true,
                   ),
-                ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Center(
+                              child: GestureDetector(
+                                onTap: () async {
+                                  await controller.pickImage();
+                                  setState(() {});
+                                },
+                                child: CircleAvatar(
+                                  radius: 45,
+                                  backgroundColor: theme.cardColor,
+                                  backgroundImage: controller.fotoLocal != null
+                                      ? FileImage(controller.fotoLocal!)
+                                      : null,
+                                  child: controller.fotoLocal == null
+                                      ? Icon(
+                                          Icons.camera_alt,
+                                          color: theme.colorScheme.primary,
+                                          size: 30,
+                                        )
+                                      : null,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 30),
+                            _buildTextField(
+                              'Nombre',
+                              'Ingrese el nombre de la mascota',
+                              Icons.pets,
+                              controller.nombreController,
+                              theme,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildDropdownField(
+                                    'Especie',
+                                    Icons.category,
+                                    theme,
+                                    controller.especie,
+                                    ['Perro', 'Gato', 'Otro'],
+                                    (val) => setState(() => controller.especie = val!),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildTextField(
+                                    'Raza',
+                                    'Ingrese la raza',
+                                    Icons.pets_outlined,
+                                    controller.razaController,
+                                    theme,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            _buildDropdownField(
+                              'Sexo',
+                              Icons.male,
+                              theme,
+                              controller.sexo,
+                              ['Macho', 'Hembra'],
+                              (val) => setState(() => controller.sexo = val!),
+                            ),
+                            GestureDetector(
+                              onTap: () => controller.seleccionarFecha(context, (String fecha) {
+                                setState(() {
+                                  controller.fechaNacimientoController.text = fecha;
+                                });
+                              }),
+                              child: AbsorbPointer(
+                                child: _buildTextField(
+                                  'Fecha de nacimiento',
+                                  'Seleccione la fecha',
+                                  Icons.cake,
+                                  controller.fechaNacimientoController,
+                                  theme,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: _buildTextField(
+                                    'Peso (kg)',
+                                    'Ej. 12.5',
+                                    Icons.monitor_weight,
+                                    controller.pesoController,
+                                    theme,
+                                    type: TextInputType.number,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildTextField(
+                                    'Altura (cm)',
+                                    'Ej. 50',
+                                    Icons.height,
+                                    controller.alturaController,
+                                    theme,
+                                    type: TextInputType.number,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.colorScheme.primary,
+                                minimumSize: const Size(double.infinity, 50),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              onPressed: () async {
+                                SoundService.playButton();
+
+                                if (_formKey.currentState!.validate()) {
+                                  isLoading.value = true;
+
+                                  final Mascota? nueva = await controller.guardarMascota();
+                                  isLoading.value = false;
+
+                                  if (nueva != null) {
+                                    SoundService.playSuccess();
+                                    Get.snackbar(
+                                      'Éxito',
+                                      'Mascota guardada exitosamente',
+                                      backgroundColor: Colors.white30,
+                                      colorText: theme.colorScheme.onBackground,
+                                      icon: const Icon(Icons.check_circle, color: Colors.green),
+                                    );
+                                    Navigator.pop(context, nueva);
+                                  } else {
+                                    SoundService.playWarning();
+                                    Get.snackbar(
+                                      'Error',
+                                      'Error al guardar la mascota',
+                                      backgroundColor: Colors.white30,
+                                      colorText: theme.colorScheme.onBackground,
+                                      icon: const Icon(Icons.warning, color: Colors.redAccent),
+                                    );
+                                  }
+                                }
+                              },
+                              child: const Text(
+                                'Guardar Mascota',
+                                style: TextStyle(fontSize: 16, color: Colors.white),
+                              ),
+                            ),
+                            const SizedBox(height: 40),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+          if (isLoading.value)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+        ],
+      )),
     );
+
+    
   }
 
   Widget _buildTextField(
