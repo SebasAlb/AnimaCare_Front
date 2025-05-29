@@ -17,6 +17,8 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
   final AgregarMascotaController controller = AgregarMascotaController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final RxBool isLoading = false.obs;
+  final RxnString errorFecha = RxnString(); // ✅ inicializa como observable nulo
+
   
 
   @override
@@ -119,28 +121,9 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                               ['Macho', 'Hembra'],
                               (val) => setState(() => controller.sexo = val!),
                             ),
-                            GestureDetector(
-                              onTap: () => controller.seleccionarFecha(context, (String fecha) {
-                                setState(() {
-                                  controller.fechaNacimientoController.text = fecha;
-                                });
-                                // ✅ Esto elimina el error visual si la fecha es válida
-                                final isValid = fecha.trim().isNotEmpty;
-                                if (isValid) {
-                                  // Actualiza solo ese campo específico (forzamos el rebuild)
-                                  _formKey.currentState!.validate();
-                                }
-                              }),
-                              child: AbsorbPointer(
-                                child: _buildTextField(
-                                  'Fecha de nacimiento',
-                                  'Seleccione la fecha',
-                                  Icons.cake,
-                                  controller.fechaNacimientoController,
-                                  theme,
-                                ),
-                              ),
-                            ),
+                            _buildFechaNacimientoField(theme),
+
+
                             Row(
                               children: <Widget>[
                                 Expanded(
@@ -177,13 +160,16 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                               ),
                               onPressed: () async {
                                 SoundService.playButton();
-
-                                if (_formKey.currentState!.validate()) {
+                              
+                                final fechaValida = controller.fechaNacimientoController.text.trim().isNotEmpty;
+                                errorFecha.value = fechaValida ? null : 'Campo requerido';
+                              
+                                if (_formKey.currentState!.validate() && fechaValida) {
                                   isLoading.value = true;
-
+                              
                                   final Mascota? nueva = await controller.guardarMascota();
                                   isLoading.value = false;
-
+                              
                                   if (nueva != null) {
                                     SoundService.playSuccess();
                                     Get.snackbar(
@@ -234,132 +220,125 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
   }
 
   Widget _buildTextField(
-  String label,
-  String hint,
-  IconData icon,
-  TextEditingController controller,
-  ThemeData theme, {
-  TextInputType type = TextInputType.text,
-}) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 5),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: theme.textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.primary,
+    String label,
+    String hint,
+    IconData icon,
+    TextEditingController controller,
+    ThemeData theme, {
+    TextInputType type = TextInputType.text,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
+            ),
           ),
-        ),
-        const SizedBox(height: 2),
-        ValueBuilder<String?>(
-          initialValue: null,
-          builder: (errorText, updater) {
-            final showError = errorText != null;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFormField(
-                  controller: controller,
-                  keyboardType: type,
-                  style: theme.textTheme.bodyMedium,
-                  decoration: InputDecoration(
-                    hintText: hint,
-                    hintStyle: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
-                    prefixIcon: Icon(icon, color: theme.colorScheme.primary),
-                    filled: true,
-                    fillColor: theme.cardColor,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: showError
-                          ? const BorderSide(color: Colors.red, width: 1.5)
-                          : BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: showError
-                          ? const BorderSide(color: Colors.red, width: 1.5)
-                          : BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: showError ? Colors.red : theme.colorScheme.primary,
-                        width: 1.5,
+          const SizedBox(height: 2),
+          ValueBuilder<String?>(
+            initialValue: null,
+            builder: (errorText, updater) {
+              final showError = errorText != null;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    controller: controller,
+                    keyboardType: type,
+                    style: theme.textTheme.bodyMedium,
+                    decoration: InputDecoration(
+                      hintText: hint,
+                      hintStyle: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                      prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+                      filled: true,
+                      fillColor: theme.cardColor,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: showError
+                            ? const BorderSide(color: Colors.red, width: 1.5)
+                            : BorderSide.none,
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: showError
+                            ? const BorderSide(color: Colors.red, width: 1.5)
+                            : BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: showError ? Colors.red : theme.colorScheme.primary,
+                          width: 1.5,
+                        ),
+                      ),
+                      // 🔧 Estos 2 eliminan el espacio interno del error de Flutter
+                      errorText: showError ? '' : null,
+                      errorStyle: const TextStyle(fontSize: 0, height: 0),
                     ),
-                    // 🔧 Estos 2 eliminan el espacio interno del error de Flutter
-                    errorText: showError ? '' : null,
-                    errorStyle: const TextStyle(fontSize: 0, height: 0),
-                  ),
-                  validator: (value) {
-                    final val = value?.trim() ?? '';
+                    validator: (value) {
+                      final val = value?.trim() ?? '';
 
-                    // Validación específica para peso y altura
-                    if (label.contains('Peso') || label.contains('Altura')) {
-                      if (val.isEmpty) {
-                        updater('Este campo es obligatorio');
-                        return ''; // bloquea guardado
-                      } else if (!RegExp(r'^\d+(\.\d+)?$').hasMatch(val)) {
-                        updater('Ingrese un número válido (ej. 12.5)');
-                        return '';
-                      } else if (double.tryParse(val)! <= 0) {
-                        updater('Debe ser un número mayor a 0');
-                        return '';
-                      } else {
-                        updater(null); // válido
-                        return null;
+                      // Validación específica para peso y altura
+                      if ((label.contains('Peso') || label.contains('Altura')) && val.isNotEmpty) {
+                        if (!RegExp(r'^\d+(\.\d+)?$').hasMatch(val)) {
+                          updater('Ingrese un número válido (ej. 12.5)');
+                          return '';
+                        } else if (double.tryParse(val)! <= 0) {
+                          updater('Debe ser un número mayor a 0');
+                          return '';
+                        }
                       }
-                    }
+                      // Resto de campos
+                      if (label == 'Nombre' && val.isEmpty) {
+                        updater('Campo requerido');
+                        return '';
+                      }
 
-                    // Resto de campos
-                    if (val.isEmpty) {
-                      updater('Campo requerido');
-                      return '';
-                    }
+                      updater(null);
+                      return null;
+                    },
+                    onChanged: (value) {
+                      final val = value.trim();
 
-                    updater(null);
-                    return null;
-                  },
-                  onChanged: (value) {
-                    final val = value.trim();
-
-                    if (label.contains('Peso') || label.contains('Altura')) {
-                      if (val.isEmpty) {
-                        updater('Este campo es obligatorio');
-                      } else if (!RegExp(r'^\d+(\.\d+)?$').hasMatch(val)) {
-                        updater('Ingrese un número válido (ej. 12.5)');
-                      } else if (double.tryParse(val) != null && double.parse(val) <= 0) {
-                        updater('Debe ser un número mayor a 0');
+                      if ((label.contains('Peso') || label.contains('Altura')) && val.isNotEmpty) {
+                        if (!RegExp(r'^\d+(\.\d+)?$').hasMatch(val)) {
+                          updater('Ingrese un número válido (ej. 12.5)');
+                        } else if (double.tryParse(val)! <= 0) {
+                          updater('Debe ser un número mayor a 0');
+                        } else {
+                          updater(null);
+                        }
+                      } else if (label == 'Nombre') {
+                        updater(val.isEmpty ? 'Campo requerido' : null);
                       } else {
                         updater(null);
                       }
-                    } else {
-                      updater(val.isEmpty ? 'Campo requerido' : null);
-                    }
-                  },
-                ),
-                const SizedBox(height: 4),
-                SizedBox(
-                  height: 18,
-                  child: showError
-                      ? Text(
-                          errorText!,
-                          style: const TextStyle(color: Colors.red, fontSize: 12),
-                        )
-                      : const SizedBox.shrink(),
-                ),
-              ],
-            );
-          },
-        ),
-      ],
-    ),
-  );
-}
+                    },
+                  ),
+                  const SizedBox(height: 4),
+                  SizedBox(
+                    height: 18,
+                    child: showError
+                        ? Text(
+                            errorText!,
+                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
 
   Widget _buildDropdownField(
@@ -396,28 +375,28 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                     onChanged: onChanged,
 
                     decoration: InputDecoration(
-  isDense: true,
-  contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12), // igual al textfield
-  filled: true,
-  fillColor: theme.cardColor,
-  prefixIcon: Icon(icon, color: theme.colorScheme.primary),
-  enabledBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.circular(12),
-    borderSide: BorderSide.none,
-  ),
-  focusedBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.circular(12),
-    borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5),
-  ),
-  errorBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: Colors.red),
-  ),
-  focusedErrorBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: Colors.red, width: 1.5),
-  ),
-),
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12), // igual al textfield
+                      filled: true,
+                      fillColor: theme.cardColor,
+                      prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Colors.red),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+                      ),
+                    ),
 
                     
                     validator: (val) {
@@ -445,4 +424,77 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
     );
   }
 
+  Widget _buildFechaNacimientoField(ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Fecha de nacimiento',
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Obx(() {
+            final showError = errorFecha.value != null;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () => controller.seleccionarFecha(context, (String fecha) {
+                    controller.fechaNacimientoController.text = fecha;
+                    errorFecha.value = null; // ✅ Limpia el error si hay fecha
+                    setState(() {});
+                  }),
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      controller: controller.fechaNacimientoController,
+                      decoration: InputDecoration(
+                        hintText: 'Seleccione la fecha',
+                        prefixIcon: Icon(Icons.cake, color: theme.colorScheme.primary),
+                        filled: true,
+                        fillColor: theme.cardColor,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: showError
+                              ? const BorderSide(color: Colors.red, width: 1.5)
+                              : BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: showError ? Colors.red : theme.colorScheme.primary,
+                            width: 1.5,
+                          ),
+                        ),
+                        errorText: showError ? '' : null,
+                        errorStyle: const TextStyle(fontSize: 0, height: 0),
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                SizedBox(
+                  height: 18,
+                  child: showError
+                      ? Text(
+                          errorFecha.value!,
+                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
 }
+
