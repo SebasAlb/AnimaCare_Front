@@ -65,13 +65,13 @@ class HomeScreen extends StatelessWidget {
                                     crossAxisCount: 2,
                                     crossAxisSpacing: 16,
                                     mainAxisSpacing: 16,
+                                    padding: const EdgeInsets.only(bottom: 100), // ⬅️ Espacio para evitar que el FAB tape
                                     children: controller.mascotas
                                         .map((Mascota m) => PetCard(mascota: m))
                                         .toList(),
                                   ),
                                 ),
                     ),
-
 
                   ],
                 ),
@@ -112,6 +112,9 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+
+
 
 
 
