@@ -7,6 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:animacare_front/services/pet_service.dart';
 import 'package:animacare_front/presentation/screens/home/cloudinary_service.dart';
 
+import 'package:animacare_front/services/sound_service.dart';
+import 'package:get/get.dart';
+
 class EditarMascotaModal {
   static void show(
     BuildContext context, {
@@ -17,8 +20,11 @@ class EditarMascotaModal {
     final nombreController = TextEditingController(text: mascota.nombre);
     final _formKey = GlobalKey<FormState>();
     File? nuevaFoto;
+    final ValueNotifier<bool> isLoading = ValueNotifier(false);
 
     showModalBottomSheet(
+      //enableDrag: false, // ← bloquea arrastre hacia abajo
+      //isDismissible: false, // ← bloquea tap fuera del modal
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -28,183 +34,236 @@ class EditarMascotaModal {
       builder: (modalContext) {
         final theme = Theme.of(modalContext);
 
-        return Padding(
-          padding: EdgeInsets.only(
-            top: 24,
-            left: 20,
-            right: 20,
-            bottom: MediaQuery.of(modalContext).viewInsets.bottom + 24,
-          ),
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('Editar información',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.primary)),
-                  const SizedBox(height: 20),
-                  _buildFotoPerfil(theme, mascota, () async {
-                    final picker = ImagePicker();
-                    final picked =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    if (picked != null) {
-                      nuevaFoto = File(picked.path);
-                      (modalContext as Element).markNeedsBuild();
-                    }
-                  }, nuevaFoto),
-                  const SizedBox(height: 20),
-                  _campoTexto('Nombre', nombreController, theme),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: controllers['Especie']!.text,
-                          decoration: _decoracionCampo(theme, label: 'Especie'),
-                          items: ['Perro', 'Gato', 'Otro']
-                              .map((e) =>
-                                  DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                          onChanged: (val) =>
-                              controllers['Especie']!.text = val ?? '',
-                          validator: (val) => val == null || val.isEmpty
-                              ? 'Campo requerido'
-                              : null,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _campoTexto('Raza', controllers['Raza']!, theme),
-                      ),
-                    ],
+        return ValueListenableBuilder<bool>(
+          valueListenable: isLoading,
+          builder: (_, loading, __) {
+            return WillPopScope(
+              onWillPop: () async => !loading,
+              child: AbsorbPointer(
+                absorbing: loading,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: 24,
+                    left: 20,
+                    right: 20,
+                    bottom: MediaQuery.of(modalContext).viewInsets.bottom + 24,
                   ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: controllers['Sexo']!.text,
-                    decoration: _decoracionCampo(theme, label: 'Sexo'),
-                    items: ['Macho', 'Hembra']
-                        .map((e) =>
-                            DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                    onChanged: (val) =>
-                        controllers['Sexo']!.text = val ?? '',
-                    validator: (val) => val == null || val.isEmpty
-                        ? 'Campo requerido'
-                        : null,
-                  ),
-                  const SizedBox(height: 16),
-                  GestureDetector(
-                    onTap: () async {
-                      final seleccionada = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2010),
-                        lastDate: DateTime(2035),
-                      );
-                      if (seleccionada != null) {
-                        controllers['Fecha de nacimiento']!.text =
-                            '${seleccionada.day.toString().padLeft(2, '0')}/${seleccionada.month.toString().padLeft(2, '0')}/${seleccionada.year}';
-                      }
-                    },
-                    child: AbsorbPointer(
-                      child: _campoTexto('Cumpleaños',
-                          controllers['Fecha de nacimiento']!, theme),
+
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+              
+                    child: Form(
+                      key: _formKey,
+                      child: Stack(
+                        children: [
+                          SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Editar información',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                _buildFotoPerfil(theme, mascota, () async {
+                                  final picker = ImagePicker();
+                                  final picked = await picker.pickImage(source: ImageSource.gallery);
+                                  if (picked != null) {
+                                    nuevaFoto = File(picked.path);
+                                    (modalContext as Element).markNeedsBuild();
+                                  }
+                                }, nuevaFoto),
+                                const SizedBox(height: 20),
+                                _campoTexto('Nombre', nombreController, theme),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        value: controllers['Especie']!.text,
+                                        decoration: _decoracionCampo(theme, label: 'Especie'),
+                                        items: ['Perro', 'Gato', 'Otro']
+                                            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                                            .toList(),
+                                        onChanged: (val) => controllers['Especie']!.text = val ?? '',
+                                        validator: (val) => val == null || val.isEmpty ? 'Campo requerido' : null,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(child: _campoTexto('Raza', controllers['Raza']!, theme)),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                DropdownButtonFormField<String>(
+                                  value: controllers['Sexo']!.text,
+                                  decoration: _decoracionCampo(theme, label: 'Sexo'),
+                                  items: ['Macho', 'Hembra']
+                                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                                      .toList(),
+                                  onChanged: (val) => controllers['Sexo']!.text = val ?? '',
+                                  validator: (val) => val == null || val.isEmpty ? 'Campo requerido' : null,
+                                ),
+                                const SizedBox(height: 16),
+                                GestureDetector(
+                                  onTap: () async {
+                                    final seleccionada = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(2010),
+                                      lastDate: DateTime(2035),
+                                    );
+                                    if (seleccionada != null) {
+                                      controllers['Fecha de nacimiento']!.text =
+                                          '${seleccionada.day.toString().padLeft(2, '0')}/${seleccionada.month.toString().padLeft(2, '0')}/${seleccionada.year}';
+                                    }
+                                  },
+                                  child: AbsorbPointer(
+                                    child: _campoTexto('Cumpleaños', controllers['Fecha de nacimiento']!, theme),
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _campoTexto(
+                                        'Peso (kg)',
+                                        controllers['Peso']!..text =
+                                            controllers['Peso']!.text.replaceAll(' kg', ''),
+                                        theme,
+                                        type: TextInputType.number,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: _campoTexto(
+                                        'Altura (cm)',
+                                        controllers['Altura']!..text =
+                                            controllers['Altura']!.text.replaceAll(' cm', ''),
+                                        theme,
+                                        type: TextInputType.number,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 24),
+                                ElevatedButton.icon(
+                                  icon: const Icon(Icons.save),
+                                  label: const Text('Guardar cambios'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: theme.colorScheme.primary,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    minimumSize: const Size(double.infinity, 50),
+                                  ),
+                                  onPressed: () async {
+                                    if (!_formKey.currentState!.validate()) return;
+                                    try {
+                                      isLoading.value = true;
+                                      SoundService.playLoading();
+
+                                      mascota.nombre = nombreController.text;
+                                      mascota.especie = controllers['Especie']!.text;
+                                      mascota.raza = controllers['Raza']!.text;
+                                      mascota.sexo = controllers['Sexo']!.text;
+                                      mascota.peso = double.tryParse(controllers['Peso']!.text) ?? 0;
+                                      mascota.altura = double.tryParse(controllers['Altura']!.text) ?? 0;
+
+                                      final partes = controllers['Fecha de nacimiento']!.text.split('/');
+                                      if (partes.length == 3) {
+                                        mascota.fechaNacimiento = DateTime(
+                                          int.parse(partes[2]),
+                                          int.parse(partes[1]),
+                                          int.parse(partes[0]),
+                                        );
+                                      }
+
+                                      if (nuevaFoto != null) {
+                                        final url = await CloudinaryService.uploadImage(nuevaFoto!);
+                                        if (url != null) mascota.fotoUrl = url;
+                                      }
+
+                                      onGuardar(mascota);
+                                      await PetService().actualizarMascota(mascota, int.parse(mascota.id));
+
+                                      SoundService.playSuccess();
+                                      Get.snackbar(
+                                        'Mascota actualizada',
+                                        'La información fue guardada correctamente.',
+                                        backgroundColor: Colors.white30,
+                                        colorText: theme.colorScheme.onBackground,
+                                        icon: const Icon(Icons.check_circle, color: Colors.green),
+                                      );
+
+
+                                      context.read<DetalleMascotaController>().guardarCambiosDesdeFormulario(
+                                        nuevoNombre: mascota.nombre,
+                                      );
+
+                                      Navigator.pop(modalContext);
+                                    } catch (e) {
+                                      SoundService.playWarning();
+                                      Get.snackbar(
+                                        'Error',
+                                        'No se pudo guardar: $e',
+                                        backgroundColor: Colors.white30,
+                                        colorText: theme.colorScheme.onBackground,
+                                        icon: const Icon(Icons.warning, color: Colors.redAccent),
+                                      );
+                                    } finally {
+                                      isLoading.value = false;
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          ValueListenableBuilder<bool>(
+                            valueListenable: isLoading,
+                            builder: (_, loading, __) {
+                              if (!loading) return const SizedBox.shrink();
+                              
+                              return Positioned.fill(
+                                child: AbsorbPointer(
+                                  child: Stack(
+                                    children: [
+                                      ModalBarrier(
+                                        dismissible: false,
+                                        color: Colors.black.withOpacity(0.3),
+                                      ),
+                                      const Center(child: CircularProgressIndicator()),
+                                    ],
+                                  ),
+                                ),
+                              );
+                              /*return Positioned.fill(  //mismo return de arriba pero sin la pantalla gris
+                                child: AbsorbPointer(
+                                  absorbing: true,
+                                  child: const Center(child: CircularProgressIndicator()),
+                                ),
+                              );
+                              */
+                            },
+                          ),
+                        ],
+                      ),
                     ),
+
+                    
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _campoTexto(
-                          'Peso (kg)',
-                          controllers['Peso']!..text =
-                              controllers['Peso']!.text.replaceAll(' kg', ''),
-                          theme,
-                          type: TextInputType.number,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _campoTexto(
-                          'Altura (cm)',
-                          controllers['Altura']!..text =
-                              controllers['Altura']!.text.replaceAll(' cm', ''),
-                          theme,
-                          type: TextInputType.number,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.save),
-                    label: const Text('Guardar cambios'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-
-                    onPressed: () async {
-                      if (!_formKey.currentState!.validate()) return;
-
-                      mascota.nombre = nombreController.text;
-                      mascota.especie = controllers['Especie']!.text;
-                      mascota.raza = controllers['Raza']!.text;
-                      mascota.sexo = controllers['Sexo']!.text;
-                      mascota.peso = double.tryParse(controllers['Peso']!.text) ?? 0;
-                      mascota.altura = double.tryParse(controllers['Altura']!.text) ?? 0;
-
-                      final partes = controllers['Fecha de nacimiento']!.text.split('/');
-                      if (partes.length == 3) {
-                        mascota.fechaNacimiento = DateTime(
-                          int.parse(partes[2]),
-                          int.parse(partes[1]),
-                          int.parse(partes[0]),
-                        );
-                      }
-
-                      if (nuevaFoto != null) {
-                        final url = await CloudinaryService.uploadImage(nuevaFoto!);
-                        if (url != null) {
-                          mascota.fotoUrl = url;
-                        }
-                      } 
 
 
-                      try {
-                        // 🔁 Guarda en local
-                        onGuardar(mascota);
-
-                        // 🌐 ACTUALIZA en backend
-                        await PetService().actualizarMascota(mascota, int.parse(mascota.id));
-
-                        // 🔄 Actualiza UI
-                        context.read<DetalleMascotaController>().guardarCambiosDesdeFormulario(
-                          nuevoNombre: mascota.nombre,
-                        );
-
-                        Navigator.pop(modalContext);
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error al actualizar: $e')),
-                        );
-                      }
-                    },
-
-
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
-        
       },
+
+
     );
   }
 
