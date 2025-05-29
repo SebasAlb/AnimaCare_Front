@@ -132,7 +132,7 @@ class MascotaInfoSection extends StatelessWidget {
           }).toList(),
 
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 60), // espacio final
       ],
     );
   }
@@ -297,6 +297,9 @@ class _FiltroChip extends StatelessWidget {
         ),
       );
 }
+
+
+
 
 
 
