@@ -9,6 +9,7 @@ import 'package:animacare_front/presentation/screens/home/cloudinary_service.dar
 
 import 'package:animacare_front/services/sound_service.dart';
 import 'package:get/get.dart';
+import 'package:animacare_front/storage/pet_storage.dart';
 
 class EditarMascotaModal {
   static void show(
@@ -211,6 +212,13 @@ class EditarMascotaModal {
 
                                         onGuardar(mascota);
                                         await PetService().actualizarMascota(mascota, int.parse(mascota.id));
+                                        // ACTUALIZAR STORAGE LOCAL
+                                        final List<Mascota> mascotasGuardadas = MascotasStorage.getMascotas();
+                                        final int index = mascotasGuardadas.indexWhere((m) => m.id == mascota.id);
+                                        if (index != -1) {
+                                          mascotasGuardadas[index] = mascota;
+                                          MascotasStorage.saveMascotas(mascotasGuardadas);
+                                        }
 
                                         SoundService.playSuccess();
                                         Get.snackbar(
@@ -576,9 +584,6 @@ class EditarMascotaModal {
 }
 
 }
-
-
-
 
 
 
