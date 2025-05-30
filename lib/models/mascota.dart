@@ -11,7 +11,7 @@ class Mascota {
     required this.fotoUrl,
   });
 
-  String id;
+  int id;
   String nombre;
   String especie;
   String raza;
@@ -22,7 +22,7 @@ class Mascota {
   String fotoUrl;
 
   factory Mascota.fromJson(Map<String, dynamic> json) => Mascota(
-        id: json['id'].toString(),
+        id: int.tryParse(json['id'].toString()) ?? 0,
         nombre: json['nombre'] ?? 'Sin nombre',
         especie: json['especie'] ?? 'Desconocida',
         raza: json['raza'] ?? 'Desconocida',
@@ -56,4 +56,5 @@ class Mascota {
     return '$anios años y $meses meses';
   }
 }
+
 
