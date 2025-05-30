@@ -57,7 +57,7 @@ class DetalleMascotaController extends ChangeNotifier {
 
   Future<void> _cargarDetallesMascota() async {
     try {
-      final detalles = await _petService.obtenerDetallesMascota(int.parse(mascota.id));
+      final detalles = await _petService.obtenerDetallesMascota(mascota.id);
       print('Eventos: ${detalles.eventos.map((e) => e.titulo).toList()}');
       print('Historial: ${detalles.historial.map((h) => h.titulo).toList()}');
       // Organizar historial
