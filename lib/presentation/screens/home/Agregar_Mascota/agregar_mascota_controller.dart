@@ -7,6 +7,7 @@ import 'package:animacare_front/storage/user_storage.dart';
 import 'package:animacare_front/models/dueno.dart';
 import 'package:animacare_front/presentation/screens/home/cloudinary_service.dart';
 
+import 'package:animacare_front/storage/pet_storage.dart'; // NUEVO
 
 class AgregarMascotaController {
   final TextEditingController nombreController = TextEditingController();
@@ -107,6 +108,8 @@ class AgregarMascotaController {
 
       final Mascota mascotaCreada =
           await petService.crearMascota(nuevaMascota, dueno.id);
+      // ✅ ACTUALIZAR STORAGE LOCAL
+      MascotasStorage.saveMascotas([...MascotasStorage.getMascotas(), mascotaCreada]);
       return mascotaCreada;
     } catch (e) {
       print('Error al guardar mascota: $e');
