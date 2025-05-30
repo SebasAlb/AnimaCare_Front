@@ -76,4 +76,21 @@ class PetService {
       throw Exception(error);
     }
   }
+
+  // GET: Obtener eventos, citas e historial de una mascota
+  Future<Map<String, dynamic>> obtenerDetallesMascota(int mascotaId) async {
+    try {
+      final response = await _dio.get(
+        '$_baseUrl/v1/pet/schedule/$mascotaId',
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      final error = e.response?.data['error'] ?? 'Error al obtener detalles';
+      throw Exception(error);
+    }
+  }
+
 }
+
