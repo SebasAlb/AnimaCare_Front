@@ -33,7 +33,7 @@ class CalendarController extends ChangeNotifier {
       // Simula carga para cada mascota (idealmente deberías hacer una petición que traiga todos los eventos del dueño)
       final mascotas = MascotasStorage.getMascotas();
       for (final mascota in mascotas) {
-        final detalles = await _petService.obtenerDetallesMascota(int.parse(mascota.id));
+        final detalles = await _petService.obtenerDetallesMascota(mascota.id);
 
         _eventos.addAll(detalles.eventos.map((evento) {
           return EventoCalendar(
