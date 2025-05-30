@@ -211,7 +211,7 @@ class EditarMascotaModal {
                                         }
 
                                         onGuardar(mascota);
-                                        await PetService().actualizarMascota(mascota, int.parse(mascota.id));
+                                        await PetService().actualizarMascota(mascota, mascota.id);
                                         // ACTUALIZAR STORAGE LOCAL
                                         final List<Mascota> mascotasGuardadas = MascotasStorage.getMascotas();
                                         final int index = mascotasGuardadas.indexWhere((m) => m.id == mascota.id);
