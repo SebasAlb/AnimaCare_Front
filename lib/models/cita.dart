@@ -1,17 +1,13 @@
 class Cita {
-  String id;
-  String mascotaId;
-  String veterinarioId;
+  int id;
   String razon;
-  String estado; // pendiente, cancelada, confirmada
+  String estado;
   DateTime fecha;
-  String hora;
+  DateTime hora;
   String? descripcion;
 
   Cita({
     required this.id,
-    required this.mascotaId,
-    required this.veterinarioId,
     required this.razon,
     required this.estado,
     required this.fecha,
@@ -20,24 +16,20 @@ class Cita {
   });
 
   factory Cita.fromJson(Map<String, dynamic> json) => Cita(
-    id: json['id'].toString(),
-    mascotaId: json['mascotaId'],
-    veterinarioId: json['veterinarioId'],
-    razon: json['razon'],
+    id: json['id'],
+    razon: json['razon_cita'],
     estado: json['estado'],
     fecha: DateTime.parse(json['fecha']),
-    hora: json['hora'],
+    hora: DateTime.parse(json['hora']),
     descripcion: json['descripcion'],
   );
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'mascotaId': mascotaId,
-    'veterinarioId': veterinarioId,
-    'razon': razon,
+    'razon_cita': razon,
     'estado': estado,
     'fecha': fecha.toIso8601String(),
-    'hora': hora,
+    'hora': hora.toIso8601String(),
     'descripcion': descripcion,
   };
 }

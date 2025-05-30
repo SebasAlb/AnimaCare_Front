@@ -1,6 +1,6 @@
 class CategoriaAtencion {
-  String id;
-  String nombre; // vacuna, desparasitación, etc.
+  int id;
+  String nombre;
 
   CategoriaAtencion({
     required this.id,
@@ -8,7 +8,7 @@ class CategoriaAtencion {
   });
 
   factory CategoriaAtencion.fromJson(Map<String, dynamic> json) => CategoriaAtencion(
-    id: json['id'].toString(),
+    id: json['id'],
     nombre: json['nombre'],
   );
 

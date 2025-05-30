@@ -1,31 +1,27 @@
 class HistorialMedico {
-  String id;
-  String mascotaId;
+  int id;
   String titulo;
   String categoriaId;
   DateTime fecha;
 
   HistorialMedico({
     required this.id,
-    required this.mascotaId,
     required this.titulo,
     required this.categoriaId,
     required this.fecha,
   });
 
   factory HistorialMedico.fromJson(Map<String, dynamic> json) => HistorialMedico(
-    id: json['id'].toString(),
-    mascotaId: json['mascotaId'],
+    id: json['id'],
     titulo: json['titulo'],
-    categoriaId: json['categoriaId'],
+    categoriaId: json['categoria_id'].toString(),
     fecha: DateTime.parse(json['fecha']),
   );
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'mascotaId': mascotaId,
     'titulo': titulo,
-    'categoriaId': categoriaId,
+    'categoria_id': categoriaId,
     'fecha': fecha.toIso8601String(),
   };
 }

@@ -1,14 +1,17 @@
+import 'package:animacare_front/storage/pet_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/evento_calendar.dart';
+import 'package:animacare_front/models/detalles_mascota.dart';
+import 'package:animacare_front/services/pet_service.dart';
 
 class CalendarController extends ChangeNotifier {
   final TextEditingController searchController = TextEditingController();
+  final PetService _petService = PetService();
 
   DateTime focusedDay = DateTime.now();
   DateTime? selectedDay;
   bool modoCalendario = true;
 
-  // Filtros avanzados
   Map<String, dynamic> filtrosAvanzados = <String, dynamic>{
     'mascota': null,
     'veterinario': null,
@@ -20,277 +23,63 @@ class CalendarController extends ChangeNotifier {
     'horaHasta': null,
   };
 
-  /// Lista de eventos tipados
-  final List<EventoCalendar> _eventos = <EventoCalendar>[
-    EventoCalendar(
-      id: '1',
-      titulo: 'Vacuna contra la rabia',
-      hora: '11:44',
-      mascota: 'Firulais',
-      veterinario: 'Dr. González',
-      fecha: '2025-05-10',
-      tipo: 'cita',
-      categoria: 'Vacuna',
-      estado: 'confirmada',
-    ),
-    EventoCalendar(
-      id: '2',
-      titulo: 'Control general',
-      hora: '15:30',
-      mascota: 'Pelusa',
-      veterinario: 'Dra. Ramírez',
-      fecha: '2025-05-10',
-      tipo: 'cita',
-      categoria: 'Consulta',
-      estado: 'pendiente',
-    ),
-    EventoCalendar(
-      id: '3',
-      titulo: 'Charla de adopción',
-      hora: '12:00',
-      mascota: 'General',
-      veterinario: 'Equipo Fundación Patitas',
-      fecha: '2025-05-10',
-      tipo: 'evento',
-      categoria: 'Charla',
-    ),
-    EventoCalendar(
-      id: '4',
-      titulo: 'Revisión dental',
-      hora: '09:00',
-      mascota: 'Kira',
-      veterinario: 'Dr. Villalba',
-      fecha: '2025-05-11',
-      tipo: 'cita',
-      categoria: 'Odontología',
-      estado: 'confirmada',
-    ),
-    EventoCalendar(
-      id: '5',
-      titulo: 'Conferencia bienestar animal',
-      hora: '17:00',
-      mascota: 'Todos',
-      veterinario: 'Invitados internacionales',
-      fecha: '2025-05-12',
-      tipo: 'evento',
-      categoria: 'Conferencia',
-    ),
-    EventoCalendar(
-      id: '6',
-      titulo: 'Vacunación múltiple',
-      hora: '08:00',
-      mascota: 'Max',
-      veterinario: 'Dr. Torres',
-      fecha: '2025-05-12',
-      tipo: 'cita',
-      categoria: 'Vacuna',
-      estado: 'pendiente',
-    ),
-    EventoCalendar(
-      id: '7',
-      titulo: 'Chequeo general',
-      hora: '09:00',
-      mascota: 'Luna',
-      veterinario: 'Dra. Espinoza',
-      fecha: '2025-05-12',
-      tipo: 'cita',
-      categoria: 'Consulta',
-      estado: 'pendiente',
-    ),
-    EventoCalendar(
-      id: '8',
-      titulo: 'Taller de cuidado animal',
-      hora: '11:00',
-      mascota: 'General',
-      veterinario: 'Fundación Patitas',
-      fecha: '2025-05-12',
-      tipo: 'evento',
-      categoria: 'Charla',
-    ),
-    EventoCalendar(
-      id: '9',
-      titulo: 'Control dermatológico',
-      hora: '14:00',
-      mascota: 'Rocky',
-      veterinario: 'Dr. Pérez',
-      fecha: '2025-05-12',
-      tipo: 'cita',
-      categoria: 'Dermatología',
-      estado: 'confirmada',
-    ),
-    EventoCalendar(
-      id: '10',
-      titulo: 'Sesión informativa de adopción',
-      hora: '16:00',
-      mascota: 'Todos',
-      veterinario: 'Voluntariado Animal',
-      fecha: '2025-05-12',
-      tipo: 'evento',
-      categoria: 'Charla',
-    ),
-    EventoCalendar(
-      id: '11',
-      titulo: 'Vacuna antirrábica',
-      hora: '09:30',
-      mascota: 'Sasha',
-      veterinario: 'Dra. Guzmán',
-      fecha: '2025-05-14',
-      tipo: 'cita',
-      categoria: 'Vacuna',
-      estado: 'pendiente',
-    ),
-    EventoCalendar(
-      id: '12',
-      titulo: 'Evaluación nutricional',
-      hora: '11:15',
-      mascota: 'Milo',
-      veterinario: 'Dr. Herrera',
-      fecha: '2025-05-14',
-      tipo: 'cita',
-      categoria: 'Consulta',
-      estado: 'confirmada',
-    ),
-    EventoCalendar(
-      id: '13',
-      titulo: 'Charla sobre tenencia responsable',
-      hora: '13:00',
-      mascota: 'General',
-      veterinario: 'FAUNA Ecuador',
-      fecha: '2025-05-14',
-      tipo: 'evento',
-      categoria: 'Charla',
-    ),
-    EventoCalendar(
-      id: '14',
-      titulo: 'Control cardiaco',
-      hora: '15:30',
-      mascota: 'Zoe',
-      veterinario: 'Dra. Villamar',
-      fecha: '2025-05-14',
-      tipo: 'cita',
-      categoria: 'Cardiología',
-      estado: 'confirmada',
-    ),
-    EventoCalendar(
-      id: '15',
-      titulo: 'Cita de revisión anual',
-      hora: '17:00',
-      mascota: 'Toby',
-      veterinario: 'Dr. Romero',
-      fecha: '2025-05-14',
-      tipo: 'cita',
-      categoria: 'Control',
-      estado: 'pendiente',
-    ),
-    EventoCalendar(
-      id: '16',
-      titulo: 'Revisión post-operatoria',
-      hora: '08:00',
-      mascota: 'Nina',
-      veterinario: 'Dra. Quintero',
-      fecha: '2025-05-16',
-      tipo: 'cita',
-      categoria: 'Cirugía',
-      estado: 'pendiente',
-    ),
-    EventoCalendar(
-      id: '17',
-      titulo: 'Conferencia de salud animal',
-      hora: '10:00',
-      mascota: 'Todos',
-      veterinario: 'Invitados especiales',
-      fecha: '2025-05-16',
-      tipo: 'evento',
-      categoria: 'Conferencia',
-    ),
-    EventoCalendar(
-      id: '18',
-      titulo: 'Vacunación canina',
-      hora: '12:00',
-      mascota: 'Simba',
-      veterinario: 'Dr. Gómez',
-      fecha: '2025-05-16',
-      tipo: 'cita',
-      categoria: 'Vacuna',
-      estado: 'confirmada',
-    ),
-    EventoCalendar(
-      id: '19',
-      titulo: 'Charla para nuevos dueños',
-      hora: '14:30',
-      mascota: 'General',
-      veterinario: 'Refugio Animal',
-      fecha: '2025-05-16',
-      tipo: 'evento',
-      categoria: 'Charla',
-    ),
-    EventoCalendar(
-      id: '20',
-      titulo: 'Cita de control digestivo',
-      hora: '16:00',
-      mascota: 'Pancho',
-      veterinario: 'Dra. Ledesma',
-      fecha: '2025-05-16',
-      tipo: 'cita',
-      categoria: 'Gastroenterología',
-      estado: 'pendiente',
-    ),
-    EventoCalendar(
-      id: '21',
-      titulo: 'Revisión de piel',
-      hora: '09:00',
-      mascota: 'Bella',
-      veterinario: 'Dra. Torres',
-      fecha: '2025-05-20',
-      tipo: 'cita',
-      categoria: 'Dermatología',
-      estado: 'confirmada',
-    ),
-    EventoCalendar(
-      id: '22',
-      titulo: 'Charla de prevención',
-      hora: '10:30',
-      mascota: 'Todos',
-      veterinario: 'Fundación Huellitas',
-      fecha: '2025-05-20',
-      tipo: 'evento',
-      categoria: 'Charla',
-    ),
-    EventoCalendar(
-      id: '23',
-      titulo: 'Cita de fisioterapia',
-      hora: '13:00',
-      mascota: 'Rex',
-      veterinario: 'Dr. Navarro',
-      fecha: '2025-05-20',
-      tipo: 'cita',
-      categoria: 'Rehabilitación',
-      estado: 'pendiente',
-    ),
-    EventoCalendar(
-      id: '24',
-      titulo: 'Jornada de vacunación',
-      hora: '15:00',
-      mascota: 'Loki',
-      veterinario: 'Dra. Viteri',
-      fecha: '2025-05-20',
-      tipo: 'cita',
-      categoria: 'Vacuna',
-      estado: 'confirmada',
-    ),
-    EventoCalendar(
-      id: '25',
-      titulo: 'Conferencia internacional sobre salud',
-      hora: '17:30',
-      mascota: 'Todos',
-      veterinario: 'FAUNA GLOBAL',
-      fecha: '2025-05-20',
-      tipo: 'evento',
-      categoria: 'Conferencia',
-    ),
-  ];
-
+  final List<EventoCalendar> _eventos = [];
   List<EventoCalendar> get eventos => _eventos;
+
+  Future<void> cargarEventosDesdeBackend() async {
+    try {
+      _eventos.clear();
+
+      // Simula carga para cada mascota (idealmente deberías hacer una petición que traiga todos los eventos del dueño)
+      final mascotas = MascotasStorage.getMascotas();
+      for (final mascota in mascotas) {
+        final detalles = await _petService.obtenerDetallesMascota(int.parse(mascota.id));
+
+        _eventos.addAll(detalles.eventos.map((evento) {
+          return EventoCalendar(
+            id: evento.id.toString(),
+            titulo: evento.titulo,
+            hora: _formatoHora(evento.hora),
+            fecha: _formatoFecha(evento.fecha),
+            mascota: mascota.nombre,
+            veterinario: 'No especificado', // Modifica si tienes el veterinario en el evento
+            tipo: 'evento', // o 'cita' según corresponda
+            categoria: null,
+            estado: null,
+            descripcion: evento.descripcion,
+          );
+        }));
+
+        _eventos.addAll(detalles.citas.map((cita) {
+          return EventoCalendar(
+            id: cita.id.toString(),
+            titulo: cita.razon,
+            hora: _formatoHora(cita.hora),
+            fecha: _formatoFecha(cita.fecha),
+            mascota: mascota.nombre,
+            veterinario: 'Veterinario asignado', // reemplaza con campo real si lo tienes
+            tipo: 'cita',
+            categoria: null,
+            estado: cita.estado,
+            descripcion: cita.descripcion,
+          );
+        }));
+      }
+
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error cargando eventos del calendario: $e');
+    }
+  }
+
+  String _formatoFecha(DateTime fecha) =>
+      '${fecha.year}-${_dos(fecha.month)}-${_dos(fecha.day)}';
+
+  String _formatoHora(DateTime hora) =>
+      '${_dos(hora.hour)}:${_dos(hora.minute)}';
+
+  String _dos(int n) => n.toString().padLeft(2, '0');
+
 
   void cambiarModo(bool nuevoModo) {
     modoCalendario = nuevoModo;
@@ -381,27 +170,4 @@ class CalendarController extends ChangeNotifier {
     }
     return mapa;
   }
-
-  /// Carga inicial de eventos (por ahora estática, futura: desde backend)
-  void cargarEventosIniciales() {
-    // Aquí podrías hacer una petición HTTP al backend:
-    /*
-    Future<void> fetchEventos() async {
-      final response = await http.get(Uri.parse('https://api.tuveterinaria.com/eventos'));
-      if (response.statusCode == 200) {
-        final List data = jsonDecode(response.body);
-        _eventos = data.map((e) => EventoCalendar.fromJson(e)).toList();
-        notifyListeners();
-      } else {
-        throw Exception('Error al cargar eventos');
-      }
-    }
-    */
-    notifyListeners(); // Refresca la UI tras la carga inicial (simulada)
-  }
-
-  String _formatoFecha(DateTime fecha) =>
-      '${fecha.year}-${_dos(fecha.month)}-${_dos(fecha.day)}';
-
-  String _dos(int n) => n.toString().padLeft(2, '0');
 }

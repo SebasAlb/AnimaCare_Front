@@ -1,3 +1,5 @@
+import 'package:animacare_front/models/detalles_mascota.dart';
+import 'package:animacare_front/models/historial_medico.dart';
 import 'package:dio/dio.dart';
 import 'package:animacare_front/constants/api_config.dart';
 import 'package:animacare_front/models/mascota.dart';
@@ -59,33 +61,33 @@ class PetService {
   }
 
   // POST: Obtener historial médico por mascota y dueño
-  Future<List<dynamic>> obtenerHistorial(int mascotaId, int duenioId) async {
+  Future<List<HistorialMedico>> obtenerHistorial(int mascotaId, int duenioId) async {
     try {
       final response = await _dio.post(
         '$_baseUrl/v1/pet/history/Owner',
-        data: {
-          'mascota_id': mascotaId,
-          'duenio_id': duenioId,
-        },
+        data: {'mascota_id': mascotaId, 'duenio_id': duenioId},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
-      return response.data as List;
+      return (response.data as List)
+          .map((e) => HistorialMedico.fromJson(e))
+          .toList();
     } on DioException catch (e) {
       final error = e.response?.data['error'] ?? 'Error de red o del servidor';
       throw Exception(error);
     }
   }
 
+
   // GET: Obtener eventos, citas e historial de una mascota
-  Future<Map<String, dynamic>> obtenerDetallesMascota(int mascotaId) async {
+  Future<DetallesMascota> obtenerDetallesMascota(int mascotaId) async {
     try {
       final response = await _dio.get(
         '$_baseUrl/v1/pet/schedule/$mascotaId',
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
-      return response.data as Map<String, dynamic>;
+      return DetallesMascota.fromJson(response.data);
     } on DioException catch (e) {
       final error = e.response?.data['error'] ?? 'Error al obtener detalles';
       throw Exception(error);

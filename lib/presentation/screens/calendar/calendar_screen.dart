@@ -22,10 +22,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     super.initState();
+
     controller.searchController.addListener(() {
       if (!controller.modoCalendario) {
         setState(() {});
       }
+    });
+
+    controller.cargarEventosDesdeBackend().then((_) {
+      setState(() {}); // Para actualizar la vista si cambia algo
     });
   }
 
