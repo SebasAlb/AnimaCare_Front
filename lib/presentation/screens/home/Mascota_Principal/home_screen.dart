@@ -57,21 +57,35 @@ class HomeScreen extends StatelessWidget {
                     Expanded(
                       child: controller.isLoading
                           ? const Center(child: CircularProgressIndicator())
-                          : controller.mascotas.isEmpty
-                              ? const Center(child: Text('No tienes mascotas registradas'))
-                              : Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: GridView.count(
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 16,
-                                    mainAxisSpacing: 16,
-                                    padding: const EdgeInsets.only(bottom: 100), // ⬅️ Espacio para evitar que el FAB tape
-                                    children: controller.mascotas
-                                        .map((Mascota m) => PetCard(mascota: m))
-                                        .toList(),
-                                  ),
-                                ),
-                    ),
+                          : RefreshIndicator(
+                              onRefresh: () async {
+                                controller.limpiarMascotasCache(); // Limpia almacenamiento local
+                                await controller.cargarMascotasDesdeApi(); // Vuelve a cargar
+                              },
+                              child: controller.mascotas.isEmpty
+                                  ? ListView(
+                                    physics: const AlwaysScrollableScrollPhysics(),
+                                    children: const [
+                                      SizedBox(height: 100),
+                                      Center(child: Text('No tienes mascotas registradas')),
+                                    ],
+                                  )
+                                  : Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      child: GridView.count(
+                                        physics: const AlwaysScrollableScrollPhysics(),
+                                        crossAxisCount: 2,
+                                        crossAxisSpacing: 16,
+                                        mainAxisSpacing: 16,
+                                        padding: const EdgeInsets.only(bottom: 100),
+                                        children: controller.mascotas
+                                            .map((Mascota m) => PetCard(mascota: m))
+                                            .toList(),
+                                      ),
+                                    ),
+                            ),
+                    )
+
 
                   ],
                 ),
@@ -112,6 +126,13 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
+
 
 
 
