@@ -6,6 +6,8 @@ import 'package:animacare_front/models/dueno.dart';
 import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agregar_mascota_screen.dart';
 import 'package:animacare_front/services/sound_service.dart';
 
+import 'package:animacare_front/storage/pet_storage.dart'; // NUEVO
+
 class HomeController extends ChangeNotifier {
   final List<Mascota> _mascotas = [];
   bool _isLoading = true;
@@ -23,10 +25,22 @@ class HomeController extends ChangeNotifier {
       final Dueno? dueno = UserStorage.getUser();
       if (dueno == null) throw Exception("Usuario no autenticado");
 
-      final List<Mascota> lista = await _petService.obtenerMascotasPorDueno(dueno.id);
+      // Cargar desde storage si existe
+      if (MascotasStorage.hasMascotas()) {
+        final cacheadas = MascotasStorage.getMascotas();
+        _mascotas
+          ..clear()
+          ..addAll(cacheadas);
+        _isLoading = false;
+        notifyListeners();
+      }
+
+      // Cargar desde API (siempre lo hace para mantener actualizado)
+      final List<Mascota> desdeApi = await _petService.obtenerMascotasPorDueno(dueno.id);
       _mascotas
         ..clear()
-        ..addAll(lista);
+        ..addAll(desdeApi);
+      MascotasStorage.saveMascotas(desdeApi);
     } catch (e) {
       print("Error al obtener mascotas: $e");
     }
@@ -34,6 +48,7 @@ class HomeController extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
 
   Future<void> onAgregarMascota(BuildContext context) async {
     SoundService.playButton();
@@ -49,7 +64,14 @@ class HomeController extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void limpiarMascotasCache() {
+  MascotasStorage.clearMascotas();
+}
+
   
 }
+
+
 
 
