@@ -94,7 +94,7 @@ class AgregarMascotaController {
       }
 
       final Mascota nuevaMascota = Mascota(
-        id: '', // será asignado por backend
+        id: 0, // será asignado por backend
         nombre: nombreController.text.trim(),
         especie: especie,
         raza: razaController.text.trim().isEmpty ? '' : razaController.text.trim(),
