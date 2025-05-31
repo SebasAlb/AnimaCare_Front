@@ -6,9 +6,11 @@ import 'package:animacare_front/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/services/sound_service.dart';
 
+
 class PetCard extends StatefulWidget {
-  const PetCard({super.key, required this.mascota});
+  const PetCard({super.key, required this.mascota, required this.onEliminada});
   final Mascota mascota;
+  final VoidCallback onEliminada;
 
   @override
   State<PetCard> createState() => _PetCardState();
@@ -88,28 +90,41 @@ class _PetCardState extends State<PetCard> {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 alignment: Alignment.center,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Flexible(
-                      child: Text(
-                        mascotaActual.nombre,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: theme.brightness == Brightness.dark
-                              ? AppColors.onSurfaceDark // blanco suave
-                              : AppColors.primaryBrand, // azul profundo
-                          fontSize: 16,
-                        ),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              mascotaActual.nombre,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: theme.brightness == Brightness.dark
+                                    ? AppColors.onSurfaceDark
+                                    : AppColors.primaryBrand,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Icon(
+                            Icons.chevron_right,
+                            color: theme.brightness == Brightness.dark
+                                ? AppColors.onSurfaceDark.withOpacity(0.6)
+                                : AppColors.primaryBrand.withOpacity(0.6),
+                            size: 20,
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 6),
-                    Icon(
-                      Icons.chevron_right,
-                      color: theme.brightness == Brightness.dark
-                          ? AppColors.onSurfaceDark.withOpacity(0.6)
-                          : AppColors.primaryBrand.withOpacity(0.6),
-                      size: 20,
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red.shade400),
+                      onPressed: () {
+                        SoundService.playButton(); // 🔊 Sonido
+                        _mostrarConfirmacionEliminar(context);
+                      },
                     ),
                   ],
                 ),
@@ -120,4 +135,30 @@ class _PetCardState extends State<PetCard> {
       ),
     );
   }
+  void _mostrarConfirmacionEliminar(BuildContext context) async {
+    final bool? confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Eliminar mascota'),
+        content: Text('¿Seguro que deseas eliminar a ${mascotaActual.nombre}? Esta acción es reversible.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar == true) {
+      widget.onEliminada();
+    }
+
+  }
+
 }
+
