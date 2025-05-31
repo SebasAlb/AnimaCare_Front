@@ -152,8 +152,8 @@ class DetalleMascotaController extends ChangeNotifier {
     controllers['Edad']?.text = _calcularEdad(mascota.fechaNacimiento);
     controllers['Fecha de nacimiento']?.text =
         _formatoFecha(mascota.fechaNacimiento);
-    controllers['Peso']?.text = '${mascota.peso} kg';
-    controllers['Altura']?.text = '${mascota.altura} cm';
+    controllers['Peso']?.text = mascota.peso == 0.0 ? '' : '${mascota.peso}';
+    controllers['Altura']?.text = mascota.altura == 0.0 ? '' : '${mascota.altura}';
     controllers['Sexo']?.text = mascota.sexo;
   }
 
