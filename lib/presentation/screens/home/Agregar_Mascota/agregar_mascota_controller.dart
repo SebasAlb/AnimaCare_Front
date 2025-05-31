@@ -9,6 +9,9 @@ import 'package:animacare_front/presentation/screens/home/cloudinary_service.dar
 
 import 'package:animacare_front/storage/pet_storage.dart'; // NUEVO
 
+import 'package:animacare_front/models/evento.dart';
+import 'package:animacare_front/services/event_service.dart';
+
 class AgregarMascotaController {
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController razaController = TextEditingController();
@@ -110,12 +113,45 @@ class AgregarMascotaController {
           await petService.crearMascota(nuevaMascota, dueno.id);
       // ✅ ACTUALIZAR STORAGE LOCAL
       MascotasStorage.saveMascotas([...MascotasStorage.getMascotas(), mascotaCreada]);
-      return mascotaCreada;
-    } catch (e) {
-      print('Error al guardar mascota: $e');
-      return null;
-    }
-  }
+      
+      // ✅ CREAR EVENTO DE CUMPLEAÑOS PERSONALIZADO
+      final DateTime hoy = DateTime.now();
+      final DateTime cumpleEsteAnio = DateTime(
+        hoy.year,
+        mascotaCreada.fechaNacimiento.month,
+        mascotaCreada.fechaNacimiento.day,
+        9, 0,
+      );
+
+      // Determinar si el cumpleaños es este año o el siguiente
+      final DateTime fechaEvento = (cumpleEsteAnio.isBefore(hoy))
+          ? DateTime(hoy.year + 1, mascotaCreada.fechaNacimiento.month, mascotaCreada.fechaNacimiento.day, 9, 0)
+          : cumpleEsteAnio;
+
+      // Calcular edad que cumple en esa fecha
+      final int edad = fechaEvento.year - mascotaCreada.fechaNacimiento.year;
+
+      final Evento eventoCumple = Evento(
+        id: 0,
+        titulo: 'Cumpleaños de ${mascotaCreada.nombre}',
+        fecha: fechaEvento,
+        hora: fechaEvento,
+        descripcion: '¡Festejale a ${mascotaCreada.nombre} sus $edad años de edad!',
+        categoriaId: 7,
+        mascotaId: mascotaCreada.id,
+        veterinarioId: 1,
+      );
+
+      await EventService().crearEvento(eventoCumple);
+
+
+            
+            return mascotaCreada;
+          } catch (e) {
+            print('Error al guardar mascota: $e');
+            return null;
+          }
+        }
 
 
   DateTime _parseFecha(String fecha) {
@@ -127,6 +163,10 @@ class AgregarMascotaController {
     );
   }
 }
+
+
+
+
 
 
 
