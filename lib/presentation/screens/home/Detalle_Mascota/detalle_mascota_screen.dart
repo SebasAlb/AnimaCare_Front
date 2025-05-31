@@ -171,8 +171,9 @@ class _DetalleContenido extends StatelessWidget {
           child: Column(
             children: <Widget>[
               CustomHeader(
-                petName: controller.mascota.nombre,
+                nameScreen: controller.mascota.nombre,
                 mostrarMascota: true,
+                isSecondaryScreen: true,
               ),
               _buildToggleTabs(),
               Expanded(

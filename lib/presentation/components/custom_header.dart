@@ -202,7 +202,7 @@ class _CustomHeaderState extends State<CustomHeader> {
     const Color textColor = Colors.white;
     final Color background = theme.primaryColor;
 
-    if (widget.isSecondaryScreen) {
+    if (widget.isSecondaryScreen && !widget.mostrarMascota) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         color: background,
@@ -250,6 +250,79 @@ class _CustomHeaderState extends State<CustomHeader> {
         : '${dueno?.nombre ?? ''} ${dueno?.apellido ?? ''}'.trim().isEmpty
         ? 'Usuario'
         : '${dueno!.nombre} ${dueno!.apellido}';
+
+
+    if (widget.isSecondaryScreen && widget.mostrarMascota) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        color: background,
+        child: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: textColor),
+              onPressed: () async {
+                SoundService.playButton();
+                if (widget.onBackConfirm != null) {
+                  final canExit = await widget.onBackConfirm!();
+                  if (canExit) {
+                    if (widget.onBack != null) {
+                      widget.onBack!();
+                    } else {
+                      Navigator.pop(context);
+                    }
+                  }
+                } else {
+                  if (widget.onBack != null) {
+                    widget.onBack!();
+                  } else {
+                    Navigator.pop(context);
+                  }
+                }
+              },
+            ),
+            const SizedBox(width: 5),
+            Expanded(
+              child: Text(
+                widget.nameScreen,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+              ),
+            ),
+            const SizedBox(width: 5),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.notifications, color: textColor),
+                  onPressed: () => _mostrarNotificaciones(context),
+                ),
+                if (!notificacionesRevisadas && notificacionesHoy.isNotEmpty)
+                  Positioned(
+                    right: 6,
+                    bottom: 6,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: theme.colorScheme.secondary,
+                      ),
+                      child: Text(
+                        '${notificacionesHoy.length}',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+
+      );
+    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
