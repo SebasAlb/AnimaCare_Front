@@ -7,6 +7,7 @@ import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agrega
 import 'package:animacare_front/services/sound_service.dart';
 
 import 'package:animacare_front/storage/pet_storage.dart'; // NUEVO
+import 'package:animacare_front/services/event_service.dart';
 
 class HomeController extends ChangeNotifier {
   final List<Mascota> _mascotas = [];
@@ -16,6 +17,8 @@ class HomeController extends ChangeNotifier {
 
   List<Mascota> get mascotas => _mascotas;
   bool get isLoading => _isLoading;
+  bool _isEliminando = false;
+  bool get isEliminando => _isEliminando;
 
   Future<void> cargarMascotasDesdeApi() async {
     _isLoading = true;
@@ -37,6 +40,10 @@ class HomeController extends ChangeNotifier {
 
       // Cargar desde API (siempre lo hace para mantener actualizado)
       final List<Mascota> desdeApi = await _petService.obtenerMascotasPorDueno(dueno.id);
+      
+      // Filtrar mascotas activas (sin deleted_at)
+      final activas = desdeApi.where((m) => m.deletedAt == null).toList();
+
       _mascotas
         ..clear()
         ..addAll(desdeApi);
@@ -64,6 +71,26 @@ class HomeController extends ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<void> eliminarMascotaConEventos(Mascota mascota) async {
+    _isEliminando = true;
+    notifyListeners();
+
+    try {
+      final detalles = await _petService.obtenerDetallesMascota(mascota.id);
+      for (final evento in detalles.eventos) {
+        await EventService().eliminarEvento(evento.id);
+      }
+
+      await _petService.eliminarMascota(mascota.id);
+
+      SoundService.playSuccess();
+    } catch (e) {
+      debugPrint('Error al eliminar mascota: $e');
+    }
+
+    _isEliminando = false;
+    await cargarMascotasDesdeApi(); // Refresca
+  }
 
   void limpiarMascotasCache() {
   MascotasStorage.clearMascotas();
@@ -71,6 +98,8 @@ class HomeController extends ChangeNotifier {
 
   
 }
+
+
 
 
 
