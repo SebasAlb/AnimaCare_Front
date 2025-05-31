@@ -9,6 +9,7 @@ class Mascota {
     required this.peso,
     required this.altura,
     required this.fotoUrl,
+    this.deletedAt,
   });
 
   int id;
@@ -20,6 +21,7 @@ class Mascota {
   double peso;
   double altura;
   String fotoUrl;
+  DateTime? deletedAt;
 
   factory Mascota.fromJson(Map<String, dynamic> json) => Mascota(
         id: int.tryParse(json['id'].toString()) ?? 0,
@@ -31,6 +33,7 @@ class Mascota {
         peso: double.tryParse(json['peso'].toString()) ?? 0.0,
         altura: double.tryParse(json['altura'].toString()) ?? 0.0,
         fotoUrl: json['foto_url'] ?? '',
+        deletedAt: json['deleted_at'] != null ? DateTime.tryParse(json['deleted_at']) : null, 
       );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -43,6 +46,7 @@ class Mascota {
         'peso': peso,
         'altura': altura,
         'foto_url': fotoUrl,
+        'deleted_at': deletedAt?.toIso8601String(),
       };
 
   String get edadFormateada {
