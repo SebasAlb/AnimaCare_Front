@@ -11,6 +11,9 @@ import 'package:animacare_front/services/sound_service.dart';
 import 'package:get/get.dart';
 import 'package:animacare_front/storage/pet_storage.dart';
 
+import 'package:animacare_front/models/evento.dart';
+import 'package:animacare_front/services/event_service.dart';
+
 class EditarMascotaModal {
   static void show(
     BuildContext context, {
@@ -83,30 +86,26 @@ class EditarMascotaModal {
                                     children: [
                                       Expanded(
                                         child: _dropdownValidado(
-  label: 'Especie',
-  theme: theme,
-  icono: Icons.category,
-  valorActual: controllers['Especie']!.text,
-  opciones: ['Perro', 'Gato', 'Otro'],
-  onChanged: (val) => controllers['Especie']!.text = val ?? '',
-),
-
+                                          label: 'Especie',
+                                          theme: theme,
+                                          icono: Icons.category,
+                                          valorActual: controllers['Especie']!.text,
+                                          opciones: ['Perro', 'Gato', 'Otro'],
+                                          onChanged: (val) => controllers['Especie']!.text = val ?? '',
+                                        ),
                                       ),
                                       const SizedBox(width: 12),
                                       Expanded(child: _campoTexto('Raza', controllers['Raza']!, theme)),
                                     ],
                                   ),
-
                                   _dropdownValidado(
-  label: 'Sexo',
-  theme: theme,
-  icono: Icons.male,
-  valorActual: controllers['Sexo']!.text,
-  opciones: ['Macho', 'Hembra'],
-  onChanged: (val) => controllers['Sexo']!.text = val ?? '',
-),
-
-
+                                    label: 'Sexo',
+                                    theme: theme,
+                                    icono: Icons.male,
+                                    valorActual: controllers['Sexo']!.text,
+                                    opciones: ['Macho', 'Hembra'],
+                                    onChanged: (val) => controllers['Sexo']!.text = val ?? '',
+                                  ),
                                   GestureDetector(
                                     onTap: () async {
                                       final DateTime? seleccionada = await showDatePicker(
@@ -124,7 +123,6 @@ class EditarMascotaModal {
                                           child: child!,
                                         ),
                                       );
-
                                       if (seleccionada != null) {
                                         controllers['Fecha de nacimiento']!.text =
                                             '${seleccionada.day.toString().padLeft(2, '0')}/${seleccionada.month.toString().padLeft(2, '0')}/${seleccionada.year}';
@@ -212,6 +210,39 @@ class EditarMascotaModal {
 
                                         onGuardar(mascota);
                                         await PetService().actualizarMascota(mascota, mascota.id);
+                                        
+                                        // === ✅ Actualizar evento de cumpleaños si la fecha cambió ===
+                                        // 🎯 Buscar evento actual de cumpleaños
+                                        final eventos = await PetService().obtenerDetallesMascota(mascota.id);
+                                        final eventoCumple = eventos.eventos.firstWhere(
+                                          (e) => e.titulo.toLowerCase().contains('cumpleaños de'),
+                                          orElse: () => throw Exception('Evento de cumpleaños no encontrado'),
+                                        );
+
+                                        // ✅ CREAR EVENTO DE CUMPLEAÑOS PERSONALIZADO AL EDITAR
+                                        final DateTime hoy = DateTime.now();
+                                        final DateTime cumpleEsteAnio = DateTime(
+                                          hoy.year,
+                                          mascota.fechaNacimiento.month,
+                                          mascota.fechaNacimiento.day,
+                                          9, 0,
+                                        );
+
+                                        // Determinar si el cumpleaños es este año o el siguiente
+                                        final DateTime nuevaFechaEvento = (cumpleEsteAnio.isBefore(hoy))
+                                            ? DateTime(hoy.year + 1, mascota.fechaNacimiento.month, mascota.fechaNacimiento.day, 9, 0)
+                                            : cumpleEsteAnio;
+
+                                        // Calcular edad que cumple en esa fecha
+                                        final int edad = nuevaFechaEvento.year - mascota.fechaNacimiento.year;
+
+                                        // 🔁 Actualizar evento con nueva fecha y hora
+                                        await EventService().actualizarFechaEvento(
+                                          eventoCumple.id,
+                                          nuevaFechaEvento,
+                                          nuevaFechaEvento,
+                                        );
+
                                         // ACTUALIZAR STORAGE LOCAL
                                         final List<Mascota> mascotasGuardadas = MascotasStorage.getMascotas();
                                         final int index = mascotasGuardadas.indexWhere((m) => m.id == mascota.id);
@@ -584,6 +615,8 @@ class EditarMascotaModal {
 }
 
 }
+
+
 
 
 
