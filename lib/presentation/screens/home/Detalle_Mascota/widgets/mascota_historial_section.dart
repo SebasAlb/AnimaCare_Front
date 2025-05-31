@@ -4,17 +4,15 @@ class MascotaHistorialSection extends StatelessWidget {
   const MascotaHistorialSection({
     super.key,
     required this.historial,
-    required this.proximoEvento,
-    required this.fechaProximoEvento,
   });
 
   final Map<String, List<Map<String, String>>> historial;
-  final String proximoEvento;
-  final String fechaProximoEvento;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final bool historialVacio = historial.isEmpty;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -26,90 +24,32 @@ class MascotaHistorialSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        _ProximoEventoCard(titulo: proximoEvento, fecha: fechaProximoEvento),
-        const SizedBox(height: 16),
-        const _BuscadorHistorial(),
-        const SizedBox(height: 16),
-        ...historial.entries.map(
-          (entry) => _ExpandableCard(
-            title: entry.key,
-            items: entry.value,
+        if (historialVacio)
+          const Padding(
+            padding: EdgeInsets.only(top: 100),
+            child: Center(
+              child: Text(
+                'Aún no hay historial médico registrado',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          )
+        else
+          ...historial.entries.map(
+            (entry) => ExpandableCard(
+              title: entry.key,
+              items: entry.value,
+            ),
           ),
-        ),
         const SizedBox(height: 40),
       ],
     );
   }
 }
 
-class _ProximoEventoCard extends StatelessWidget {
-  const _ProximoEventoCard({
-    required this.titulo,
-    required this.fecha,
-  });
-
-  final String titulo;
-  final String fecha;
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primary,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        children: <Widget>[
-          const Icon(Icons.event_available, color: Colors.white),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'Próximo evento: $titulo\nFecha: $fecha',
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BuscadorHistorial extends StatelessWidget {
-  const _BuscadorHistorial();
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    return TextField(
-      decoration: InputDecoration(
-        hintText: 'Buscar en historial...',
-        prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
-        hintStyle: TextStyle(color: theme.colorScheme.primary),
-        filled: true,
-        fillColor: theme.cardColor,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-}
-
-class _ExpandableCard extends StatefulWidget {
-  const _ExpandableCard({
+class ExpandableCard extends StatefulWidget {
+  const ExpandableCard({
+    super.key,
     required this.title,
     required this.items,
   });
@@ -118,10 +58,10 @@ class _ExpandableCard extends StatefulWidget {
   final List<Map<String, String>> items;
 
   @override
-  State<_ExpandableCard> createState() => _ExpandableCardState();
+  State<ExpandableCard> createState() => _ExpandableCardState();
 }
 
-class _ExpandableCardState extends State<_ExpandableCard>
+class _ExpandableCardState extends State<ExpandableCard>
     with SingleTickerProviderStateMixin {
   bool _expanded = false;
   late final AnimationController _controller;
@@ -203,17 +143,15 @@ class _ExpandableCardState extends State<_ExpandableCard>
                                   children: <Widget>[
                                     Text(
                                       item['descripcion'] ?? '',
-                                      style: theme.textTheme.bodyMedium
-                                          ?.copyWith(
-                                              fontWeight: FontWeight.bold,),
+                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
                                       item['fecha'] ?? '',
-                                      style:
-                                          theme.textTheme.bodySmall?.copyWith(
-                                        color: theme.textTheme.bodySmall?.color
-                                            ?.withOpacity(0.6),
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
                                       ),
                                     ),
                                   ],
@@ -233,3 +171,4 @@ class _ExpandableCardState extends State<_ExpandableCard>
     );
   }
 }
+
