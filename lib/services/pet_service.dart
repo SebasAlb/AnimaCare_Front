@@ -94,5 +94,22 @@ class PetService {
     }
   }
 
+  Future<void> eliminarMascota(int id) async {
+    try {
+      final response = await _dio.get(
+        '$_baseUrl/v1/pet/delete/$id',
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      // Puedes imprimir si deseas verificar:
+      print('✅ Mascota eliminada: ${response.data}');
+    } on DioException catch (e) {
+      final error = e.response?.data['error'] ?? 'Error al eliminar mascota';
+      print('❌ Error al eliminar mascota: $error');
+      throw Exception(error);
+    }
+  }
+
 }
+
 
