@@ -78,9 +78,11 @@ class HomeScreen extends StatelessWidget {
                                           crossAxisSpacing: 16,
                                           mainAxisSpacing: 16,
                                           padding: const EdgeInsets.only(bottom: 100),
+                                          
                                           children: controller.mascotas.map((Mascota m) {
                                             return Consumer<HomeController>(
                                               builder: (context, controller, _) => PetCard(
+                                                key: ValueKey(m.id), // ✅ Esto soluciona el error visual
                                                 mascota: m,
                                                 onEliminada: () async {
                                                   await controller.eliminarMascotaConEventos(m);
@@ -88,6 +90,7 @@ class HomeScreen extends StatelessWidget {
                                               ),
                                             );
                                           }).toList(),
+
                             ),
                           ),
                         ),
@@ -143,8 +146,18 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+    
   }
 }
+
+
+
+
+
+
+
+
+
 
 
 
