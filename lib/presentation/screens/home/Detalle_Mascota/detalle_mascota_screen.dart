@@ -114,8 +114,6 @@ class _DetalleContenido extends StatelessWidget {
         case VistaDetalleMascota.historial:
           return MascotaHistorialSection(
             historial: controller.historialMedico,
-            proximoEvento: controller.proximoEvento,
-            fechaProximoEvento: controller.fechaProximoEvento,
           );
         case VistaDetalleMascota.eventos:
           return const MascotaEventosSection();
