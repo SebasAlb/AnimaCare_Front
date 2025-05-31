@@ -1,7 +1,6 @@
 import 'package:animacare_front/storage/pet_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/evento_calendar.dart';
-import 'package:animacare_front/models/detalles_mascota.dart';
 import 'package:animacare_front/services/pet_service.dart';
 
 class CalendarController extends ChangeNotifier {
@@ -29,40 +28,40 @@ class CalendarController extends ChangeNotifier {
   Future<void> cargarEventosDesdeBackend() async {
     try {
       _eventos.clear();
-
-      // Simula carga para cada mascota (idealmente deberías hacer una petición que traiga todos los eventos del dueño)
       final mascotas = MascotasStorage.getMascotas();
       for (final mascota in mascotas) {
         final detalles = await _petService.obtenerDetallesMascota(mascota.id);
 
         _eventos.addAll(detalles.eventos.map((evento) {
-          return EventoCalendar(
+          final ec = EventoCalendar(
             id: evento.id.toString(),
             titulo: evento.titulo,
             hora: _formatoHora(evento.hora),
             fecha: _formatoFecha(evento.fecha),
             mascota: mascota.nombre,
-            veterinario: 'No especificado', // Modifica si tienes el veterinario en el evento
-            tipo: 'evento', // o 'cita' según corresponda
+            veterinario: 'No especificado',
+            tipo: 'evento',
             categoria: null,
             estado: null,
             descripcion: evento.descripcion,
           );
+          return ec;
         }));
 
         _eventos.addAll(detalles.citas.map((cita) {
-          return EventoCalendar(
+          final ec = EventoCalendar(
             id: cita.id.toString(),
             titulo: cita.razon,
             hora: _formatoHora(cita.hora),
             fecha: _formatoFecha(cita.fecha),
             mascota: mascota.nombre,
-            veterinario: 'Veterinario asignado', // reemplaza con campo real si lo tienes
+            veterinario: 'Veterinario asignado',
             tipo: 'cita',
             categoria: null,
             estado: cita.estado,
             descripcion: cita.descripcion,
           );
+          return ec;
         }));
       }
 

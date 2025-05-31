@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:animacare_front/presentation/theme/theme_controller.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:animacare_front/presentation/screens/settings/Editar_Perfil/editar_perfil_controller.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,29 @@ Future<void> main() async {
 
   // Controladores que se usarán solo cuando se necesiten
   Get.lazyPut<EditarPerfilController>(() => EditarPerfilController());
+
+  await AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelKey: 'anima_channel',
+        channelName: 'Notificaciones de AnimaCare',
+        channelDescription: 'Recordatorios de citas y eventos de tus mascotas',
+        defaultColor: const Color(0xFF4CAF50),
+        ledColor: Colors.white,
+        importance: NotificationImportance.High,
+        channelShowBadge: true,
+      )
+    ],
+    debug: true,
+  );
+
+  // Solicitar permiso si es necesario
+  await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    if (!isAllowed) {
+      AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+  });
 
   runApp(const MyApp());
 }
