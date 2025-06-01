@@ -1,3 +1,4 @@
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 
 class CustomNavBar extends StatelessWidget {
@@ -38,7 +39,10 @@ class CustomNavBar extends StatelessWidget {
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
         currentIndex: currentIndex,
         type: BottomNavigationBarType.fixed,
-        onTap: onTap,
+        onTap: (index) {
+          SoundService.playButton();
+          onTap(index);
+          },
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home, size: 28),

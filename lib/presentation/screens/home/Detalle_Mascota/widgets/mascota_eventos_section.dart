@@ -1,3 +1,4 @@
+import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/vista_eventos.dart';
@@ -13,6 +14,34 @@ class MascotaEventosSection extends StatefulWidget {
 
 class _MascotaEventosSectionState extends State<MascotaEventosSection> {
   final TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+
+  List<EventoCalendar> filtrarEventosPorTexto(List<EventoCalendar> eventos, String texto) {
+    texto = texto.toLowerCase().trim();
+    return eventos.where((evento) {
+      return texto.isEmpty ||
+          evento.titulo.toLowerCase().contains(texto) ||
+          evento.mascota.toLowerCase().contains(texto) ||
+          evento.veterinario.toLowerCase().contains(texto) ||
+          evento.fecha.contains(texto) ||
+          evento.fecha.replaceAll('-', '/').contains(texto) ||
+          evento.fecha.replaceAll('-', '').contains(texto);
+    }).toList();
+  }
 
   void mostrarDetallesEvento(EventoCalendar evento) {
     final theme = Theme.of(context);
@@ -55,9 +84,10 @@ class _MascotaEventosSectionState extends State<MascotaEventosSection> {
                     TextButton.icon(
                       onPressed: () {
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Función de reagendar cita no implementada aún.'),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AgendarCitaScreen(),
                           ),
                         );
                       },
@@ -130,7 +160,7 @@ class _MascotaEventosSectionState extends State<MascotaEventosSection> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.65,
             child: VistaEventos(
-              eventos: lista,
+              eventos: filtrarEventosPorTexto(lista, searchController.text),
               controller: searchController,
               onTapEvento: mostrarDetallesEvento,
               onSeleccionarFecha: (_) {},

@@ -1,3 +1,4 @@
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/models/veterinario.dart';
 import 'package:animacare_front/models/veterinario_excepcion.dart';
@@ -246,6 +247,7 @@ class ContactInfoScreen extends StatelessWidget {
     builder: (BuildContext context) {
       return InkWell(
         onTap: () async {
+          SoundService.playButton();
           await Clipboard.setData(ClipboardData(text: text));
         },
         child: Row(

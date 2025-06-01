@@ -21,6 +21,9 @@ class FiltroEventosModal extends StatefulWidget {
 }
 
 class _FiltroEventosModalState extends State<FiltroEventosModal> {
+  String? categoriaEventoSeleccionada;
+  String? razonCitaSeleccionada;
+  String? estadoSeleccionado;
   String? mascotaSeleccionada;
   String? veterinarioSeleccionado;
   String? tipoSeleccionado;
@@ -29,11 +32,14 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
   DateTime? fechaHasta;
   TimeOfDay? horaDesde;
   TimeOfDay? horaHasta;
-
+  
   @override
   void initState() {
     super.initState();
-    final Map<String, dynamic> filtros = widget.filtrosActuales ?? <String, dynamic>{};
+    final filtros = widget.filtrosActuales ?? <String, dynamic>{};
+    categoriaEventoSeleccionada = filtros['categoria'];
+    razonCitaSeleccionada = filtros['razonCita'];
+    estadoSeleccionado = filtros['estado'];
     mascotaSeleccionada = filtros['mascota'];
     veterinarioSeleccionado = filtros['veterinario'];
     tipoSeleccionado = filtros['tipo'];
@@ -45,7 +51,7 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
   }
 
   Future<void> seleccionarFecha(BuildContext context, bool esInicio) async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2020),
@@ -59,7 +65,7 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
   }
 
   Future<void> seleccionarHora(BuildContext context, bool esInicio) async {
-    final TimeOfDay? picked = await showTimePicker(
+    final picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
@@ -75,7 +81,9 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
       mascotaSeleccionada = null;
       veterinarioSeleccionado = null;
       tipoSeleccionado = null;
-      categoriaSeleccionada = null;
+      categoriaEventoSeleccionada = null;
+      razonCitaSeleccionada = null;
+      estadoSeleccionado = null;
       fechaDesde = null;
       fechaHasta = null;
       horaDesde = null;
@@ -85,32 +93,30 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
-    final TextStyle? textStyle = theme.textTheme.bodyMedium;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textStyle = theme.textTheme.bodyMedium;
 
     return AlertDialog(
       backgroundColor: theme.dialogBackgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Text(
         'Filtros avanzados',
-        style:
-            theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
       ),
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             Text('Mascota', style: textStyle),
             DropdownButton<String>(
               value: mascotaSeleccionada,
               hint: Text('Selecciona una mascota', style: textStyle),
               isExpanded: true,
               dropdownColor: theme.cardColor,
-              items: widget.mascotas.map((e) => DropdownMenuItem(
-                  value: e,
-                  child: Text(e, style: textStyle),
-                ),).toList(),
+              items: widget.mascotas
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e, style: textStyle)))
+                  .toList(),
               onChanged: (value) => setState(() => mascotaSeleccionada = value),
             ),
             const SizedBox(height: 10),
@@ -120,12 +126,10 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
               hint: Text('Selecciona un veterinario', style: textStyle),
               isExpanded: true,
               dropdownColor: theme.cardColor,
-              items: widget.veterinarios.map((e) => DropdownMenuItem(
-                  value: e,
-                  child: Text(e, style: textStyle),
-                ),).toList(),
-              onChanged: (value) =>
-                  setState(() => veterinarioSeleccionado = value),
+              items: widget.veterinarios
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e, style: textStyle)))
+                  .toList(),
+              onChanged: (value) => setState(() => veterinarioSeleccionado = value),
             ),
             const SizedBox(height: 10),
             Text('Tipo de evento', style: textStyle),
@@ -134,43 +138,72 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
               hint: Text('Cita o Evento', style: textStyle),
               isExpanded: true,
               dropdownColor: theme.cardColor,
-              items: <String>['cita', 'evento'].map((e) => DropdownMenuItem(
-                  value: e,
-                  child: Text(e, style: textStyle),
-                ),).toList(),
-              onChanged: (value) => setState(() => tipoSeleccionado = value),
+              items: ['Cita', 'Evento']
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e, style: textStyle)))
+                  .toList(),
+              onChanged: (value) => setState(() {
+                tipoSeleccionado = value;
+              }),
             ),
             const SizedBox(height: 10),
-            Text('Categoría', style: textStyle),
-            DropdownButton<String>(
-              value: categoriaSeleccionada,
-              hint: Text('Selecciona una categoría', style: textStyle),
-              isExpanded: true,
-              dropdownColor: theme.cardColor,
-              items: widget.categorias.map((e) => DropdownMenuItem(
-                  value: e,
-                  child: Text(e, style: textStyle),
-                ),).toList(),
-              onChanged: (value) =>
-                  setState(() => categoriaSeleccionada = value),
-            ),
+            if (tipoSeleccionado == 'Evento') ...[
+              Text('Categoría', style: textStyle),
+              DropdownButton<String>(
+                value: categoriaEventoSeleccionada,
+                hint: Text('Selecciona una categoría', style: textStyle),
+                isExpanded: true,
+                dropdownColor: theme.cardColor,
+                //items: widget.categorias
+                items: ['Vacuna', 'Desparacitación', 'Control general', 'Cirugía', 'Recomendación', 'Medicación', 'Cumpleaños']
+                    .map((e) => DropdownMenuItem(value: e, child: Text(e, style: textStyle)))
+                    .toList(),
+                onChanged: (value) => setState(() => categoriaEventoSeleccionada = value),
+              ),
+              const SizedBox(height: 10),
+            ],
             const SizedBox(height: 10),
+            if (tipoSeleccionado == 'Cita') ...[
+              Text('Razón', style: textStyle),
+              DropdownButton<String>(
+                value: razonCitaSeleccionada,
+                hint: Text('Selecciona la razón de cita', style: textStyle),
+                isExpanded: true,
+                dropdownColor: theme.cardColor,
+                //items: widget.categorias
+                items: ['Consulta general', 'Vacunación', 'Desparasitación', 'Control postoperatorio', 'Emergencia', 'Chequeo geriátrico']
+                    .map((e) => DropdownMenuItem(value: e, child: Text(e, style: textStyle)))
+                    .toList(),
+                onChanged: (value) => setState(() => razonCitaSeleccionada = value),
+              ),
+              const SizedBox(height: 10),
+              Text('Estado', style: textStyle),
+              DropdownButton<String>(
+                value: estadoSeleccionado,
+                hint: Text('Selecciona el estado', style: textStyle),
+                isExpanded: true,
+                dropdownColor: theme.cardColor,
+                items: ['Pendiente', 'Confirmada', 'Cancelada']
+                    .map((e) => DropdownMenuItem(value: e, child: Text(e, style: textStyle)))
+                    .toList(),
+                onChanged: (value) => setState(() => estadoSeleccionado = value),
+              ),
+            ],
             Text('Rango de fechas', style: textStyle),
             Row(
-              children: <Widget>[
+              children: [
                 Expanded(
                   child: TextButton(
                     onPressed: () => seleccionarFecha(context, true),
                     style: TextButton.styleFrom(
-                      foregroundColor: Colors.blue, // Change text color to blue
-                      backgroundColor: Colors.lightBlue.withOpacity(0.2), // Optional: for a subtle background tint
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), // Optional: add rounded corners
+                      foregroundColor: Colors.blue,
+                      backgroundColor: Colors.lightBlue.withOpacity(0.2),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                     child: Text(
                       fechaDesde == null
                           ? 'Desde'
                           : '${fechaDesde!.day}/${fechaDesde!.month}/${fechaDesde!.year}',
-                      style: textStyle, // You can keep your existing textStyle for other properties
+                      style: textStyle,
                     ),
                   ),
                 ),
@@ -179,9 +212,9 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
                   child: TextButton(
                     onPressed: () => seleccionarFecha(context, false),
                     style: TextButton.styleFrom(
-                      foregroundColor: Colors.blue, // Change text color to blue
-                      backgroundColor: Color(0xFFFFA726).withOpacity(0.2), // Optional: for a subtle background tint
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), // Optional: add rounded corners
+                      foregroundColor: Colors.blue,
+                      backgroundColor: const Color(0xFFFFA726).withOpacity(0.2),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                     child: Text(
                       fechaHasta == null
@@ -196,14 +229,14 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
             const SizedBox(height: 10),
             Text('Rango de horas', style: textStyle),
             Row(
-              children: <Widget>[
+              children: [
                 Expanded(
                   child: TextButton(
                     onPressed: () => seleccionarHora(context, true),
                     style: TextButton.styleFrom(
-                      foregroundColor: Colors.blue, // Change text color to blue
-                      backgroundColor: Colors.lightBlue.withOpacity(0.2), // Optional: for a subtle background tint
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), // Optional: add rounded corners
+                      foregroundColor: Colors.blue,
+                      backgroundColor: Colors.lightBlue.withOpacity(0.2),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                     child: Text(
                       horaDesde == null ? 'Desde' : horaDesde!.format(context),
@@ -216,9 +249,9 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
                   child: TextButton(
                     onPressed: () => seleccionarHora(context, false),
                     style: TextButton.styleFrom(
-                      foregroundColor: Colors.blue, // Change text color to blue
-                      backgroundColor: Color(0xFFFFA726).withOpacity(0.2), // Optional: for a subtle background tint
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), // Optional: add rounded corners
+                      foregroundColor: Colors.blue,
+                      backgroundColor: const Color(0xFFFFA726).withOpacity(0.2),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                     child: Text(
                       horaHasta == null ? 'Hasta' : horaHasta!.format(context),
@@ -231,7 +264,7 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
           ],
         ),
       ),
-      actions: <Widget>[
+      actions: [
         Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -246,18 +279,20 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
                       backgroundColor: Colors.grey.withOpacity(0.2),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child:
-                    Text('Limpiar', style: TextStyle(color: colorScheme.error)),                ),
+                    child: Text('Limpiar', style: TextStyle(color: colorScheme.error)),
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      final Map<String, dynamic> filtros = <String, dynamic>{
+                      final filtros = {
                         'mascota': mascotaSeleccionada,
                         'veterinario': veterinarioSeleccionado,
                         'tipo': tipoSeleccionado,
-                        'categoria': categoriaSeleccionada,
+                        'categoria': tipoSeleccionado == 'Evento' ? categoriaEventoSeleccionada : null,
+                        'razonCita': tipoSeleccionado == 'Cita' ? razonCitaSeleccionada : null,
+                        'estado': tipoSeleccionado == 'Cita' ? estadoSeleccionado : null,
                         'fechaDesde': fechaDesde,
                         'fechaHasta': fechaHasta,
                         'horaDesde': horaDesde,

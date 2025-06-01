@@ -6,6 +6,8 @@ import 'package:animacare_front/presentation/screens/calendar/widgets/evento_cal
 import 'package:animacare_front/services/owner_service.dart';
 import 'package:animacare_front/services/notification_service.dart';
 import 'package:intl/intl.dart';
+import 'package:get/get.dart';
+
 
 class CustomHeader extends StatefulWidget {
   const CustomHeader({
@@ -148,11 +150,13 @@ class _CustomHeaderState extends State<CustomHeader> {
 
   void _mostrarNotificaciones(BuildContext context) {
     if (notificacionesCargando) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('🔔 Cargando notificaciones...'),
-          duration: Duration(seconds: 2),
-        ),
+      Get.snackbar(
+        'Cargando...',
+        'Estamos cargando tus notificaciones, por favor espera.',
+        backgroundColor: Colors.white30,
+        colorText: Theme.of(context).colorScheme.onBackground,
+        icon: const Icon(Icons.notifications_active, color: Colors.deepOrangeAccent),
+        duration: const Duration(seconds: 2),
       );
       return;
     }
@@ -372,19 +376,12 @@ class _CustomHeaderState extends State<CustomHeader> {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                notificacionesCargando
-                    ? const Padding(
-                  padding: EdgeInsets.only(right: 16),
-                  child: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                  ),
-                ) : IconButton(
+                IconButton(
                   icon: const Icon(Icons.notifications, color: textColor),
-                  onPressed: notificacionesCargando
-                      ? null // Bloquea si aún no se cargan
-                      : () => _mostrarNotificaciones(context),
+                  onPressed: () {
+                    SoundService.playButton();
+                    _mostrarNotificaciones(context);
+                  },
                 ),
                 if (!notificacionesRevisadas && notificacionesHoy.isNotEmpty)
                   Positioned(
@@ -448,7 +445,10 @@ class _CustomHeaderState extends State<CustomHeader> {
             children: [
               IconButton(
                 icon: const Icon(Icons.notifications, color: textColor),
-                onPressed: () => _mostrarNotificaciones(context),
+                onPressed: () {
+                  SoundService.playButton();
+                  _mostrarNotificaciones(context);
+                }
               ),
               if (!notificacionesRevisadas && notificacionesHoy.isNotEmpty)
                 Positioned(

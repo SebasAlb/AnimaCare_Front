@@ -1,5 +1,6 @@
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/routes/app_routes.dart';
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_screen.dart';
@@ -92,6 +93,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   if (evento.esCita) ...<Widget>[
                     TextButton.icon(
                       onPressed: () {
+                        SoundService.playButton();
                         Navigator.pop(context);
                         Navigator.push(
                           context,
@@ -108,6 +110,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     ),
                     TextButton.icon(
                       onPressed: () {
+                        SoundService.playButton();
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -130,7 +133,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
               top: 8,
               right: 8,
               child: GestureDetector(
-                onTap: () => Navigator.pop(context),
+                onTap: () {
+                  SoundService.playButton();
+                  Navigator.pop(context);
+                },
                 child: Icon(Icons.close, color: theme.iconTheme.color),
               ),
             ),
@@ -142,13 +148,26 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   void abrirFiltroModal(BuildContext context) {
     final List<EventoCalendar> eventos = controller.eventos;
-    final List<String> mascotas = eventos.map((e) => e.mascota).toSet().toList();
-    final List<String> veterinarios = eventos.map((e) => e.veterinario).toSet().toList();
-    final List<String> categorias = eventos
-        .where((e) => e.categoria != null)
-        .map((e) => e.categoria!)
+
+    final List<String> mascotas = eventos
+        .map((e) => e.mascota)
+        .where((m) => m.trim().isNotEmpty)
         .toSet()
         .toList();
+
+    final List<String> veterinarios = eventos
+        .map((e) => e.veterinario)
+        .where((v) => v.trim().isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+
+    final List<String> categorias = eventos
+        .where((e) => e.categoria != null && e.categoria!.trim().isNotEmpty)
+        .map((e) => e.categoria!)
+        .toSet()
+        .toList()
+      ..sort();
 
     showDialog(
       context: context,
@@ -192,7 +211,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         GestureDetector(
-                          onTap: () => setState(() => controller.cambiarModo(true)),
+                          onTap: () {
+                            SoundService.playButton();
+                            setState(() => controller.cambiarModo(true));
+                            },
                           child: Text(
                             'Calendario',
                             style: TextStyle(
@@ -211,7 +233,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () => setState(() => controller.cambiarModo(false)),
+                          onTap: () {
+                            SoundService.playButton();
+                            setState(() => controller.cambiarModo(false));
+                            },
                           child: Text(
                             'Eventos',
                             style: TextStyle(

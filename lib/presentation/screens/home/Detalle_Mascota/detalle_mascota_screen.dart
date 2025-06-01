@@ -127,6 +127,7 @@ class _DetalleContenido extends StatelessWidget {
     }
 
     Widget _buildContenido() {
+      SoundService.playButton();
       switch (controller.vistaActual) {
         case VistaDetalleMascota.historial:
           return MascotaHistorialSection(
@@ -136,14 +137,14 @@ class _DetalleContenido extends StatelessWidget {
           return const MascotaEventosSection();
         case VistaDetalleMascota.info:
         default:
-          return MascotaInfoSection(
-            nombre: controller.mascota.nombre,
-            fotoUrl: controller.mascota.fotoUrl,
-            controllers: controller.controllers,
-            filtro: controller.filtro,
-            onFiltroChange: controller.setFiltro,
-            filtroScrollController: controller.filtroScrollController,
-            filtroKeys: controller.filtroKeys,
+            return MascotaInfoSection(
+              nombre: controller.mascota.nombre,
+              fotoUrl: controller.mascota.fotoUrl,
+              controllers: controller.controllers,
+              filtro: controller.filtro,
+              onFiltroChange: controller.setFiltro,
+              filtroScrollController: controller.filtroScrollController,
+              filtroKeys: controller.filtroKeys,
           );
       }
     }

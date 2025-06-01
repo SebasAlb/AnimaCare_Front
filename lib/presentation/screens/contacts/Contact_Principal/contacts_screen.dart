@@ -1,3 +1,4 @@
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:animacare_front/storage/veterinarian_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/models/veterinario.dart';
@@ -87,7 +88,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       return ContactCard(
                         veterinario: vet,
                         excepciones: controller.excepciones,
-                        onTap: () => controller.abrirDetalle(context, vet),
+                        onTap: () {
+                          SoundService.playButton();
+                          controller.abrirDetalle(context, vet);
+                        },
                       );
                     },
                   ),
@@ -97,7 +101,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
           ),
         ),
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => controller.abrirAgendarCita(context),
+          onPressed: () {
+            SoundService.playButton();
+            controller.abrirAgendarCita(context);
+          },
           backgroundColor: theme.colorScheme.primary,
           icon: Icon(Icons.event_available, color: theme.colorScheme.onPrimary),
           label: Text(
