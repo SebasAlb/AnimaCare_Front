@@ -51,18 +51,23 @@ class _ContactsScreenState extends State<ContactsScreen> {
           child: Column(
             children: <Widget>[
               const CustomHeader(),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Center(
-                  child: Text(
-                    'Contactos',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                      color: theme.colorScheme.primary,
+              Column( // Assuming this Padding is a child of a Column or similar
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Center(
+                      child: Text(
+                        'Contactos',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Center(child: Text('⬇️ Arrastre para refrescar ⬇️', style: TextStyle(fontWeight: FontWeight.bold))),
+                ],
               ),
               Expanded(
                 child: isLoading

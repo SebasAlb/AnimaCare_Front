@@ -18,10 +18,14 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   final CalendarController controller = CalendarController();
+  bool _cargandoEventos = true;
 
   @override
   void initState() {
     super.initState();
+
+    final DateTime hoy = DateTime.now();
+    controller.seleccionarDia(hoy, hoy); // Selecciona el día actual desde el inicio
 
     controller.searchController.addListener(() {
       if (!controller.modoCalendario) {
@@ -30,7 +34,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
     });
 
     controller.cargarEventosDesdeBackend().then((_) {
-      setState(() {}); // Para actualizar la vista si cambia algo
+      setState(() {
+        _cargandoEventos = false;
+      });
     });
   }
 
@@ -170,99 +176,115 @@ class _CalendarScreenState extends State<CalendarScreen> {
         Navigator.pushReplacementNamed(context, AppRoutes.homeOwner);
         return false;
       },
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        backgroundColor: theme.scaffoldBackgroundColor,
-        body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              const CustomHeader(),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () => setState(() => controller.cambiarModo(true)),
-                      child: Text(
-                        'Calendario',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: controller.modoCalendario
-                              ? colorScheme.primary
-                              : colorScheme.onSurface.withOpacity(0.5),
+      child:Stack(
+        children: [
+          Scaffold(
+            resizeToAvoidBottomInset: true,
+            backgroundColor: theme.scaffoldBackgroundColor,
+            body: SafeArea(
+              child: Column(
+                children: <Widget>[
+                  const CustomHeader(),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () => setState(() => controller.cambiarModo(true)),
+                          child: Text(
+                            'Calendario',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: controller.modoCalendario
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurface.withOpacity(0.5),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    Text(
-                      '  |  ',
-                      style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => setState(() => controller.cambiarModo(false)),
-                      child: Text(
-                        'Eventos',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: !controller.modoCalendario
-                              ? colorScheme.primary
-                              : colorScheme.onSurface.withOpacity(0.5),
+                        Text(
+                          '  |  ',
+                          style: TextStyle(
+                            color: colorScheme.onSurface.withOpacity(0.6),
+                          ),
                         ),
-                      ),
+                        GestureDetector(
+                          onTap: () => setState(() => controller.cambiarModo(false)),
+                          child: Text(
+                            'Eventos',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: !controller.modoCalendario
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurface.withOpacity(0.5),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
+                  Expanded(
+                    child: controller.modoCalendario
+                        ? VistaCalendario(
+                            eventos: controller.eventosDelDia(controller.selectedDay),
+                            selectedDay: controller.selectedDay,
+                            focusedDay: controller.focusedDay,
+                            onDaySelected: (sel, foc) =>
+                                setState(() => controller.seleccionarDia(sel, foc)),
+                            onTapEvento: mostrarDetallesEvento,
+                            eventosMarcados: controller.getDiasConEventos(),
+                          )
+                        : VistaEventos(
+                            eventos: controller.filtrarEventosPorTexto(),
+                            controller: controller.searchController,
+                            onTapEvento: mostrarDetallesEvento,
+                            onSeleccionarFecha: (fecha) {
+                              setState(() {
+                                controller.seleccionarDia(fecha, fecha);
+                                controller.cambiarModo(true);
+                              });
+                            },
+                            onAbrirFiltro: () => abrirFiltroModal(context),
+                          ),
+                  ),
+                ],
+              ),
+            ),
+            bottomNavigationBar: CustomNavBar(
+              currentIndex: 2,
+              onTap: (int index) {
+                switch (index) {
+                  case 0:
+                    Navigator.pushReplacementNamed(context, AppRoutes.homeOwner);
+                    break;
+                  case 1:
+                    Navigator.pushReplacementNamed(context, AppRoutes.contactsP);
+                    break;
+                  case 2:
+                    break;
+                  case 3:
+                    Navigator.pushReplacementNamed(context, AppRoutes.settingsP);
+                    break;
+                }
+              },
+            ),
+          ),
+          if (_cargandoEventos)
+            Container(
+              color: Colors.black.withOpacity(0.4),
+              child: const Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
                   ],
                 ),
               ),
-              Expanded(
-                child: controller.modoCalendario
-                    ? VistaCalendario(
-                        eventos: controller.eventosDelDia(controller.selectedDay),
-                        selectedDay: controller.selectedDay,
-                        focusedDay: controller.focusedDay,
-                        onDaySelected: (sel, foc) =>
-                            setState(() => controller.seleccionarDia(sel, foc)),
-                        onTapEvento: mostrarDetallesEvento,
-                        eventosMarcados: controller.getDiasConEventos(),
-                      )
-                    : VistaEventos(
-                        eventos: controller.filtrarEventosPorTexto(),
-                        controller: controller.searchController,
-                        onTapEvento: mostrarDetallesEvento,
-                        onSeleccionarFecha: (fecha) {
-                          setState(() {
-                            controller.seleccionarDia(fecha, fecha);
-                            controller.cambiarModo(true);
-                          });
-                        },
-                        onAbrirFiltro: () => abrirFiltroModal(context),
-                      ),
-              ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: CustomNavBar(
-          currentIndex: 2,
-          onTap: (int index) {
-            switch (index) {
-              case 0:
-                Navigator.pushReplacementNamed(context, AppRoutes.homeOwner);
-                break;
-              case 1:
-                Navigator.pushReplacementNamed(context, AppRoutes.contactsP);
-                break;
-              case 2:
-                break;
-              case 3:
-                Navigator.pushReplacementNamed(context, AppRoutes.settingsP);
-                break;
-            }
-          },
-        ),
+            ),
+        ]
       ),
     );
   }

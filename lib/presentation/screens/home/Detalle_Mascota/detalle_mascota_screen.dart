@@ -34,17 +34,30 @@ class _DetalleContenido extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final controller = context.watch<DetalleMascotaController>();
-    
+
     Widget _buildTab({
       required BuildContext context,
       required String label,
       required VistaDetalleMascota vista,
       required bool isSelected,
+      required bool isDisabled,
       required ThemeData theme,
-    }) => GestureDetector(
-          onTap: () {
-            context.read<DetalleMascotaController>().vistaActual = vista;
-          },
+    }) {
+      return GestureDetector(
+        onTap: isDisabled
+            ? () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(' 🔄 Cargando $label...'),
+              duration: const Duration(seconds: 1),
+            ),
+          );
+        }
+            : () {
+          context.read<DetalleMascotaController>().vistaActual = vista;
+        },
+        child: Opacity(
+          opacity: isDisabled ? 0.4 : 1,
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
             decoration: BoxDecoration(
@@ -64,7 +77,9 @@ class _DetalleContenido extends StatelessWidget {
               ),
             ),
           ),
-        );
+        ),
+      );
+    };
 
 
     Widget _buildToggleTabs() {
@@ -90,6 +105,8 @@ class _DetalleContenido extends StatelessWidget {
                 label: entries[i].value,
                 vista: entries[i].key,
                 isSelected: controller.vistaActual == entries[i].key,
+                isDisabled: controller.isLoading &&
+                    entries[i].key != VistaDetalleMascota.info,
                 theme: theme,
               ),
               if (i < entries.length - 1)

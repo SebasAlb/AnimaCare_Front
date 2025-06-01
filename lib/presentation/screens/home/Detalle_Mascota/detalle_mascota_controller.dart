@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'package:animacare_front/models/mascota.dart';
 import 'package:animacare_front/models/detalles_mascota.dart';
 import 'package:animacare_front/services/pet_service.dart';
+import 'package:animacare_front/presentation/screens/calendar/widgets/evento_calendar.dart';
 
 enum VistaDetalleMascota { info, historial, eventos }
 
 class DetalleMascotaController extends ChangeNotifier {
   DetalleMascotaController(this.mascota) {
     _inicializarControllersDesdeMascota();
-    _cargarDetallesMascota();
+    cargarDetallesMascota();
   }
 
   Mascota mascota;
@@ -17,7 +19,7 @@ class DetalleMascotaController extends ChangeNotifier {
 
   int currentIndex = 0;
   String filtro = 'Todos';
-  
+
   VistaDetalleMascota _vistaActual = VistaDetalleMascota.info;
   VistaDetalleMascota get vistaActual => _vistaActual;
   set vistaActual(VistaDetalleMascota vista) {
@@ -25,7 +27,7 @@ class DetalleMascotaController extends ChangeNotifier {
     notifyListeners();
   }
 
-
+  bool isLoading = true;
 
   final ScrollController filtroScrollController = ScrollController();
 
@@ -49,18 +51,21 @@ class DetalleMascotaController extends ChangeNotifier {
   Map<String, List<Map<String, String>>> historialMedico = {};
   String proximoEvento = '';
   String fechaProximoEvento = '';
+  List<EventoCalendar> eventosMascota = [];
 
   void setFiltro(String nuevoFiltro) {
     filtro = nuevoFiltro;
     notifyListeners();
   }
 
-  Future<void> _cargarDetallesMascota() async {
+  Future<void> cargarDetallesMascota() async {
     try {
+      isLoading = true;
+      notifyListeners();
+
       final detalles = await _petService.obtenerDetallesMascota(mascota.id);
-      print('Eventos: ${detalles.eventos.map((e) => e.titulo).toList()}');
-      print('Historial: ${detalles.historial.map((h) => h.titulo).toList()}');
-      // Organizar historial
+
+      // Organizar historial médico
       historialMedico.clear();
       for (var item in detalles.historial) {
         final categoria = _mapearCategoriaId(item.categoriaId);
@@ -71,7 +76,35 @@ class DetalleMascotaController extends ChangeNotifier {
         });
       }
 
-      // Próximo evento
+      // Construir lista de eventos unificados
+      eventosMascota = [
+        ...detalles.eventos.map((e) => EventoCalendar(
+          id: e.id.toString(),
+          titulo: e.titulo,
+          hora: '${e.hora.hour.toString().padLeft(2, '0')}:${e.hora.minute.toString().padLeft(2, '0')}',
+          fecha: '${e.fecha.year}-${e.fecha.month.toString().padLeft(2, '0')}-${e.fecha.day.toString().padLeft(2, '0')}',
+          mascota: mascota.nombre,
+          veterinario: 'No especificado',
+          tipo: 'evento',
+          categoria: null,
+          estado: null,
+          descripcion: e.descripcion,
+        )),
+        ...detalles.citas.map((c) => EventoCalendar(
+          id: c.id.toString(),
+          titulo: c.razon,
+          hora: '${c.hora.hour.toString().padLeft(2, '0')}:${c.hora.minute.toString().padLeft(2, '0')}',
+          fecha: '${c.fecha.year}-${c.fecha.month.toString().padLeft(2, '0')}-${c.fecha.day.toString().padLeft(2, '0')}',
+          mascota: mascota.nombre,
+          veterinario: 'Veterinario asignado',
+          tipo: 'cita',
+          categoria: null,
+          estado: c.estado,
+          descripcion: c.descripcion,
+        )),
+      ];
+
+      // Próximo evento (opcional)
       if (detalles.eventos.isNotEmpty) {
         detalles.eventos.sort((a, b) => a.fecha.compareTo(b.fecha));
         final evento = detalles.eventos.first;
@@ -82,9 +115,11 @@ class DetalleMascotaController extends ChangeNotifier {
         fechaProximoEvento = '-';
       }
 
-      notifyListeners();
     } catch (e) {
       debugPrint('Error cargando detalles de mascota: $e');
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -103,7 +138,6 @@ class DetalleMascotaController extends ChangeNotifier {
     }
   }
 
-  // Actualiza los datos del modelo Mascota desde el formulario de edición y notifica a la UI
   void guardarCambiosDesdeFormulario({required String nuevoNombre}) {
     mascota.nombre = nuevoNombre;
     mascota.especie = controllers['Especie']?.text ?? '';
@@ -150,8 +184,7 @@ class DetalleMascotaController extends ChangeNotifier {
     controllers['Especie']?.text = mascota.especie;
     controllers['Raza']?.text = mascota.raza;
     controllers['Edad']?.text = _calcularEdad(mascota.fechaNacimiento);
-    controllers['Fecha de nacimiento']?.text =
-        _formatoFecha(mascota.fechaNacimiento);
+    controllers['Fecha de nacimiento']?.text = _formatoFecha(mascota.fechaNacimiento);
     controllers['Peso']?.text = mascota.peso == 0.0 ? '' : '${mascota.peso}';
     controllers['Altura']?.text = mascota.altura == 0.0 ? '' : '${mascota.altura}';
     controllers['Sexo']?.text = mascota.sexo;
@@ -172,5 +205,3 @@ class DetalleMascotaController extends ChangeNotifier {
     return '${fecha.day.toString().padLeft(2, '0')}/${fecha.month.toString().padLeft(2, '0')}/${fecha.year}';
   }
 }
-
-

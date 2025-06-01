@@ -1,4 +1,5 @@
 import 'package:animacare_front/presentation/theme/theme_controller.dart';
+import 'package:animacare_front/services/notification_service.dart';
 import 'package:animacare_front/services/sound_service.dart';
 import 'package:animacare_front/storage/pet_storage.dart';
 import 'package:animacare_front/storage/veterinarian_storage.dart';
@@ -25,6 +26,7 @@ class ConfPrincipalController extends GetxController {
         UserStorage.clearUser();
         MascotasStorage.clearMascotas();
         VeterinariosStorage.clearVeterinarios();
+        NotificationService.eliminarTodas();
         Get.offAllNamed('/login');
         break;
       case 'Notificaciones':

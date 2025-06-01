@@ -5,6 +5,7 @@ import 'package:animacare_front/presentation/theme/theme_controller.dart';
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:animacare_front/presentation/screens/settings/Editar_Perfil/editar_perfil_controller.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +16,7 @@ Future<void> main() async {
 
   // Controladores que se usarán solo cuando se necesiten
   Get.lazyPut<EditarPerfilController>(() => EditarPerfilController());
-
+  await initializeDateFormatting('es_ES', null);
   await AwesomeNotifications().initialize(
     null,
     [

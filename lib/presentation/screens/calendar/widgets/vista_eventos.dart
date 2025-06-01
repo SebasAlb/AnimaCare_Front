@@ -17,7 +17,7 @@ class VistaEventos extends StatefulWidget {
   final TextEditingController controller;
   final Function(EventoCalendar) onTapEvento;
   final Function(DateTime) onSeleccionarFecha;
-  final VoidCallback onAbrirFiltro;
+  final VoidCallback? onAbrirFiltro;
 
   @override
   State<VistaEventos> createState() => _VistaEventosState();
@@ -125,11 +125,12 @@ class _VistaEventosState extends State<VistaEventos> {
                 ),
               ),
               const SizedBox(width: 8),
-              IconButton(
-                icon: Icon(Icons.filter_alt, color: colorScheme.primary),
-                onPressed: widget.onAbrirFiltro,
-                tooltip: 'Filtros avanzados',
-              ),
+              if (widget.onAbrirFiltro != null)
+                IconButton(
+                  icon: Icon(Icons.filter_alt, color: colorScheme.primary),
+                  onPressed: widget.onAbrirFiltro,
+                  tooltip: 'Filtros avanzados',
+                ),
             ],
           ),
         ),

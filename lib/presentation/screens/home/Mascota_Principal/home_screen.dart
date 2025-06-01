@@ -34,8 +34,8 @@ class HomeScreen extends StatelessWidget {
         },
         child: Consumer<HomeController>(
           builder: (context, controller, _) => Stack(
-            children: [
-              Scaffold(
+          children: [
+            Scaffold(
                 resizeToAvoidBottomInset: true,
                 backgroundColor: theme.scaffoldBackgroundColor,
                 body: SafeArea(
@@ -45,12 +45,14 @@ class HomeScreen extends StatelessWidget {
                       const CustomHeader(),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        child: Text(
-                          'Mascotas ',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: theme.colorScheme.primary,
-                            letterSpacing: 1.2,
+                        child: Center(
+                          child: Text(
+                            'Mascotas ',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: theme.colorScheme.primary,
+                              letterSpacing: 1.2,
+                            ),
                           ),
                         ),
                       ),

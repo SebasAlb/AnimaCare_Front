@@ -6,24 +6,25 @@ class NotificationService {
 
   /// Programa una notificación para un evento o cita
   static Future<void> programarNotificacion(EventoCalendar evento) async {
-    final DateTime fechaHora = DateTime.parse('${evento.fecha} ${evento.hora}');
+    final DateTime fechaEvento = DateTime.parse('${evento.fecha} ${evento.hora}');
+    final DateTime fechaNotificacion = fechaEvento.subtract(const Duration(days: 1));
 
-    if (fechaHora.isBefore(DateTime.now())) {
+    if (fechaNotificacion.isBefore(DateTime.now())) {
       print('------------------[NOTIF] No se programa: ${evento.titulo} (fecha pasada)');
       return;
     }
 
     final int id = int.tryParse(evento.id) ?? DateTime.now().millisecondsSinceEpoch;
 
-    print('**************[NOTIF] Programando notificación: ${evento.id} - ${evento.titulo} → $fechaHora');
+    print('**************[NOTIF] Programando notificación: ${evento.id} - ${evento.titulo} → $fechaEvento');
 
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
         channelKey: channelKey,
-        title: evento.titulo,
-        body: '${evento.tipo == 'cita' ? 'Cita' : 'Evento'} de ${evento.mascota} con ${evento.veterinario}',
-        notificationLayout: NotificationLayout.Default,
+        title: '⏰ Recordatorio: ${evento.titulo}',
+        body: '${evento.tipo == 'cita' ? 'Tienes una cita' : 'Tienes un evento'} con ${evento.mascota} mañana a las ${evento.hora}.',
+        notificationLayout: NotificationLayout.BigText,
         payload: {
           'tipo': evento.tipo,
           'mascota': evento.mascota,
@@ -31,11 +32,11 @@ class NotificationService {
         },
       ),
       schedule: NotificationCalendar(
-        year: fechaHora.year,
-        month: fechaHora.month,
-        day: fechaHora.day,
-        hour: fechaHora.hour,
-        minute: fechaHora.minute,
+        year: fechaNotificacion.year,
+        month: fechaNotificacion.month,
+        day: fechaNotificacion.day,
+        hour: fechaNotificacion.hour,
+        minute: fechaNotificacion.minute,
         second: 0,
         millisecond: 0,
         repeats: false,
