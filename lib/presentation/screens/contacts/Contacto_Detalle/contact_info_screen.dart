@@ -126,13 +126,28 @@ class ContactInfoScreen extends StatelessWidget {
                         final TimeOfDay horaMin = grupo['horaMin'];
                         final TimeOfDay horaMax = grupo['horaMax'];
 
-                        final bool esHoy = DateTime.now().isAfter(desde) && DateTime.now().isBefore(hasta.add(const Duration(days: 1)));
-                        final Color fondo = esHoy
-                            ? const Color.fromARGB(255, 218, 71, 71)
-                            : const Color.fromARGB(255, 248, 187, 3);
-                        final Color icono = const Color.fromARGB(255, 255, 255, 255);
-                        final String textoEstado = esHoy ? 'No disponible por' : 'No estará disponible por';
+                        final now = DateTime.now();
+                        final DateTime desdeConHora = DateTime(desde.year, desde.month, desde.day, horaMin.hour, horaMin.minute);
+                        final DateTime hastaConHora = DateTime(hasta.year, hasta.month, hasta.day, horaMax.hour, horaMax.minute);
 
+                        final bool esHoy = now.year == desde.year && now.month == desde.month && now.day == desde.day;
+                        final bool yaEmpezo = now.isAfter(desdeConHora);
+                        final bool aunNoEmpieza = esHoy && now.isBefore(desdeConHora);
+
+                        Color fondo;
+                        String textoEstado;
+
+                        if (yaEmpezo && now.isBefore(hastaConHora)) {
+                          fondo = const Color.fromARGB(255, 218, 71, 71); // rojo - en curso
+                          textoEstado = 'No disponible por';
+                        } else if (aunNoEmpieza) {
+                          fondo = const Color.fromARGB(255, 255, 193, 7); // amarillo - es hoy pero aún no inicia
+                          textoEstado = 'Estará ausente por';
+                        } else {
+                          fondo = const Color.fromARGB(255, 248, 187, 3); // naranja - futuro
+                          textoEstado = 'No estará disponible por';
+                        }       
+                        final Color icono = const Color.fromARGB(255, 255, 255, 255);
                         final String horarioInicio = grupo['horaInicio'] != null
                             ? (grupo['horaInicio'] as TimeOfDay).format(context)
                             : horaMin.format(context);
@@ -140,10 +155,6 @@ class ContactInfoScreen extends StatelessWidget {
                         final String horarioFin = grupo['horaFin'] != null
                             ? (grupo['horaFin'] as TimeOfDay).format(context)
                             : horaMax.format(context);
-
-                        final String rangoFechas = desde == hasta
-                            ? 'Solo el ${DateFormat('dd/MM/yyyy').format(desde)}\nHorario: $horarioInicio - $horarioFin'
-                            : 'Ausencia del ${DateFormat('dd/MM/yyyy').format(desde)} $horarioInicio\nal ${DateFormat('dd/MM/yyyy').format(hasta)} $horarioFin';
 
 
                         return Container(
@@ -158,12 +169,40 @@ class ContactInfoScreen extends StatelessWidget {
                               Icon(Icons.warning_amber_rounded, color: icono),
                               const SizedBox(width: 10),
                               Expanded(
-                                child: Text(
-                                  '$textoEstado: $motivo\n$rangoFechas',
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: icono,
+                                child: Text.rich(
+                                  TextSpan(
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: icono,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: '$textoEstado: ',
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      TextSpan(text: '$motivo\n'),
+                                      if (desde == hasta) ...[
+                                        const TextSpan(
+                                          text: 'Fecha: ',
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        TextSpan(text: '${DateFormat('dd/MM/yyyy').format(desde)}\n'),
+                                        const TextSpan(
+                                          text: 'Horario: ',
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        TextSpan(text: '$horarioInicio - $horarioFin'),
+                                      ] else ...[
+                                        const TextSpan(
+                                          text: 'Fecha:\n',
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        TextSpan(text: 'Desde el ${DateFormat('dd/MM/yyyy').format(desde)} a las $horarioInicio\n'),
+                                        TextSpan(text: 'Hasta el ${DateFormat('dd/MM/yyyy').format(hasta)} a las $horarioFin'),
+                                      ],
+                                    ],
                                   ),
                                 ),
+
                               ),
                             ],
                           ),
