@@ -26,15 +26,26 @@ class ContactCard extends StatelessWidget {
   String? _horarioDeHoy() {
     final diaHoy = _nombreDiaHoy();
     final detalle = veterinario.horarios.firstWhereOrNull(
-          (h) => h.diaSemana == diaHoy,
+      (h) => h.diaSemana == diaHoy,
     );
+
     if (detalle != null) {
-      final inicio = DateTime.parse(detalle.horaInicio).toLocal();
-      final fin = DateTime.parse(detalle.horaFin).toLocal();
-      return '${_formatoHora(inicio)} - ${_formatoHora(fin)}';
+      final hoy = DateTime.now();
+
+      // Parseamos las horas del horario
+      final inicio = DateTime.parse(detalle.horaInicio);
+      final fin = DateTime.parse(detalle.horaFin);
+
+      // Creamos un DateTime con la fecha actual pero con la hora del horario
+      final inicioHoy = DateTime(hoy.year, hoy.month, hoy.day, inicio.hour, inicio.minute);
+      final finHoy = DateTime(hoy.year, hoy.month, hoy.day, fin.hour, fin.minute);
+
+      return '${_formatoHora(inicioHoy)} - ${_formatoHora(finHoy)}';
     }
+
     return null;
   }
+
 
   String _estadoHoy() {
     final ahora = DateTime.now();
@@ -196,4 +207,5 @@ class ContactCard extends StatelessWidget {
     );
   }
 }
+
 
