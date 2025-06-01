@@ -64,35 +64,51 @@ class HomeScreen extends StatelessWidget {
                                 },
                                 child: controller.mascotas.isEmpty
                                     ? ListView(
+                                      physics: const AlwaysScrollableScrollPhysics(),
+                                      children: const [
+                                        Center(child: Text('⬇️ Arrastre para refrescar ⬇️', style: TextStyle(fontWeight: FontWeight.bold))),
+                                        SizedBox(height: 100),
+                                        Center(child: Text('No tienes mascotas registradas...')),
+                                      ],
+                                    )
+                                  : Stack(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      child: GridView.count(
                                         physics: const AlwaysScrollableScrollPhysics(),
-                                        children: const [
-                                          SizedBox(height: 100),
-                                          Center(child: Text('No tienes mascotas registradas')),
-                                        ],
-                                      )
-                                    : Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                                        child: GridView.count(
-                                          physics: const AlwaysScrollableScrollPhysics(),
-                                          crossAxisCount: 2,
-                                          crossAxisSpacing: 16,
-                                          mainAxisSpacing: 16,
-                                          padding: const EdgeInsets.only(bottom: 100),
-                                          
-                                          children: controller.mascotas.map((Mascota m) {
-                                            return Consumer<HomeController>(
-                                              builder: (context, controller, _) => PetCard(
-                                                key: ValueKey(m.id), // ✅ Esto soluciona el error visual
-                                                mascota: m,
-                                                onEliminada: () async {
-                                                  await controller.eliminarMascotaConEventos(m);
-                                                },
-                                              ),
-                                            );
-                                          }).toList(),
-
-                            ),
-                          ),
+                                        crossAxisCount: 2,
+                                        crossAxisSpacing: 16,
+                                        mainAxisSpacing: 16,
+                                        padding: const EdgeInsets.only(
+                                            top: 50, // Adjust padding to make space for the text
+                                            bottom: 100),
+                                        children: controller.mascotas.map((Mascota m) {
+                                          return Consumer<HomeController>(
+                                            builder: (context, controller, _) => PetCard(
+                                              key: ValueKey(m.id),
+                                              mascota: m,
+                                              onEliminada: () async {
+                                                await controller.eliminarMascotaConEventos(m);
+                                              },
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                    const Positioned(
+                                      top: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Center(
+                                        child: Text(
+                                          '⬇️ Arrastre para refrescar ⬇️',
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                         ),
                       )
                     ],
