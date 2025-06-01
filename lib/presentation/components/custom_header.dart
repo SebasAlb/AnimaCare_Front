@@ -49,90 +49,90 @@ class _CustomHeaderState extends State<CustomHeader> {
 
   Future<void> _cargarNotificacionesHoy() async {
     final duenoId = dueno?.id;
-    if (duenoId == null) return;
-
-    final mascotas = await _ownerService.obtenerCitasYEventos(duenoId);
-    final DateTime ahora = DateTime.now();
-    final List<EventoCalendar> acumulado = [];
-
-    for (final mascota in mascotas) {
-      // EVENTOS
-      for (final e in mascota.eventos) {
-        final DateTime fechaHoraEvento = DateTime(
-          e.fecha.year,
-          e.fecha.month,
-          e.fecha.day,
-          e.hora.hour,
-          e.hora.minute,
-        );
-
-        if (fechaHoraEvento.isAfter(ahora)) {
-          final evento = EventoCalendar(
-            id: e.id.toString(),
-            titulo: e.titulo,
-            hora: _formatoHora(e.hora),
-            fecha: _formatoFecha(e.fecha),
-            mascota: mascota.nombreMascota,
-            veterinario: '',
-            tipo: 'evento',
-            categoria: null,
-            estado: null,
-            descripcion: e.descripcion,
-          );
-
-          acumulado.add(evento);
-
-          final yaExiste = await NotificationService.existeNotificacion(evento.id);
-          if (!yaExiste) {
-            await NotificationService.programarNotificacion(evento);
-          }
-        }
-      }
-
-      // CITAS
-      for (final c in mascota.citas) {
-        final DateTime fechaHoraCita = DateTime(
-          c.fecha.year,
-          c.fecha.month,
-          c.fecha.day,
-          c.hora.hour,
-          c.hora.minute,
-        );
-
-        if (fechaHoraCita.isAfter(ahora)) {
-          final cita = EventoCalendar(
-            id: c.id.toString(),
-            titulo: c.razon,
-            hora: _formatoHora(c.hora),
-            fecha: _formatoFecha(c.fecha),
-            mascota: mascota.nombreMascota,
-            veterinario: '',
-            tipo: 'cita',
-            categoria: null,
-            estado: c.estado,
-            descripcion: c.descripcion,
-          );
-
-          acumulado.add(cita);
-
-          final yaExiste = await NotificationService.existeNotificacion(cita.id);
-          if (!yaExiste) {
-            await NotificationService.programarNotificacion(cita);
-          }
-        }
-      }
+    if (duenoId == null) {
+      setState(() => notificacionesCargando = false); // <- Evita que se quede cargando
+      return;
     }
 
-    acumulado.sort((a, b) {
-      final dtA = DateTime.parse('${a.fecha} ${a.hora}');
-      final dtB = DateTime.parse('${b.fecha} ${b.hora}');
-      return dtA.compareTo(dtB);
-    });
+    try {
+      final mascotas = await _ownerService.obtenerCitasYEventos(duenoId);
+      final DateTime ahora = DateTime.now();
+      final List<EventoCalendar> acumulado = [];
 
-    setState(() {
-      notificacionesHoy = acumulado;
-      notificacionesCargando = false;
-    });
+      for (final mascota in mascotas) {
+        for (final e in mascota.eventos) {
+          final DateTime fechaHoraEvento = DateTime(
+            e.fecha.year, e.fecha.month, e.fecha.day,
+            e.hora.hour, e.hora.minute,
+          );
+
+          if (fechaHoraEvento.isAfter(ahora)) {
+            final evento = EventoCalendar(
+              id: e.id.toString(),
+              titulo: e.titulo,
+              hora: _formatoHora(e.hora),
+              fecha: _formatoFecha(e.fecha),
+              mascota: mascota.nombreMascota,
+              veterinario: '',
+              tipo: 'evento',
+              categoria: null,
+              estado: null,
+              descripcion: e.descripcion,
+            );
+            acumulado.add(evento);
+
+            final yaExiste = await NotificationService.existeNotificacion(evento.id);
+            if (!yaExiste) {
+              await NotificationService.programarNotificacion(evento);
+            }
+          }
+        }
+
+        for (final c in mascota.citas) {
+          final DateTime fechaHoraCita = DateTime(
+            c.fecha.year, c.fecha.month, c.fecha.day,
+            c.hora.hour, c.hora.minute,
+          );
+
+          if (fechaHoraCita.isAfter(ahora) && c.estado?.toLowerCase() == 'Confirmada') {
+            final cita = EventoCalendar(
+              id: c.id.toString(),
+              titulo: c.razon,
+              hora: _formatoHora(c.hora),
+              fecha: _formatoFecha(c.fecha),
+              mascota: mascota.nombreMascota,
+              veterinario: '',
+              tipo: 'cita',
+              categoria: null,
+              estado: c.estado,
+              descripcion: c.descripcion,
+            );
+            acumulado.add(cita);
+
+            final yaExiste = await NotificationService.existeNotificacion(cita.id);
+            if (!yaExiste) {
+              await NotificationService.programarNotificacion(cita);
+            }
+          }
+        }
+      }
+
+      acumulado.sort((a, b) {
+        final dtA = DateTime.parse('${a.fecha} ${a.hora}');
+        final dtB = DateTime.parse('${b.fecha} ${b.hora}');
+        return dtA.compareTo(dtB);
+      });
+
+      setState(() {
+        notificacionesHoy = acumulado;
+        notificacionesCargando = false;
+      });
+    } catch (e) {
+      setState(() {
+        notificacionesHoy = [];
+        notificacionesCargando = false; // <- IMPORTANTE
+      });
+    }
   }
 
   String formatearFechaBonita(String fechaIso) {
@@ -147,7 +147,7 @@ class _CustomHeaderState extends State<CustomHeader> {
   }
 
   void _mostrarNotificaciones(BuildContext context) {
-    if (notificacionesCargando || notificacionesHoy.isEmpty) {
+    if (notificacionesCargando) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('🔔 Cargando notificaciones...'),
@@ -382,7 +382,7 @@ class _CustomHeaderState extends State<CustomHeader> {
                   ),
                 ) : IconButton(
                   icon: const Icon(Icons.notifications, color: textColor),
-                  onPressed: notificacionesHoy.isEmpty
+                  onPressed: notificacionesCargando
                       ? null // Bloquea si aún no se cargan
                       : () => _mostrarNotificaciones(context),
                 ),

@@ -161,17 +161,28 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
                 Expanded(
                   child: TextButton(
                     onPressed: () => seleccionarFecha(context, true),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blue, // Change text color to blue
+                      backgroundColor: Colors.lightBlue.withOpacity(0.2), // Optional: for a subtle background tint
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), // Optional: add rounded corners
+                    ),
                     child: Text(
                       fechaDesde == null
                           ? 'Desde'
                           : '${fechaDesde!.day}/${fechaDesde!.month}/${fechaDesde!.year}',
-                      style: textStyle,
+                      style: textStyle, // You can keep your existing textStyle for other properties
                     ),
                   ),
                 ),
+                const SizedBox(width: 15),
                 Expanded(
                   child: TextButton(
                     onPressed: () => seleccionarFecha(context, false),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blue, // Change text color to blue
+                      backgroundColor: Color(0xFFFFA726).withOpacity(0.2), // Optional: for a subtle background tint
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), // Optional: add rounded corners
+                    ),
                     child: Text(
                       fechaHasta == null
                           ? 'Hasta'
@@ -189,15 +200,26 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
                 Expanded(
                   child: TextButton(
                     onPressed: () => seleccionarHora(context, true),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blue, // Change text color to blue
+                      backgroundColor: Colors.lightBlue.withOpacity(0.2), // Optional: for a subtle background tint
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), // Optional: add rounded corners
+                    ),
                     child: Text(
                       horaDesde == null ? 'Desde' : horaDesde!.format(context),
                       style: textStyle,
                     ),
                   ),
                 ),
+                const SizedBox(width: 15),
                 Expanded(
                   child: TextButton(
                     onPressed: () => seleccionarHora(context, false),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blue, // Change text color to blue
+                      backgroundColor: Color(0xFFFFA726).withOpacity(0.2), // Optional: for a subtle background tint
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), // Optional: add rounded corners
+                    ),
                     child: Text(
                       horaHasta == null ? 'Hasta' : horaHasta!.format(context),
                       style: textStyle,
@@ -210,33 +232,62 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
         ),
       ),
       actions: <Widget>[
-        TextButton(
-          onPressed: limpiarCampos,
-          child:
-              Text('Limpiar todo', style: TextStyle(color: colorScheme.error)),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child:
-              Text('Cancelar', style: TextStyle(color: colorScheme.onSurface)),
-        ),
-        ElevatedButton.icon(
-          onPressed: () {
-            final Map<String, dynamic> filtros = <String, dynamic>{
-              'mascota': mascotaSeleccionada,
-              'veterinario': veterinarioSeleccionado,
-              'tipo': tipoSeleccionado,
-              'categoria': categoriaSeleccionada,
-              'fechaDesde': fechaDesde,
-              'fechaHasta': fechaHasta,
-              'horaDesde': horaDesde,
-              'horaHasta': horaHasta,
-            };
-            Navigator.pop(context);
-            widget.onAplicar(filtros);
-          },
-          icon: const Icon(Icons.check),
-          label: const Text('Aplicar'),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: limpiarCampos,
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blue,
+                      backgroundColor: Colors.grey.withOpacity(0.2),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child:
+                    Text('Limpiar', style: TextStyle(color: colorScheme.error)),                ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      final Map<String, dynamic> filtros = <String, dynamic>{
+                        'mascota': mascotaSeleccionada,
+                        'veterinario': veterinarioSeleccionado,
+                        'tipo': tipoSeleccionado,
+                        'categoria': categoriaSeleccionada,
+                        'fechaDesde': fechaDesde,
+                        'fechaHasta': fechaHasta,
+                        'horaDesde': horaDesde,
+                        'horaHasta': horaHasta,
+                      };
+                      Navigator.pop(context);
+                      widget.onAplicar(filtros);
+                    },
+                    icon: const Icon(Icons.check, color: Colors.white),
+                    label: const Text('Aplicar', style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colorScheme.primaryContainer,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            TextButton.icon(
+              onPressed: () => Navigator.pop(context),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.red.withOpacity(0.8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              icon: const Icon(Icons.close, color: Colors.white),
+              label: const Text('Cancelar', style: TextStyle(color: Colors.white)),
+            ),
+          ],
         ),
       ],
     );

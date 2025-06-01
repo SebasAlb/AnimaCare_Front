@@ -107,13 +107,20 @@ class _MascotaEventosSectionState extends State<MascotaEventosSection> {
     final List<EventoCalendar> lista = controller.eventosMascota;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'Eventos de ${controller.mascota.nombre}',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: SizedBox(
+            width: double.infinity,
+            child: Text(
+              'Citas y eventos de ${controller.mascota.nombre}',
+              textAlign: TextAlign.left,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 16),

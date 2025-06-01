@@ -193,9 +193,12 @@ class _DetalleContenido extends StatelessWidget {
               _buildToggleTabs(),
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.all(20),
                   children: <Widget>[
-                    _buildContenido(), // MascotaInfoSection o MascotaHistorialSection
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0), // Example: 20px horizontal, 0 vertical
+                      child: _buildContenido(), // MascotaInfoSection o MascotaHistorialSection
+                    ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
