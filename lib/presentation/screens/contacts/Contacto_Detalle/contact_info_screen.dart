@@ -34,8 +34,14 @@ class ContactInfoScreen extends StatelessWidget {
         DateTime.parse(e.horaFin).hour,
         DateTime.parse(e.horaFin).minute,
       );
-      return e.veterinarioId == veterinario.id && fin.isAfter(DateTime.now());
+      return e.veterinarioId == veterinario.id &&
+            fin.isAfter(DateTime.now()) &&
+            e.motivo != 'Cita';
     }).toList();
+
+
+    final grupos = agruparExcepcionesPorRango(excepcionesRelevantes);
+
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -113,30 +119,32 @@ class ContactInfoScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      ...excepcionesRelevantes.map((e) {
-                        final inicio = DateTime(
-                          e.fecha.year,
-                          e.fecha.month,
-                          e.fecha.day,
-                          DateTime.parse(e.horaInicio).hour,
-                          DateTime.parse(e.horaInicio).minute,
-                        );
-                        final fin = DateTime(
-                          e.fecha.year,
-                          e.fecha.month,
-                          e.fecha.day,
-                          DateTime.parse(e.horaFin).hour,
-                          DateTime.parse(e.horaFin).minute,
-                        );
-                        final bool esHoy = DateTime.now().isAfter(inicio) && DateTime.now().isBefore(fin);
+                      ...grupos.map((grupo) {
+                        final desde = grupo['desde'] as DateTime;
+                        final hasta = grupo['hasta'] as DateTime;
+                        final String motivo = grupo['motivo'];
+                        final TimeOfDay horaMin = grupo['horaMin'];
+                        final TimeOfDay horaMax = grupo['horaMax'];
+
+                        final bool esHoy = DateTime.now().isAfter(desde) && DateTime.now().isBefore(hasta.add(const Duration(days: 1)));
                         final Color fondo = esHoy
                             ? const Color.fromARGB(255, 218, 71, 71)
-                            : Colors.amber.withOpacity(0.15);
-                        final Color icono = esHoy
-                            ? const Color.fromARGB(255, 255, 255, 255)
-                            : Colors.amber[700]!;
-                        final String textoEstado =
-                        esHoy ? 'No disponible por' : 'No estará disponible por';
+                            : const Color.fromARGB(255, 248, 187, 3);
+                        final Color icono = const Color.fromARGB(255, 255, 255, 255);
+                        final String textoEstado = esHoy ? 'No disponible por' : 'No estará disponible por';
+
+                        final String horarioInicio = grupo['horaInicio'] != null
+                            ? (grupo['horaInicio'] as TimeOfDay).format(context)
+                            : horaMin.format(context);
+
+                        final String horarioFin = grupo['horaFin'] != null
+                            ? (grupo['horaFin'] as TimeOfDay).format(context)
+                            : horaMax.format(context);
+
+                        final String rangoFechas = desde == hasta
+                            ? 'Solo el ${DateFormat('dd/MM/yyyy').format(desde)}\nHorario: $horarioInicio - $horarioFin'
+                            : 'Ausencia del ${DateFormat('dd/MM/yyyy').format(desde)} $horarioInicio\nal ${DateFormat('dd/MM/yyyy').format(hasta)} $horarioFin';
+
 
                         return Container(
                           margin: const EdgeInsets.only(bottom: 12),
@@ -151,9 +159,7 @@ class ContactInfoScreen extends StatelessWidget {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
-                                  '$textoEstado: ${e.motivo}\n'
-                                      'Desde: ${DateFormat('dd/MM/yyyy HH:mm').format(inicio)}\n'
-                                      'Hasta: ${DateFormat('dd/MM/yyyy HH:mm').format(fin)}',
+                                  '$textoEstado: $motivo\n$rangoFechas',
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: icono,
                                   ),
@@ -273,3 +279,67 @@ class HorarioTable extends StatelessWidget {
     );
   }
 }
+
+
+List<Map<String, dynamic>> agruparExcepcionesPorRango(List<VeterinarioExcepcion> excepciones) {
+  final List<Map<String, dynamic>> grupos = [];
+
+  final ordenadas = [...excepciones]..sort((a, b) => a.fecha.compareTo(b.fecha));
+
+  for (int i = 0; i < ordenadas.length; i++) {
+    final actual = ordenadas[i];
+    if (!actual.disponible) {
+      DateTime inicioFecha = actual.fecha;
+      DateTime finFecha = actual.fecha;
+      String motivo = actual.motivo;
+
+      // Convertir horaInicio y horaFin del primer día
+      TimeOfDay horaMin = _parseHora(actual.horaInicio);
+      TimeOfDay horaMax = _parseHora(actual.horaFin);
+
+      while (i + 1 < ordenadas.length) {
+        final sig = ordenadas[i + 1];
+        final esConsecutiva = sig.fecha.difference(finFecha).inDays == 1;
+        final mismoMotivo = sig.motivo == motivo && !sig.disponible;
+
+        if (esConsecutiva && mismoMotivo) {
+          finFecha = sig.fecha;
+
+          // Actualizar hora mínima y máxima si aplica
+          final hIni = _parseHora(sig.horaInicio);
+          final hFin = _parseHora(sig.horaFin);
+
+          if (_horaEsAntes(hIni, horaMin)) horaMin = hIni;
+          if (_horaEsAntes(horaMax, hFin)) horaMax = hFin;
+
+          i++;
+        } else {
+          break;
+        }
+      }
+
+      grupos.add({
+        'desde': inicioFecha,
+        'hasta': finFecha,
+        'motivo': motivo,
+        'horaMin': horaMin,
+        'horaMax': horaMax,
+        'horaInicio': _parseHora(actual.horaInicio), // hora del primer día
+        'horaFin': _parseHora(ordenadas[i].horaFin), // hora del último día (posición actual del for)
+      });
+
+    }
+  }
+
+  return grupos;
+}
+
+TimeOfDay _parseHora(String isoTime) {
+  final time = DateTime.parse(isoTime);
+  return TimeOfDay(hour: time.hour, minute: time.minute);
+}
+
+bool _horaEsAntes(TimeOfDay a, TimeOfDay b) {
+  return a.hour < b.hour || (a.hour == b.hour && a.minute < b.minute);
+}
+
