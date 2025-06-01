@@ -90,7 +90,7 @@ class _PetCardState extends State<PetCard> {
                 children: [
                   // Botón eliminar con fondo rojo oscuro
                   Container(
-                    width: 60,
+                    width: 45,
                     decoration: const BoxDecoration(
                       color: Colors.red, // Puedes ajustar al rojo más oscuro que prefieras
                       borderRadius: BorderRadius.only(

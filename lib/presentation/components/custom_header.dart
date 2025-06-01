@@ -281,14 +281,20 @@ class _CustomHeaderState extends State<CustomHeader> {
               },
             ),
             const SizedBox(width: 5),
-            Expanded(
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 200),
               child: Text(
                 widget.nameScreen,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: textColor,
+                ),
               ),
             ),
-            const SizedBox(width: 5),
+            const Spacer(), // This pushes everything after it to the far right
             Stack(
               clipBehavior: Clip.none,
               children: [
@@ -320,7 +326,6 @@ class _CustomHeaderState extends State<CustomHeader> {
             ),
           ],
         ),
-
       );
     }
 
@@ -340,7 +345,7 @@ class _CustomHeaderState extends State<CustomHeader> {
               ),
               const SizedBox(width: 10),
               ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 180),
+                constraints: const BoxConstraints(maxWidth: 200),
                 child: Text(
                   displayName,
                   overflow: TextOverflow.ellipsis,
