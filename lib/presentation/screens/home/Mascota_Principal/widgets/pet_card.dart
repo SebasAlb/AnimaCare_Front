@@ -86,14 +86,37 @@ class _PetCardState extends State<PetCard> {
               ),
             ),
             Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                alignment: Alignment.center,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Expanded(
+              child: Row(
+                children: [
+                  // Botón eliminar con fondo rojo oscuro
+                  Container(
+                    width: 60,
+                    decoration: const BoxDecoration(
+                      color: Colors.red, // Puedes ajustar al rojo más oscuro que prefieras
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                      ),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.delete_forever_rounded, color: Colors.white),
+                      onPressed: () {
+                        SoundService.playButton(); // 🔊 Sonido
+                        _mostrarConfirmacionEliminar(context);
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade500, // Fondo más oscurito
+                        borderRadius: const BorderRadius.only(
+                          bottomRight: Radius.circular(20),
+                        ),
+                      ),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Flexible(
                             child: Text(
@@ -101,33 +124,17 @@ class _PetCardState extends State<PetCard> {
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: theme.brightness == Brightness.dark
-                                    ? AppColors.onSurfaceDark
-                                    : AppColors.primaryBrand,
+                                color: Colors.white,
                                 fontSize: 16,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 6),
-                          Icon(
-                            Icons.chevron_right,
-                            color: theme.brightness == Brightness.dark
-                                ? AppColors.onSurfaceDark.withOpacity(0.6)
-                                : AppColors.primaryBrand.withOpacity(0.6),
-                            size: 20,
-                          ),
+                          const Icon(Icons.chevron_right, color: Colors.white),
                         ],
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red.shade400),
-                      onPressed: () {
-                        SoundService.playButton(); // 🔊 Sonido
-                        _mostrarConfirmacionEliminar(context);
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
