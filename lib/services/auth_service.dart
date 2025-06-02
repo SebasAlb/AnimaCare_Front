@@ -29,6 +29,7 @@ class AuthService {
   Future<Dueno?> register({
     required String nombre,
     required String apellido,
+    required String cedula,
     required String correo,
     required String contrasena,
   }) async {
@@ -38,7 +39,7 @@ class AuthService {
         data: {
           'nombre': nombre,
           'apellido': apellido,
-          'cedula': '',        // puedes pedirlo luego en un segundo paso
+          'cedula': cedula,
           'telefono': '',
           'correo': correo,
           'ciudad': '',
@@ -81,3 +82,4 @@ class AuthService {
     }
   }
 }
+
