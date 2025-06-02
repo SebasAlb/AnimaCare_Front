@@ -71,20 +71,18 @@ class MascotaInfoSection extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: theme.cardColor,
                       borderRadius: BorderRadius.circular(12),
-                      
-                      image: fotoUrl.isNotEmpty
-                        ? DecorationImage(
-                            image: fotoUrl.startsWith('/') || fotoUrl.startsWith('file')
-                                ? FileImage(File(fotoUrl))
-                                : NetworkImage(fotoUrl) as ImageProvider,
-                            fit: BoxFit.cover,
-                          )
-                        : const DecorationImage(
-                            image: AssetImage('assets/images/perfil_mascota.png'),
-                            fit: BoxFit.cover,
-                          ),
-
-
+                    ),
+                    child: fotoUrl.isNotEmpty
+                        ? ClipRRect( // Usa ClipRRect para que la imagen se ajuste al borderRadius
+                      borderRadius: BorderRadius.circular(12),
+                      child: fotoUrl.startsWith('/') || fotoUrl.startsWith('file')
+                          ? Image.file(File(fotoUrl), fit: BoxFit.cover)
+                          : Image.network(fotoUrl, fit: BoxFit.cover),
+                    )
+                        : Icon(
+                      Icons.pets, // O el icono que prefieras, por ejemplo, Icons.person
+                      size: 70, // Ajusta el tamaño del icono según tu preferencia
+                      color: theme.colorScheme.primary, // Color del icono
                     ),
                   ),
                   Positioned(

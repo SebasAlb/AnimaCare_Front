@@ -139,7 +139,7 @@ class AgregarMascotaController {
         descripcion: '¡Festejale a ${mascotaCreada.nombre} sus $edad años de edad!',
         categoriaId: 7,
         mascotaId: mascotaCreada.id,
-        veterinarioId: 1,
+        veterinarioId: 5,
       );
 
       await EventService().crearEvento(eventoCumple);
