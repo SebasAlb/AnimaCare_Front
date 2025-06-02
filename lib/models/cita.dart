@@ -1,3 +1,5 @@
+import 'veterinario.dart';
+
 class Cita {
   int id;
   String razon;
@@ -5,6 +7,9 @@ class Cita {
   DateTime fecha;
   DateTime hora;
   String? descripcion;
+  int? mascotaId; // ✅ NUEVO
+  int? veterinarioId; // ✅ NUEVO
+  Veterinario? veterinario; // ✅ NUEVO
 
   Cita({
     required this.id,
@@ -13,6 +18,9 @@ class Cita {
     required this.fecha,
     required this.hora,
     this.descripcion,
+    this.mascotaId, // ✅
+    this.veterinarioId, // ✅
+    this.veterinario, // ✅ NUEVO
   });
 
   factory Cita.fromJson(Map<String, dynamic> json) => Cita(
@@ -22,6 +30,15 @@ class Cita {
     fecha: DateTime.parse(json['fecha']),
     hora: DateTime.parse(json['hora']),
     descripcion: json['descripcion'],
+    mascotaId: json['mascota_id'], // ✅
+    veterinarioId: json['veterinario']?['id'] ?? json['veterinario_id'], // ✅   
+    veterinario: json['veterinario'] != null
+            ? Veterinario.fromJson({
+                ...json['veterinario'],
+                'horarios': [],
+                'excepciones': [],
+              })
+            : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -31,5 +48,7 @@ class Cita {
     'fecha': fecha.toIso8601String(),
     'hora': hora.toIso8601String(),
     'descripcion': descripcion,
+    'mascota_id': mascotaId, // ✅ para el backend
+    'veterinario_id': veterinarioId, // ✅ para el backend
   };
 }
