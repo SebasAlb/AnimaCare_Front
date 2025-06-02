@@ -12,6 +12,7 @@ class VistaEventos extends StatefulWidget {
     required this.onTapEvento,
     required this.onSeleccionarFecha,
     required this.onAbrirFiltro,
+    required this.eventMasct,
   });
 
   final List<EventoCalendar> eventos;
@@ -19,6 +20,7 @@ class VistaEventos extends StatefulWidget {
   final Function(EventoCalendar) onTapEvento;
   final Function(DateTime) onSeleccionarFecha;
   final VoidCallback? onAbrirFiltro;
+  final bool eventMasct;
 
   @override
   State<VistaEventos> createState() => _VistaEventosState();
@@ -206,7 +208,10 @@ class _VistaEventosState extends State<VistaEventos> {
                       children: <Widget>[
                         FechaAgrupada(
                           fecha: fechaStr,
-                          onTap: () => widget.onSeleccionarFecha(fecha),
+                          onTap: () {
+                            widget.onSeleccionarFecha(fecha);
+                          },
+                          eventMascota: widget.eventMasct,
                         ),
                         ...eventosDelDia.map(
                           (evento) => GestureDetector(

@@ -165,6 +165,7 @@ class _MascotaEventosSectionState extends State<MascotaEventosSection> {
               onTapEvento: mostrarDetallesEvento,
               onSeleccionarFecha: (_) {},
               onAbrirFiltro: null,
+              eventMasct: true,
             ),
           ),
       ],

@@ -275,6 +275,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               SoundService.playButton();
                               abrirFiltroModal(context);
                             },
+                            eventMasct: false,
                           ),
                   ),
                 ],
