@@ -79,6 +79,17 @@ class SignupScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   _buildTextField(
+                    label: 'Cédula',
+                    hint: 'Ingrese su cédula',
+                    icon: Icons.badge,
+                    controller: controller.cedulaController,
+                    theme: theme,
+                    type: TextInputType.number, // Teclado numérico
+                  ),
+
+
+                  const SizedBox(height: 20),
+                  _buildTextField(
                     label: 'Correo Electrónico',
                     hint: 'Ingrese su correo electrónico',
                     icon: Icons.email,
@@ -185,3 +196,4 @@ class SignupScreen extends StatelessWidget {
         ],
       );
 }
+
