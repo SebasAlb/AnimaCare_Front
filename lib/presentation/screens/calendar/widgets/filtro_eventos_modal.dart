@@ -140,7 +140,7 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
               hint: Text('Cita o Evento', style: textStyle),
               isExpanded: true,
               dropdownColor: theme.cardColor,
-              items: ['Cita', 'Evento']
+              items: ['cita', 'evento']
                   .map((e) => DropdownMenuItem(value: e, child: Text(e, style: textStyle)))
                   .toList(),
               onChanged: (value) => setState(() {
@@ -148,7 +148,7 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
               }),
             ),
             const SizedBox(height: 10),
-            if (tipoSeleccionado == 'Evento') ...[
+            if (tipoSeleccionado == 'evento') ...[
               Text('Categoría', style: textStyle),
               DropdownButton<String>(
                 value: categoriaEventoSeleccionada,
@@ -164,7 +164,7 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
               const SizedBox(height: 10),
             ],
             const SizedBox(height: 10),
-            if (tipoSeleccionado == 'Cita') ...[
+            if (tipoSeleccionado == 'cita') ...[
               Text('Razón', style: textStyle),
               DropdownButton<String>(
                 value: razonCitaSeleccionada,
@@ -305,9 +305,9 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
                         'mascota': mascotaSeleccionada,
                         'veterinario': veterinarioSeleccionado,
                         'tipo': tipoSeleccionado,
-                        'categoria': tipoSeleccionado == 'Evento' ? categoriaEventoSeleccionada : null,
-                        'razonCita': tipoSeleccionado == 'Cita' ? razonCitaSeleccionada : null,
-                        'estado': tipoSeleccionado == 'Cita' ? estadoSeleccionado : null,
+                        'categoria': tipoSeleccionado == 'evento' ? categoriaEventoSeleccionada : null,
+                        'razonCita': tipoSeleccionado == 'cita' ? razonCitaSeleccionada : null,
+                        'estado': tipoSeleccionado == 'cita' ? estadoSeleccionado : null,
                         'fechaDesde': fechaDesde,
                         'fechaHasta': fechaHasta,
                         'horaDesde': horaDesde,
@@ -346,3 +346,4 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
     );
   }
 }
+
