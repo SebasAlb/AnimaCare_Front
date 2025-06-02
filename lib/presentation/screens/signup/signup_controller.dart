@@ -15,6 +15,7 @@ class SignupController extends GetxController {
       TextEditingController();
   var obscurePassword = true.obs;
   var obscureConfirmPassword = true.obs;
+  final TextEditingController cedulaController = TextEditingController();
 
   void signup() async {
     final String firstName = firstNameController.text.trim();
@@ -24,6 +25,7 @@ class SignupController extends GetxController {
     final String confirmPassword = confirmPasswordController.text.trim();
     final theme = Theme.of(Get.context!);
     final AuthService _authService = AuthService();
+    final String cedula = cedulaController.text.trim();
 
     if (firstName.isEmpty || lastName.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       SoundService.playWarning();
@@ -62,6 +64,31 @@ class SignupController extends GetxController {
       return;
     }
 
+    if (cedula.isEmpty) {
+      SoundService.playWarning();
+      Get.snackbar(
+        'Campo requerido',
+        'Por favor, ingresa tu cédula.',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
+      return;
+    }
+
+    if (!RegExp(r'^\d{10}$').hasMatch(cedula)) {
+      SoundService.playWarning();
+      Get.snackbar(
+        'Cédula inválida',
+        'La cédula debe contener exactamente 10 dígitos numéricos.',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
+      return;
+    }
+
+
     if (!email.contains('@')) {
       SoundService.playWarning();
       Get.snackbar(
@@ -97,11 +124,12 @@ class SignupController extends GetxController {
       );
       return;
     }
-
+    
     try {
       final Dueno? newUser = await _authService.register(
         nombre: firstName,
         apellido: lastName,
+        cedula: cedula,
         correo: email,
         contrasena: password,
       );
@@ -148,6 +176,7 @@ class SignupController extends GetxController {
     emailController.clear();
     passwordController.clear();
     confirmPasswordController.clear();
+    cedulaController.clear();
   }
 
   void goBack() {
