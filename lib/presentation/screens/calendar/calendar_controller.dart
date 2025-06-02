@@ -16,6 +16,8 @@ class CalendarController extends ChangeNotifier {
     'veterinario': null,
     'tipo': null,
     'categoria': null,
+    'razonCita': null, // ✅ nuevo
+    'estado': null,     // ✅ nuevo
     'fechaDesde': null,
     'fechaHasta': null,
     'horaDesde': null,
@@ -117,6 +119,8 @@ class CalendarController extends ChangeNotifier {
       final c = filtrosAvanzados['categoria'];
       final fd = filtrosAvanzados['fechaDesde'];
       final fh = filtrosAvanzados['fechaHasta'];
+      final rc = filtrosAvanzados['razonCita'];
+      final es = filtrosAvanzados['estado'];
       final hd = filtrosAvanzados['horaDesde'];
       final hh = filtrosAvanzados['horaHasta'];
 
@@ -138,6 +142,9 @@ class CalendarController extends ChangeNotifier {
         hour: int.parse(horaPartes[0]),
         minute: int.parse(horaPartes[1]),
       );
+      final bool coincideRazon = rc == null || evento.titulo == rc;
+      final bool coincideEstado = es == null || evento.estado == es;
+
       bool horaPosterior(TimeOfDay a, TimeOfDay b) =>
           a.hour > b.hour || (a.hour == b.hour && a.minute >= b.minute);
       bool horaAnterior(TimeOfDay a, TimeOfDay b) =>
@@ -150,6 +157,8 @@ class CalendarController extends ChangeNotifier {
           coincideVeterinario &&
           coincideTipo &&
           coincideCategoria &&
+          coincideRazon &&
+          coincideEstado &&
           coincideFecha &&
           coincideHora;
     }).toList();
@@ -170,3 +179,4 @@ class CalendarController extends ChangeNotifier {
     return mapa;
   }
 }
+
