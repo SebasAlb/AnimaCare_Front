@@ -220,20 +220,20 @@ class ContactInfoScreen extends StatelessWidget {
                                         TextSpan(
                                           text: 'Fecha:\n',
                                           style: theme.textTheme.bodyMedium?.copyWith(
-                                            color: theme.colorScheme.primary,
+                                            color: theme.colorScheme.onPrimary,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                         TextSpan(
                                           text: 'Desde el ${DateFormat('dd/MM/yyyy').format(desde)} a las $horarioInicio\n',
                                           style: theme.textTheme.bodyMedium?.copyWith(
-                                            color: theme.colorScheme.primary,
+                                            color: theme.colorScheme.onPrimary,
                                           ),
                                         ),
                                         TextSpan(
                                           text: 'Hasta el ${DateFormat('dd/MM/yyyy').format(hasta)} a las $horarioFin',
                                           style: theme.textTheme.bodyMedium?.copyWith(
-                                            color: theme.colorScheme.primary,
+                                            color: theme.colorScheme.onPrimary,
                                           ),
                                         ),
                                       ],
