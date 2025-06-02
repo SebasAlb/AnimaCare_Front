@@ -68,6 +68,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     ),
                   ),
                   Center(child: Text('⬇️ Arrastre para refrescar ⬇️', style: TextStyle(fontWeight: FontWeight.bold))),
+                  SizedBox(height: 10),
                 ],
               ),
               Expanded(

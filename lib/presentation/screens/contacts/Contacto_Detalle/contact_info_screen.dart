@@ -167,7 +167,7 @@ class ContactInfoScreen extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.warning_amber_rounded, color: icono),
+                              Icon(Icons.warning_amber_rounded, color: theme.colorScheme.onPrimary),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text.rich(
@@ -178,27 +178,64 @@ class ContactInfoScreen extends StatelessWidget {
                                     children: [
                                       TextSpan(
                                         text: '$textoEstado: ',
-                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                          color: theme.colorScheme.onPrimary,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                      TextSpan(text: '$motivo\n'),
+                                      TextSpan(
+                                        text: '$motivo\n',
+                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                          color: theme.colorScheme.onPrimary,
+                                        ),
+                                      ),
                                       if (desde == hasta) ...[
-                                        const TextSpan(
+                                        TextSpan(
                                           text: 'Fecha: ',
-                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            color: theme.colorScheme.onPrimary,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                        TextSpan(text: '${DateFormat('dd/MM/yyyy').format(desde)}\n'),
-                                        const TextSpan(
+                                        TextSpan(
+                                          text: '${DateFormat('dd/MM/yyyy').format(desde)}\n',
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            color: theme.colorScheme.onPrimary,
+                                          ),
+                                        ),
+                                        TextSpan(
                                           text: 'Horario: ',
-                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            color: theme.colorScheme.onPrimary,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                        TextSpan(text: '$horarioInicio - $horarioFin'),
+                                        TextSpan(
+                                          text: '$horarioInicio - $horarioFin',
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            color: theme.colorScheme.onPrimary,
+                                          ),
+                                        ),
                                       ] else ...[
-                                        const TextSpan(
+                                        TextSpan(
                                           text: 'Fecha:\n',
-                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            color: theme.colorScheme.primary,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                        TextSpan(text: 'Desde el ${DateFormat('dd/MM/yyyy').format(desde)} a las $horarioInicio\n'),
-                                        TextSpan(text: 'Hasta el ${DateFormat('dd/MM/yyyy').format(hasta)} a las $horarioFin'),
+                                        TextSpan(
+                                          text: 'Desde el ${DateFormat('dd/MM/yyyy').format(desde)} a las $horarioInicio\n',
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            color: theme.colorScheme.primary,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: 'Hasta el ${DateFormat('dd/MM/yyyy').format(hasta)} a las $horarioFin',
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            color: theme.colorScheme.primary,
+                                          ),
+                                        ),
                                       ],
                                     ],
                                   ),
