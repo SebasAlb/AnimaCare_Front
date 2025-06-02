@@ -1,10 +1,36 @@
+import 'package:animacare_front/models/mascota.dart';
+import 'package:animacare_front/storage/veterinarian_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/models/veterinario.dart';
 import 'package:animacare_front/models/veterinario_excepcion.dart';
-import 'package:animacare_front/presentation/components/list_extensions.dart';
+import 'package:get/get.dart';
+import 'package:animacare_front/models/cita.dart';
+import 'package:animacare_front/services/appointment_service.dart';
+import 'package:animacare_front/services/sound_service.dart';
+import 'package:animacare_front/services/veterinarian_service.dart';
+
 
 class AgendarCitaController {
-  final List<String> mascotas = <String>['Firulais', 'Pelusa', 'Max'];
+  final VeterinarianService _service = VeterinarianService();
+  final theme = Theme.of(Get.context!);
+  Future<List<Veterinario>> cargarVeterinarios() async {
+    try {
+      final data = await _service.fetchVeterinarios();
+      VeterinariosStorage.clearVeterinarios();
+      VeterinariosStorage.saveVeterinarios(data);
+      return data;
+    } catch (e) {
+      SoundService.playWarning();
+      Get.snackbar(
+        'Error',
+        'Error al obtener los horarios de los veterinarios.',
+        backgroundColor: Colors.white30,
+        colorText: theme.colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
+      return [];
+    }
+  }
 
   final List<String> razones = <String>[
     'Consulta general',
@@ -17,16 +43,14 @@ class AgendarCitaController {
 
   // ✅ Se reemplaza ContactsController por una lista real de veterinarios
   List<Veterinario> contactosExternos = [];
+  List<Mascota> mascotas = [];
 
   List<String> get veterinariosDisponibles =>
       contactosExternos.map((v) => v.nombreCompleto).toList();
 
-  Veterinario? obtenerVeterinarioPorNombre(String nombre) =>
-      contactosExternos.firstWhereOrNull((v) => v.nombreCompleto == nombre);
-
-  String? mascotaSeleccionada;
+  Mascota? mascotaSeleccionada;
   String? razonSeleccionada;
-  String? veterinarioSeleccionado;
+  Veterinario? veterinarioSeleccionado;
   DateTime? fechaSeleccionada;
   String? horaSeleccionada;
 
@@ -64,16 +88,23 @@ class AgendarCitaController {
   }
 
   bool estaDiaBloqueadoPorExcepcion(DateTime dia) {
-    final vet = obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
+    final vet = veterinarioSeleccionado;
     if (vet == null) return false;
 
     return vet.excepciones.any((e) {
       if (!e.disponible) {
+        final mismaFecha = e.fecha.year == dia.year &&
+            e.fecha.month == dia.month &&
+            e.fecha.day == dia.day;
+
+        if (!mismaFecha) return false;
+
+        // Si la excepción cubre todo el día, se bloquea el día entero
         final inicio = _combinarFechaHora(e.fecha, e.horaInicio);
         final fin = _combinarFechaHora(e.fecha, e.horaFin);
-        return dia.isAfter(inicio.subtract(const Duration(days: 1))) &&
-            dia.isBefore(fin.add(const Duration(days: 1))) &&
-            _cubreTodoElDia(e, dia);
+
+        final cubreTodoElDia = inicio.hour <= 8 && fin.hour >= 17;
+        return cubreTodoElDia;
       }
       return false;
     });
@@ -87,26 +118,37 @@ class AgendarCitaController {
     return inicio.isBefore(diaCompletoInicio) && fin.isAfter(diaCompletoFin);
   }
 
-  bool horaBloqueadaPorExcepcion(DateTime fecha, String hora) {
-    final vet = obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
+  bool horaBloqueadaPorExcepcion(DateTime fecha, String horaBloque) {
+    final vet = veterinarioSeleccionado;
     if (vet == null) return false;
 
-    final DateTime horaActual = DateTime(
+    // Extraer solo la hora del bloque: "08:00 - 09:00" => "08:00"
+    final partes = horaBloque.split(' - ');
+    if (partes.length != 2) return false;
+    final horaInicioBloque = partes[0];
+
+    final horaParts = horaInicioBloque.split(':');
+    final horaActual = DateTime(
       fecha.year,
       fecha.month,
       fecha.day,
-      int.parse(hora.split(':')[0]),
+      int.parse(horaParts[0]),
+      int.parse(horaParts[1]),
     );
 
     return vet.excepciones.any((e) {
-      if (!e.disponible) {
+      if (!e.disponible && _esMismaFecha(e.fecha, fecha)) {
         final inicio = _combinarFechaHora(e.fecha, e.horaInicio);
         final fin = _combinarFechaHora(e.fecha, e.horaFin);
-        return horaActual.isAfter(inicio) && horaActual.isBefore(fin);
+        return horaActual.isAfter(inicio.subtract(const Duration(minutes: 1))) &&
+            horaActual.isBefore(fin);
       }
       return false;
     });
   }
+
+  bool _esMismaFecha(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
 
   DateTime _combinarFechaHora(DateTime fecha, String horaISO) {
     final hora = DateTime.parse(horaISO);
@@ -120,7 +162,7 @@ class AgendarCitaController {
     if (veterinarioSeleccionado == null || fechaSeleccionada == null) return;
 
     final ThemeData theme = Theme.of(context);
-    final vet = obtenerVeterinarioPorNombre(veterinarioSeleccionado!);
+    final vet = veterinarioSeleccionado;
     if (vet == null) return;
 
     final List<String> horasDisponibles = _obtenerHorasDisponiblesParaFecha(
@@ -171,6 +213,7 @@ class AgendarCitaController {
                     onPressed: bloqueada
                         ? null
                         : () {
+                      SoundService.playButton();
                       horaSeleccionada = hora;
                       Navigator.pop(context);
                       refreshUI();
@@ -196,22 +239,62 @@ class AgendarCitaController {
     );
   }
 
-  void confirmarCita(BuildContext context) {
-    if (camposObligatoriosLlenos) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Cita agendada exitosamente'),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-        ),
+  Future<void> guardarCita(BuildContext context) async {
+    if (!camposObligatoriosLlenos) {
+      SoundService.playWarning();
+      Get.snackbar(
+        'Campos requeridos',
+        'Completa todos los campos obligatorios.',
+        backgroundColor: Colors.white30,
+        colorText: Theme.of(context).colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
       );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Completa todos los campos obligatorios'),
-          backgroundColor: Colors.redAccent,
-        ),
+      return;
+    }
+
+    final cita = Cita(
+      id: 0,
+      razon: razonSeleccionada!,
+      estado: 'Pendiente',
+      fecha: fechaSeleccionada!,
+      hora: _parseHoraSeleccionada(),
+      descripcion: notasController.text.trim(),
+      mascotaId: mascotaSeleccionada!.id,
+      veterinarioId: veterinarioSeleccionado!.id,
+    );
+
+    try {
+      await AppointmentService().crearCita(cita);
+      SoundService.playSuccess();
+      Get.snackbar(
+        'Cita creada',
+        'La cita ha sido agendada exitosamente.',
+        backgroundColor: Colors.white30,
+        colorText: Theme.of(context).colorScheme.onBackground,
+        icon: const Icon(Icons.check_circle, color: Colors.green),
+      );
+      Navigator.pop(context); // opcional: volver a la pantalla anterior
+    } catch (e) {
+      SoundService.playWarning();
+      Get.snackbar(
+        'Error',
+        e.toString().replaceFirst('Exception: ', ''),
+        backgroundColor: Colors.white30,
+        colorText: Theme.of(context).colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
       );
     }
+  }
+
+  DateTime _parseHoraSeleccionada() {
+    final partes = horaSeleccionada!.split(' - ')[0].split(':');
+    return DateTime(
+      fechaSeleccionada!.year,
+      fechaSeleccionada!.month,
+      fechaSeleccionada!.day,
+      int.parse(partes[0]),
+      int.parse(partes[1]),
+    );
   }
 
   bool get sePuedeMostrarFechaYHora => veterinarioSeleccionado != null;
@@ -231,7 +314,7 @@ class AgendarCitaController {
   }
 
   bool diaNoLaboral(DateTime dia) {
-    final vet = obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
+    final vet = veterinarioSeleccionado;
     if (vet == null) return false;
 
     final String nombreDia = _nombreDia(dia.weekday);
@@ -245,7 +328,7 @@ class AgendarCitaController {
   }
 
   String? obtenerMotivoExcepcion(DateTime dia) {
-    final vet = obtenerVeterinarioPorNombre(veterinarioSeleccionado ?? '');
+    final vet = veterinarioSeleccionado;
     if (vet == null) return null;
 
     final excepcion = vet.excepciones.firstWhereOrNull((e) {

@@ -271,7 +271,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                 controller.cambiarModo(true);
                               });
                             },
-                            onAbrirFiltro: () => abrirFiltroModal(context),
+                            onAbrirFiltro: () {
+                              SoundService.playButton();
+                              abrirFiltroModal(context);
+                            },
                           ),
                   ),
                 ],

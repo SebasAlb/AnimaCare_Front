@@ -1,9 +1,13 @@
+import 'package:animacare_front/models/mascota.dart';
+import 'package:animacare_front/models/veterinario.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
+import 'package:animacare_front/storage/pet_storage.dart';
 import 'package:animacare_front/storage/veterinarian_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_controller.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/widgets/calendario_bottom_sheet.dart';
+
 
 class AgendarCitaScreen extends StatefulWidget {
   const AgendarCitaScreen({super.key});
@@ -21,16 +25,26 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
   @override
   void initState() {
     super.initState();
-    _prevCamposLlenos = controller.camposObligatoriosLlenos;
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final veterinarios = await VeterinariosStorage.getVeterinarios();
+      final veterinarios = await controller.cargarVeterinarios();
+      final mascotas = await MascotasStorage.getMascotas();
+
       setState(() {
         controller.contactosExternos = veterinarios;
+        controller.mascotas = mascotas;
         _cargandoVeterinarios = false;
+
+        if (controller.mascotaSeleccionada != null) {
+          final match = mascotas.firstWhere(
+                (m) => m.id == controller.mascotaSeleccionada!.id,
+            orElse: () => mascotas.first,
+          );
+          controller.mascotaSeleccionada = match;
+        }
       });
     });
 
+    _prevCamposLlenos = controller.camposObligatoriosLlenos;
   }
 
   Widget _buildFieldLabel(String label, ThemeData theme) => Padding(
@@ -94,22 +108,29 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                       const SizedBox(height: 24),
 
                       _buildFieldLabel('Mascota', theme),
-                      DropdownButtonFormField<String>( // Seleccionar Mascota
+                      DropdownButtonFormField<Mascota>(
                         value: controller.mascotaSeleccionada,
                         decoration: InputDecoration(
                           hintText: 'Seleccione una mascota',
                           filled: true,
                           fillColor: theme.colorScheme.surface,
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          prefixIcon: Icon(Icons.pets, color: theme.colorScheme.primary), // ✅ Ícono añadido
+                          prefixIcon: Icon(Icons.pets, color: theme.colorScheme.primary),
                         ),
                         dropdownColor: theme.colorScheme.surface,
                         iconEnabledColor: theme.iconTheme.color,
                         style: TextStyle(color: theme.colorScheme.primary),
                         items: controller.mascotas
-                            .map((String m) => DropdownMenuItem(value: m, child: Text(m)))
+                            .map((m) => DropdownMenuItem<Mascota>(
+                          value: m,
+                          child: Text(m.nombre),
+                        ))
                             .toList(),
-                        onChanged: (String? value) => setState(() => controller.mascotaSeleccionada = value),
+                        onChanged: (Mascota? value) {
+                          setState(() {
+                            controller.mascotaSeleccionada = value;
+                          });
+                        },
                       ),
                       const SizedBox(height: 14),
 
@@ -134,7 +155,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                       const SizedBox(height: 14),
 
                       _buildFieldLabel('Veterinario', theme),
-                      DropdownButtonFormField<String>(
+                      DropdownButtonFormField<Veterinario>(
                         value: controller.veterinarioSeleccionado,
                         decoration: InputDecoration(
                           hintText: 'Seleccione un veterinario',
@@ -146,10 +167,13 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                         dropdownColor: theme.colorScheme.surface,
                         iconEnabledColor: theme.iconTheme.color,
                         style: TextStyle(color: theme.colorScheme.primary),
-                        items: controller.veterinariosDisponibles
-                            .map((String v) => DropdownMenuItem(value: v, child: Text(v)))
+                        items: controller.contactosExternos
+                            .map((v) => DropdownMenuItem<Veterinario>(
+                          value: v,
+                          child: Text(v.nombreCompleto),
+                        ))
                             .toList(),
-                        onChanged: (String? value) {
+                        onChanged: (Veterinario? value) {
                           setState(() {
                             controller.veterinarioSeleccionado = value;
                             controller.fechaSeleccionada = null;
@@ -308,7 +332,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
 
                       if (controller.camposObligatoriosLlenos)
                         ElevatedButton.icon(
-                          onPressed: () => controller.confirmarCita(context),
+                          onPressed: () => controller.guardarCita(context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: theme.colorScheme.primary,
                             foregroundColor: theme.colorScheme.onPrimary,

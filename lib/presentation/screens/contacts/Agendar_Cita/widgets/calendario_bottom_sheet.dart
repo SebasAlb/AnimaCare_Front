@@ -1,5 +1,8 @@
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class CalendarioBottomSheet extends StatefulWidget {
   final DateTime? fechaSeleccionada;
@@ -22,6 +25,13 @@ class CalendarioBottomSheet extends StatefulWidget {
 
 class _CalendarioBottomSheetState extends State<CalendarioBottomSheet> {
   String? mensajeInvalido;
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting('es_ES', null);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +43,23 @@ class _CalendarioBottomSheetState extends State<CalendarioBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           TableCalendar(
+            locale: 'es_ES',
             firstDay: now.subtract(const Duration(days: 30)),
             lastDay: now.add(const Duration(days: 90)),
             focusedDay: widget.fechaSeleccionada ?? now,
             selectedDayPredicate: (day) => isSameDay(widget.fechaSeleccionada, day),
-            
+            calendarFormat: _calendarFormat,
+            availableCalendarFormats: const {
+              CalendarFormat.month: '',
+            },
+            headerStyle: HeaderStyle(
+              formatButtonVisible: false, // oculta botón "Week"
+              titleCentered: true,        // ✅ centra "junio 2025"
+              titleTextFormatter: (date, locale) =>
+                  DateFormat.yMMMM(locale).format(date), // "junio 2025"
+            ),
             onDaySelected: (selectedDay, _) {
+              SoundService.playButton();
               final soloHoy = DateTime(now.year, now.month, now.day);
               final soloFecha = DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
 
@@ -65,20 +86,38 @@ class _CalendarioBottomSheetState extends State<CalendarioBottomSheet> {
               Navigator.pop(context);
             },
             calendarStyle: CalendarStyle(
-              defaultDecoration: BoxDecoration(color: Colors.green.shade50),
-              weekendDecoration: BoxDecoration(color: Colors.green.shade50),
-              disabledDecoration: BoxDecoration(color: Colors.grey.shade200),
+              defaultDecoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.green.shade500
+                    : Colors.green.shade400,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              weekendDecoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey.shade800
+                    : Colors.green.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              disabledDecoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey.shade900
+                    : Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(8),
+              ),
               todayDecoration: BoxDecoration(
-                color: Colors.blue.shade100,
-                shape: BoxShape.rectangle,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.blue.shade400
+                    : Colors.blue.shade400,
                 border: Border.all(color: Colors.blue, width: 2),
                 borderRadius: BorderRadius.circular(8),
               ),
               selectedDecoration: BoxDecoration(
-                color: Colors.blue.shade700,
+                color: Theme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.circular(8),
               ),
-              selectedTextStyle: const TextStyle(color: Colors.white),
+              selectedTextStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ),
             calendarBuilders: CalendarBuilders(
               defaultBuilder: (context, day, _) {

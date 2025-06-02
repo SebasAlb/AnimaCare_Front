@@ -1,3 +1,4 @@
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/evento_card.dart';
@@ -96,7 +97,10 @@ class VistaCalendario extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               final EventoCalendar evento = eventos[index];
               return GestureDetector(
-                onTap: () => onTapEvento(evento),
+                onTap: () {
+                  SoundService.playButton();
+                  onTapEvento(evento);
+                  },
                 child: EventoCard(
                   hora: evento.hora,
                   titulo: evento.titulo,

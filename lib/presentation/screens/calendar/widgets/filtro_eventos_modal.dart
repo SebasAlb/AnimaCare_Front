@@ -1,3 +1,4 @@
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 
 class FiltroEventosModal extends StatefulWidget {
@@ -77,6 +78,7 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
   }
 
   void limpiarCampos() {
+    SoundService.playButton();
     setState(() {
       mascotaSeleccionada = null;
       veterinarioSeleccionado = null;
@@ -193,7 +195,10 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
               children: [
                 Expanded(
                   child: TextButton(
-                    onPressed: () => seleccionarFecha(context, true),
+                    onPressed: () {
+                      SoundService.playButton();
+                      seleccionarFecha(context, true);
+                      },
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.blue,
                       backgroundColor: Colors.lightBlue.withOpacity(0.2),
@@ -210,7 +215,10 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
                 const SizedBox(width: 15),
                 Expanded(
                   child: TextButton(
-                    onPressed: () => seleccionarFecha(context, false),
+                    onPressed: () {
+                      SoundService.playButton();
+                      seleccionarFecha(context, false);
+                      },
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.blue,
                       backgroundColor: const Color(0xFFFFA726).withOpacity(0.2),
@@ -232,7 +240,10 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
               children: [
                 Expanded(
                   child: TextButton(
-                    onPressed: () => seleccionarHora(context, true),
+                    onPressed: () {
+                      SoundService.playButton();
+                      seleccionarHora(context, true);
+                      },
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.blue,
                       backgroundColor: Colors.lightBlue.withOpacity(0.2),
@@ -247,7 +258,10 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
                 const SizedBox(width: 15),
                 Expanded(
                   child: TextButton(
-                    onPressed: () => seleccionarHora(context, false),
+                    onPressed: () {
+                      SoundService.playButton();
+                      seleccionarHora(context, false);
+                      },
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.blue,
                       backgroundColor: const Color(0xFFFFA726).withOpacity(0.2),
@@ -286,6 +300,7 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
+                      SoundService.playButton();
                       final filtros = {
                         'mascota': mascotaSeleccionada,
                         'veterinario': veterinarioSeleccionado,
@@ -313,7 +328,10 @@ class _FiltroEventosModalState extends State<FiltroEventosModal> {
             ),
             const SizedBox(height: 12),
             TextButton.icon(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                SoundService.playButton();
+                Navigator.pop(context);
+                },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.red.withOpacity(0.8),

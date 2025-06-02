@@ -1,3 +1,4 @@
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/evento_card.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/fecha_agrupada.dart';
@@ -28,6 +29,7 @@ class _VistaEventosState extends State<VistaEventos> {
   String? tipoSeleccionado;
 
   List<String> generarFiltros(List<EventoCalendar> eventos) {
+    SoundService.playButton();
     final Set<String> categorias = <String>{};
     bool tieneCitas = false;
     bool tieneEventos = false;
@@ -130,6 +132,12 @@ class _VistaEventosState extends State<VistaEventos> {
                   icon: Icon(Icons.filter_alt, color: colorScheme.primary),
                   onPressed: widget.onAbrirFiltro,
                   tooltip: 'Filtros avanzados',
+                  style: IconButton.styleFrom(
+                    backgroundColor: colorScheme.surfaceContainerHighest,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -202,7 +210,10 @@ class _VistaEventosState extends State<VistaEventos> {
                         ),
                         ...eventosDelDia.map(
                           (evento) => GestureDetector(
-                            onTap: () => widget.onTapEvento(evento),
+                            onTap: () {
+                              SoundService.playButton();
+                              widget.onTapEvento(evento);
+                              },
                             child: EventoCard(
                               hora: evento.hora,
                               titulo: evento.titulo,
