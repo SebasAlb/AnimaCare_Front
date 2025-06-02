@@ -47,10 +47,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.dispose();
   }
 
-  String getTipoVisible(EventoCalendar evento) {
-    if (evento.tipo == 'cita') return 'Cita';
-    return evento.categoria ?? 'Evento general';
-  }
+
 
   void mostrarDetallesEvento(EventoCalendar evento) {
     final ThemeData theme = Theme.of(context);
@@ -84,10 +81,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   Text('🕒 Hora: ${evento.hora}'),
                   Text('🐾 Mascota: ${evento.mascota}'),
                   Text('👨‍⚕️ Veterinario: ${evento.veterinario}'),
-                  Text('📌 Tipo: ${getTipoVisible(evento)}'),
+                  Text('📌 Tipo: ${evento.tipo}'),
+                  if (evento.tipo == 'evento')
+                    Text('🏷 Categoría: ${evento.categoria ?? 'Evento general'}'),
                   if (evento.estado != null)
                     Text('📋 Estado: ${evento.estado}'),
-                  if (evento.descripcion != null)
+                  if (evento.descripcion != null && evento.descripcion!.isNotEmpty)
                     Text('📝 Nota: ${evento.descripcion}'),
                   const SizedBox(height: 24),
                   if (evento.esCita) ...<Widget>[
