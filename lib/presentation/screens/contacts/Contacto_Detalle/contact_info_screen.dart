@@ -37,7 +37,7 @@ class ContactInfoScreen extends StatelessWidget {
       );
       return e.veterinarioId == veterinario.id &&
             fin.isAfter(DateTime.now()) &&
-            e.motivo != 'Cita';
+            !e.motivo.startsWith('Cita agendada:'); //e.motivo != 'Cita'; 
     }).toList();
 
 
