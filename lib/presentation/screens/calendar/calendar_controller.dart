@@ -96,8 +96,26 @@ class CalendarController extends ChangeNotifier {
   List<EventoCalendar> eventosDelDia(DateTime? dia) {
     if (dia == null) return <EventoCalendar>[];
     final String formato = _formatoFecha(dia);
-    return _eventos.where((e) => e.fecha == formato).toList();
+
+    final eventosDelDia = _eventos.where((e) => e.fecha == formato).toList();
+
+    eventosDelDia.sort((a, b) {
+      final horaA = TimeOfDay(
+        hour: int.parse(a.hora.split(':')[0]),
+        minute: int.parse(a.hora.split(':')[1]),
+      );
+      final horaB = TimeOfDay(
+        hour: int.parse(b.hora.split(':')[0]),
+        minute: int.parse(b.hora.split(':')[1]),
+      );
+      return horaA.hour != horaB.hour
+          ? horaA.hour.compareTo(horaB.hour)
+          : horaA.minute.compareTo(horaB.minute);
+    });
+
+    return eventosDelDia;
   }
+
 
   List<EventoCalendar> filtrarEventosPorTexto() {
     final String texto = searchController.text.toLowerCase().trim();
@@ -179,4 +197,5 @@ class CalendarController extends ChangeNotifier {
     return mapa;
   }
 }
+
 
