@@ -23,12 +23,22 @@ class NotificationService {
         id: id,
         channelKey: channelKey,
         title: '⏰ Recordatorio: ${evento.titulo}',
-        body: '${evento.tipo == 'cita' ? 'Tienes una cita' : 'Tienes un evento'} con ${evento.mascota} mañana a las ${evento.hora}.',
+        body: '${evento.tipo == 'cita' ? 'Tienes una cita médica' : 'Tienes un evento especial'} con ${evento.mascota} '
+            'programado para mañana a las ${evento.hora}. '
+            '${evento.veterinario.isNotEmpty ? 'Veterinario: ${evento.veterinario}. ' : ''}'
+            '${evento.descripcion?.isNotEmpty == true ? 'Descripción: ${evento.descripcion}' : ''}',
         notificationLayout: NotificationLayout.BigText,
         payload: {
+          'id': evento.id,
+          'titulo': evento.titulo,
+          'fecha': evento.fecha,
+          'hora': evento.hora,
           'tipo': evento.tipo,
           'mascota': evento.mascota,
           'veterinario': evento.veterinario,
+          'categoria': evento.categoria ?? '',
+          'estado': evento.estado ?? '',
+          'descripcion': evento.descripcion ?? '',
         },
       ),
       schedule: NotificationCalendar(

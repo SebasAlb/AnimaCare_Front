@@ -1,5 +1,6 @@
 import 'package:animacare_front/presentation/components/custom_navbar.dart';
 import 'package:animacare_front/routes/app_routes.dart';
+import 'package:animacare_front/services/notification_service.dart';
 import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
@@ -70,7 +71,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       );
       await controller.cargarEventosDesdeBackend();
       setState(() {}); // 🔁 Refresca vista si es necesario
-
+      NotificationService.eliminarNotificacion(evento.id);
       SoundService.playSuccess(); // ✅ Sonido de éxito
       Get.snackbar(
         'Cita cancelada',

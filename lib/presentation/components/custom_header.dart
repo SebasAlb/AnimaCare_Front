@@ -41,7 +41,6 @@ class _CustomHeaderState extends State<CustomHeader> {
   @override
   void initState() {
     super.initState();
-    print("-------------------- initi");
     dueno = UserStorage.getUser();
     _cargarNotificacionesHoy();
 
@@ -67,6 +66,7 @@ class _CustomHeaderState extends State<CustomHeader> {
             e.fecha.year, e.fecha.month, e.fecha.day,
             e.hora.hour, e.hora.minute,
           );
+          print('---------- [DEBUG] Veterinario evento: ${e.veterinario?.nombre} ${e.veterinario?.apellido}');
 
           if (fechaHoraEvento.isAfter(ahora)) {
             final evento = EventoCalendar(
@@ -75,7 +75,9 @@ class _CustomHeaderState extends State<CustomHeader> {
               hora: _formatoHora(e.hora),
               fecha: _formatoFecha(e.fecha),
               mascota: mascota.nombreMascota,
-              veterinario: '',
+              veterinario: e.veterinario != null
+                  ? '${e.veterinario!.nombre} ${e.veterinario!.apellido}'
+                  : '',
               tipo: 'evento',
               categoria: null,
               estado: null,
@@ -95,15 +97,18 @@ class _CustomHeaderState extends State<CustomHeader> {
             c.fecha.year, c.fecha.month, c.fecha.day,
             c.hora.hour, c.hora.minute,
           );
+          print('*********** [DEBUG] Veterinario cita: ${c.veterinario?.nombre} ${c.veterinario?.apellido}');
 
-          if (fechaHoraCita.isAfter(ahora) && c.estado?.toLowerCase() == 'Confirmada') {
+          if (fechaHoraCita.isAfter(ahora) && c.estado?.toLowerCase() == 'confirmada') {
             final cita = EventoCalendar(
               id: c.id.toString(),
               titulo: c.razon,
               hora: _formatoHora(c.hora),
               fecha: _formatoFecha(c.fecha),
               mascota: mascota.nombreMascota,
-              veterinario: '',
+              veterinario: c.veterinario != null
+                  ? '${c.veterinario!.nombre} ${c.veterinario!.apellido}'
+                  : '',
               tipo: 'cita',
               categoria: null,
               estado: c.estado,
@@ -209,6 +214,9 @@ class _CustomHeaderState extends State<CustomHeader> {
                       'hora': notif.hora,
                       'veterinario': notif.veterinario,
                       'descripcion': notif.descripcion ?? '',
+                      'tipo': notif.tipo,
+                      'categoria': notif.categoria ?? '',
+                      'estado': notif.estado ?? '',
                     }, theme),
                   );
                 },
@@ -256,16 +264,24 @@ class _CustomHeaderState extends State<CustomHeader> {
                 ]
               ),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(formatearFechaBonita(notif['fecha']!), style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 4),
+                  if (notif['tipo']!.isNotEmpty)
+                    Text('Tipo: ${notif['tipo']!}', style: theme.textTheme.bodySmall),
                   const SizedBox(height: 4),
                   Text('Mascota: 🐾'+notif['mascota']!, style: theme.textTheme.bodySmall),
                   const SizedBox(height: 4),
                   Text('Veterinario: 👤'+notif['veterinario']!, style: theme.textTheme.bodySmall),
+                  if (notif['categoria']!.isNotEmpty)
+                    Text('Categoría: 🗂 ${notif['categoria']!}', style: theme.textTheme.bodySmall),
+                  if (notif['estado']!.isNotEmpty)
+                    Text('Estado: ${notif['estado']!}', style: theme.textTheme.bodySmall),
                 ],
               ),
               const SizedBox(height: 8),
+              if (notif['descripcion']!.isNotEmpty)
               Text(' ➤ '+notif['descripcion']!, style: theme.textTheme.bodySmall),
             ],
           ),
