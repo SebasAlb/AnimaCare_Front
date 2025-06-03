@@ -263,6 +263,36 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
+  Widget _buildCalendarTab({
+    required BuildContext context,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required ThemeData theme,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: isSelected
+                ? theme.colorScheme.onPrimary
+                : theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
+          ),
+        ),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -283,48 +313,40 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 children: <Widget>[
                   const CustomHeader(),
                   const SizedBox(height: 20),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        GestureDetector(
+                      children: [
+                        _buildCalendarTab(
+                          context: context,
+                          label: 'Calendario',
+                          isSelected: controller.modoCalendario,
                           onTap: () {
                             SoundService.playButton();
                             setState(() => controller.cambiarModo(true));
-                            },
+                          },
+                          theme: theme,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Text(
-                            'Calendario',
+                            '|',
                             style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: controller.modoCalendario
-                                  ? colorScheme.primary
-                                  : colorScheme.onSurface.withOpacity(0.5),
+                              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
+                              fontSize: 16,
                             ),
                           ),
                         ),
-                        Text(
-                          '  |  ',
-                          style: TextStyle(
-                            color: colorScheme.onSurface.withOpacity(0.6),
-                          ),
-                        ),
-                        GestureDetector(
+                        _buildCalendarTab(
+                          context: context,
+                          label: 'Eventos',
+                          isSelected: !controller.modoCalendario,
                           onTap: () {
                             SoundService.playButton();
                             setState(() => controller.cambiarModo(false));
-                            },
-                          child: Text(
-                            'Eventos',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: !controller.modoCalendario
-                                  ? colorScheme.primary
-                                  : colorScheme.onSurface.withOpacity(0.5),
-                            ),
-                          ),
+                          },
+                          theme: theme,
                         ),
                       ],
                     ),
@@ -379,28 +401,44 @@ class _CalendarScreenState extends State<CalendarScreen> {
               },
             ),
           ),
-          if (_cargandoEventos)
-            Container(
-              color: Colors.black.withOpacity(0.4),
-              child: const Center(
+          if (_cargandoEventos || _bloqueoCancelacion)
+            WillPopScope(
+              onWillPop: () async => false,
+              child: Container(
+                color: Colors.black.withOpacity(0.6),
+                alignment: Alignment.center,
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(),
+                    SizedBox(
+                      height: 170,
+                      width: 170,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          const SizedBox(
+                            height: 170,
+                            width: 170,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 6,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          ),
+                          ClipOval(
+                            child: Image.asset(
+                              'assets/images/animacion_calendario.gif',
+                              height: 170,
+                              width: 170,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-          
-          if (_bloqueoCancelacion)
-            WillPopScope(
-              onWillPop: () async => false,
-              child: Container(
-                color: Colors.black.withOpacity(0.5),
-                child: const Center(child: CircularProgressIndicator()),
-              ),
-            ),
-
         ]
       ),
     );

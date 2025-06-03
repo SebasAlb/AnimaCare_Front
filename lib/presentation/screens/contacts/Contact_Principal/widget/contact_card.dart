@@ -88,6 +88,11 @@ class ContactCard extends StatelessWidget {
     }
   }
 
+  String _formatearRol(String rol) {
+    final texto = rol.replaceAll('_', ' ');
+    return texto[0].toUpperCase() + texto.substring(1);
+  }
+
   IconData _estadoIcon(String estado) {
     return estado == 'Disponible'
         ? Icons.check_circle_outline
@@ -141,9 +146,9 @@ class ContactCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Veterinario - ${veterinario.rol}',
+                          'Veterinario - ${_formatearRol(veterinario.rol)}',
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.primary, // Anterior: theme.colorScheme.onPrimary,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                         const SizedBox(height: 2),

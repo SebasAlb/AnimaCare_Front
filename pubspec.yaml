@@ -44,6 +44,7 @@ flutter:
     - assets/sounds/button.mp3
     - assets/sounds/loading.mp3
     - assets/images/animacion_cargando.gif
+    - assets/images/animacion_calendario.gif
 
 flutter_icons:
   android: true
