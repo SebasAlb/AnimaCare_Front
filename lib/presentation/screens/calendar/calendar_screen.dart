@@ -154,11 +154,43 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         style: TextStyle(color: colorScheme.primary),
                       ),
                     ),
+                    
                     TextButton.icon(
                       onPressed: () {
                         SoundService.playButton();
-                        Navigator.pop(context);
-                        cancelarCita(evento); // <-- aquí se llama a la función que hace el update
+                        Navigator.pop(context); // Cierra el modal de detalles
+
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext ctx) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              title: const Text('¿Cancelar cita?'),
+                              content: const Text('¿Estás seguro de que deseas cancelar esta cita? Esta acción no se puede deshacer.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    SoundService.playButton();
+                                    Navigator.pop(ctx); // Cierra el dialogo
+                                  },
+                                  child: const Text('No'),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.redAccent,
+                                  ),
+                                  onPressed: () {
+                                    SoundService.playButton();
+                                    Navigator.pop(ctx); // Cierra el dialogo
+                                    cancelarCita(evento); // Llama la función real
+                                  },
+                                  child: const Text('Sí, cancelar'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                       icon: const Icon(Icons.delete, color: Colors.redAccent),
                       label: const Text(
@@ -166,8 +198,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         style: TextStyle(color: Colors.redAccent),
                       ),
                     ),
+                    
                   ],
-            
                 ],
               ),
             ),
@@ -370,4 +402,5 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 }
+
 
