@@ -91,7 +91,7 @@ class HomeScreen extends StatelessWidget {
                                               key: ValueKey(m.id),
                                               mascota: m,
                                               onEliminada: () async {
-                                                await controller.eliminarMascotaConEventos(m);
+                                                await controller.eliminarMascotaConEventos(context, m);
                                               },
                                             ),
                                           );

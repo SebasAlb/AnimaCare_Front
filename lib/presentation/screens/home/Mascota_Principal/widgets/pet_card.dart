@@ -150,11 +150,16 @@ class _PetCardState extends State<PetCard> {
         content: Text('¿Seguro que deseas eliminar a ${mascotaActual.nombre}? Esta acción es reversible.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () {
+              SoundService.playButton(); // 🔊 Sonido
+              Navigator.pop(context, false);
+            },
             child: const Text('Cancelar'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
             child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
           ),
         ],

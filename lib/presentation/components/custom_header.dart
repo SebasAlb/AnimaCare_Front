@@ -281,7 +281,7 @@ class _CustomHeaderState extends State<CustomHeader> {
                 ],
               ),
               const SizedBox(height: 8),
-              if (notif['descripcion']!.isNotEmpty)
+              if (notif['descripcion']!.isNotEmpty && notif['descripcion'] != ' ')
               Text(' ➤ '+notif['descripcion']!, style: theme.textTheme.bodySmall),
             ],
           ),

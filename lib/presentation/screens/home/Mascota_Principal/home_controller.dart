@@ -7,10 +7,13 @@ import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agrega
 import 'package:animacare_front/services/sound_service.dart';
 import 'package:animacare_front/storage/pet_storage.dart';
 import 'package:animacare_front/services/event_service.dart';
+import 'package:get/get.dart';
+
 
 class HomeController extends ChangeNotifier {
   final List<Mascota> _mascotas = [];
   bool _isLoading = true;
+  final theme = Theme.of(Get.context!);
 
   final PetService _petService = PetService();
 
@@ -70,7 +73,8 @@ class HomeController extends ChangeNotifier {
       notifyListeners();
     }
   }
-  Future<void> eliminarMascotaConEventos(Mascota mascota) async {
+
+  Future<void> eliminarMascotaConEventos(BuildContext context, Mascota mascota) async {
     _isEliminando = true;
     notifyListeners();
 
@@ -83,6 +87,13 @@ class HomeController extends ChangeNotifier {
       await _petService.eliminarMascota(mascota.id);
 
       SoundService.playSuccess();
+      Get.snackbar(
+        'Mascota eliminada',
+        'La mascota ${mascota.nombre} ha sido eliminada correctamente.',
+        backgroundColor: Colors.white30,
+        colorText: Theme.of(context).colorScheme.onBackground,
+        icon: const Icon(Icons.check_circle, color: Colors.green),
+      );
     } catch (e) {
       debugPrint('Error al eliminar mascota: $e');
     }

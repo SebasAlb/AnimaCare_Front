@@ -19,7 +19,7 @@ class LoginController extends GetxController {
     if (correo.isEmpty || password.isEmpty) {
       SoundService.playWarning();
       Get.snackbar(
-        'Error',
+        'Campos requeridos',
         'Por favor, completa todos los campos.',
         backgroundColor: Colors.white30,
         colorText: theme.colorScheme.onBackground,
@@ -46,7 +46,7 @@ class LoginController extends GetxController {
         SoundService.playSuccess();
         UserStorage.saveUser(user);
         Get.snackbar(
-          'Éxito',
+          'Inicio de sesión exitoso',
           'Bienvenido ${user.nombre} ${user.apellido}',
           backgroundColor: Colors.white30,
           colorText: theme.colorScheme.onBackground,

@@ -34,11 +34,17 @@ class EditarPerfilScreen extends StatelessWidget {
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Get.back(result: true),
+                  onPressed: () {
+                    SoundService.playButton();
+                    Get.back(result: true);
+                  },
                   child: const Text('Si'),
                 ),
                 TextButton(
-                  onPressed: () => Get.back(result: false),
+                  onPressed: () {
+                    SoundService.playButton();
+                    Get.back(result: false);
+                  },
                   child: const Text('No'),
                 ),
               ],
@@ -80,11 +86,17 @@ class EditarPerfilScreen extends StatelessWidget {
                           ),
                           actions: [
                             TextButton(
-                              onPressed: () => Get.back(result: true),
+                              onPressed: () {
+                                SoundService.playButton();
+                                Get.back(result: true);
+                              },
                               child: const Text('Sí'),
                             ),
                             TextButton(
-                              onPressed: () => Get.back(result: false),
+                              onPressed: () {
+                                SoundService.playButton();
+                                Get.back(result: false);
+                              },
                               child: const Text('No'),
                             ),
                           ],
@@ -206,7 +218,6 @@ class EditarPerfilScreen extends StatelessWidget {
                                 ),
                               ),
                               onPressed: () {
-                                SoundService.playButton();
                                 controller.onGuardar();
                               },
                               child: const Text(

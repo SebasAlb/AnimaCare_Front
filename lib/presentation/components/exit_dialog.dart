@@ -1,3 +1,4 @@
+import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -11,7 +12,10 @@ class ExitDialog {
           backgroundColor: Colors.white,
           actions: <Widget>[
             TextButton(
-              onPressed: () => Get.back(result: false), // Cancelar
+              onPressed: () {
+                SoundService.playButton();
+                Get.back(result: false);
+              }, // Cancelar
               child: const Text('Cancelar'),
             ),
             const TextButton(

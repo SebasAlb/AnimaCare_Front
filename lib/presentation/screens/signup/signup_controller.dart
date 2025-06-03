@@ -139,7 +139,7 @@ class SignupController extends GetxController {
         UserStorage.saveUser(newUser);
         Get.snackbar(
           'Registro exitoso',
-          'Bienvenido ${newUser.nombre} ${newUser.apellido}!',
+          'Bienvenido ${newUser.nombre} ${newUser.apellido}',
           backgroundColor: Colors.white30,
           colorText: theme.colorScheme.onBackground,
           icon: const Icon(Icons.check_circle, color: Colors.green),
