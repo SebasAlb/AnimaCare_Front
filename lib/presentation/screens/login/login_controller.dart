@@ -63,8 +63,8 @@ class LoginController extends GetxController {
     } catch (e) {
       SoundService.playWarning();
       Get.snackbar(
-        'Error',
-        'Ocurrió un error inesperado.',
+        'Error al iniciar sesión',
+        e.toString().replaceFirst('Exception: ', ''),
         backgroundColor: Colors.white30,
         colorText: theme.colorScheme.onBackground,
         icon: const Icon(Icons.warning, color: Colors.redAccent),
