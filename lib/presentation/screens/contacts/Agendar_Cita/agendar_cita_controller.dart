@@ -8,6 +8,8 @@ import 'package:animacare_front/models/cita.dart';
 import 'package:animacare_front/services/appointment_service.dart';
 import 'package:animacare_front/services/sound_service.dart';
 import 'package:animacare_front/services/veterinarian_service.dart';
+import 'package:animacare_front/presentation/screens/calendar/calendar_controller.dart';
+
 
 
 class AgendarCitaController {
@@ -273,6 +275,7 @@ class AgendarCitaController {
         colorText: Theme.of(context).colorScheme.onBackground,
         icon: const Icon(Icons.check_circle, color: Colors.green),
       );
+      
       Navigator.pop(context); // opcional: volver a la pantalla anterior
     } catch (e) {
       SoundService.playWarning();
@@ -285,6 +288,54 @@ class AgendarCitaController {
       );
     }
   }
+
+  Future<void> actualizarCitaExistente(BuildContext context, String idEvento) async {
+    if (!camposObligatoriosLlenos) {
+      SoundService.playWarning();
+      Get.snackbar(
+        'Campos requeridos',
+        'Completa todos los campos obligatorios.',
+        backgroundColor: Colors.white30,
+        colorText: Theme.of(context).colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
+      return;
+    }
+
+    final cita = Cita(
+      id: int.parse(idEvento),
+      razon: razonSeleccionada!,
+      estado: 'Pendiente',
+      fecha: fechaSeleccionada!,
+      hora: _parseHoraSeleccionada(),
+      descripcion: notasController.text.trim(),
+      mascotaId: mascotaSeleccionada!.id,
+      veterinarioId: veterinarioSeleccionado!.id,
+    );
+
+    try {
+      await AppointmentService().actualizarCita(cita.id, cita);
+      SoundService.playSuccess();
+      Get.snackbar(
+        'Cita actualizada',
+        'La cita ha sido reagendada correctamente.',
+        backgroundColor: Colors.white30,
+        colorText: Theme.of(context).colorScheme.onBackground,
+        icon: const Icon(Icons.check_circle, color: Colors.green),
+      );
+      Navigator.pushReplacementNamed(context, '/calendar');
+    } catch (e) {
+      SoundService.playWarning();
+      Get.snackbar(
+        'Error',
+        e.toString().replaceFirst('Exception: ', ''),
+        backgroundColor: Colors.white30,
+        colorText: Theme.of(context).colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
+    }
+  }
+
 
   DateTime _parseHoraSeleccionada() {
     final partes = horaSeleccionada!.split(' - ')[0].split(':');
@@ -369,3 +420,4 @@ class AgendarCitaController {
     return bloques.where((b) => !horasOcupadasSimuladas.contains(b)).toList();
   }
 }
+
