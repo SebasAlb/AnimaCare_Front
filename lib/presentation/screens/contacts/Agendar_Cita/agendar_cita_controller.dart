@@ -8,7 +8,6 @@ import 'package:animacare_front/models/cita.dart';
 import 'package:animacare_front/services/appointment_service.dart';
 import 'package:animacare_front/services/sound_service.dart';
 import 'package:animacare_front/services/veterinarian_service.dart';
-import 'package:animacare_front/presentation/screens/calendar/calendar_controller.dart';
 
 
 
@@ -308,7 +307,7 @@ class AgendarCitaController {
       estado: 'Pendiente',
       fecha: fechaSeleccionada!,
       hora: _parseHoraSeleccionada(),
-      descripcion: notasController.text.trim(),
+      descripcion: notasController.text.trim().isEmpty ? " " : notasController.text.trim(), //descripcion: notasController.text.trim(),
       mascotaId: mascotaSeleccionada!.id,
       veterinarioId: veterinarioSeleccionado!.id,
     );
@@ -420,4 +419,5 @@ class AgendarCitaController {
     return bloques.where((b) => !horasOcupadasSimuladas.contains(b)).toList();
   }
 }
+
 
