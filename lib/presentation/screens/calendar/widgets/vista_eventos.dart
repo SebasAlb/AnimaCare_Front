@@ -198,8 +198,21 @@ class _VistaEventosState extends State<VistaEventos> {
                   itemBuilder: (context, index) {
                     final String fechaStr =
                         eventosAgrupados.keys.elementAt(index);
-                    final List<EventoCalendar> eventosDelDia =
-                        eventosAgrupados[fechaStr]!;
+                    final List<EventoCalendar> eventosDelDia = [...eventosAgrupados[fechaStr]!];
+                    eventosDelDia.sort((a, b) {
+                      final horaA = TimeOfDay(
+                        hour: int.parse(a.hora.split(':')[0]),
+                        minute: int.parse(a.hora.split(':')[1]),
+                      );
+                      final horaB = TimeOfDay(
+                        hour: int.parse(b.hora.split(':')[0]),
+                        minute: int.parse(b.hora.split(':')[1]),
+                      );
+                      return horaA.hour != horaB.hour
+                          ? horaA.hour.compareTo(horaB.hour)
+                          : horaA.minute.compareTo(horaB.minute);
+                    });
+
 
                     final DateTime fecha = DateTime.parse(fechaStr);
 
