@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class EventoCard extends StatelessWidget {
   const EventoCard({
     super.key,
+    required this.tipo,
     required this.hora,
     required this.titulo,
     required this.mascota,
   });
 
+  final String tipo;
   final String hora;
   final String titulo;
   final String mascota;
@@ -18,7 +20,7 @@ class EventoCard extends StatelessWidget {
     final ColorScheme colorScheme = theme.colorScheme;
 
     return Card(
-      color: colorScheme.primaryContainer, // Fondo adaptado a tema
+      color: tipo == 'evento' ? colorScheme.tertiaryContainer : colorScheme.primaryContainer, // Fondo adaptado a tema
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: ListTile(

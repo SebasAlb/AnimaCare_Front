@@ -68,16 +68,19 @@ class _CalendarioBottomSheetState extends State<CalendarioBottomSheet> {
               final String? motivoExcepcion = widget.obtenerMotivoExcepcion?.call(soloFecha);
 
               if (isPast) {
+                SoundService.playWarning();
                 setState(() => mensajeInvalido = 'No se puede seleccionar una fecha pasada.');
                 return;
               }
 
               if (motivoExcepcion != null) {
+                SoundService.playWarning();
                 setState(() => mensajeInvalido = 'No disponible: $motivoExcepcion');
                 return;
               }
 
               if (isNoLaboral) {
+                SoundService.playWarning();
                 setState(() => mensajeInvalido = 'Ese día no es laboral para este veterinario.');
                 return;
               }

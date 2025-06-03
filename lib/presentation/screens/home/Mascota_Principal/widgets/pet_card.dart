@@ -38,7 +38,6 @@ class _PetCardState extends State<PetCard> {
           AppRoutes.detalleMascota,
           arguments: mascotaActual,
         );
-        SoundService.playButton(); // Sonido al regresar a Home
 
         if (resultado is Mascota) {
           setState(() {

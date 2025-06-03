@@ -233,6 +233,7 @@ class _VistaEventosState extends State<VistaEventos> {
                               widget.onTapEvento(evento);
                               },
                             child: EventoCard(
+                              tipo: evento.tipo,
                               hora: evento.hora,
                               titulo: evento.titulo,
                               mascota: evento.mascota,

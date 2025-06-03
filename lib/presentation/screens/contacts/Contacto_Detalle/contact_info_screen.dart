@@ -37,7 +37,7 @@ class ContactInfoScreen extends StatelessWidget {
       );
       return e.veterinarioId == veterinario.id &&
             fin.isAfter(DateTime.now()) &&
-            !e.motivo.startsWith('Cita agendada:'); //e.motivo != 'Cita'; 
+            !e.motivo.startsWith('Cita agendada:') && !e.motivo.startsWith('Cita reagendada:'); //e.motivo != 'Cita';
     }).toList();
 
 
@@ -109,6 +109,28 @@ class ContactInfoScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 30),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Horario de atención',
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: HorarioTable(
+                        horarios: _generarMapaHorarios(veterinario),
+                      ),
+                    ),
+                    const SizedBox(height: 25),
                     if (excepcionesRelevantes.isNotEmpty) ...[
                       Align(
                         alignment: Alignment.centerLeft,
@@ -249,27 +271,6 @@ class ContactInfoScreen extends StatelessWidget {
                       }),
                       const SizedBox(height: 25),
                     ],
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Horario de atención',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: HorarioTable(
-                        horarios: _generarMapaHorarios(veterinario),
-                      ),
-                    ),
                     const SizedBox(height: 90),
                   ],
                 ),

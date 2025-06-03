@@ -16,6 +16,7 @@ import 'package:get/get.dart';
 import 'package:animacare_front/storage/pet_storage.dart';
 
 import 'package:animacare_front/services/event_service.dart';
+import 'package:flutter/services.dart'; //
 
 class EditarMascotaModal {
   static void show(
@@ -67,6 +68,15 @@ class EditarMascotaModal {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.close, color: Colors.grey),
+                                      onPressed: () => Navigator.of(modalContext).pop(),
+                                      tooltip: 'Cerrar',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
                                   Text(
                                     'Editar información',
                                     style: theme.textTheme.titleMedium?.copyWith(
@@ -93,7 +103,7 @@ class EditarMascotaModal {
                                           theme: theme,
                                           icono: Icons.category,
                                           valorActual: controllers['Especie']!.text,
-                                          opciones: ['Perro', 'Gato', 'Otro'],
+                                          opciones: ['Perro', 'Gato', 'Conejo', 'Hámsteres', 'Cuy', 'Huron', 'Canario', 'Periquito', 'Loro', 'Tortuga', 'Serpiente'],
                                           onChanged: (val) => controllers['Especie']!.text = val ?? '',
                                         ),
                                       ),
@@ -114,17 +124,20 @@ class EditarMascotaModal {
                                       final DateTime? seleccionada = await showDatePicker(
                                         context: context,
                                         initialDate: DateTime.now(),
-                                        firstDate: DateTime(2010),
+                                        firstDate: DateTime(2000),
                                         lastDate: DateTime.now(), // ✅ evita fechas futuras
-                                        builder: (context, child) => Theme(
-                                          data: ThemeData.light().copyWith(
-                                            colorScheme: ColorScheme.light(
-                                              primary: const Color(0xFF14746F), // o usa tu color exacto `primario` si lo tienes declarado
-                                              onSurface: const Color(0xFF14746F),
+                                        builder: (context, child) {
+                                          final theme = Theme.of(context); // ⬅️ obtiene el tema activo (light o dark)
+                                          return Theme(
+                                            data: theme.copyWith(
+                                              colorScheme: theme.colorScheme.copyWith(
+                                                primary: theme.colorScheme.primary,
+                                                onSurface: theme.colorScheme.onSurface,
+                                              ),
                                             ),
-                                          ),
-                                          child: child!,
-                                        ),
+                                            child: child!,
+                                          );
+                                        },
                                       );
                                       if (seleccionada != null) {
                                         controllers['Fecha de nacimiento']!.text =
@@ -132,7 +145,7 @@ class EditarMascotaModal {
                                       }
                                     },
                                     child: AbsorbPointer(
-                                      child: _campoTexto('Cumpleaños', controllers['Fecha de nacimiento']!, theme),
+                                      child: _campoTexto('Fecha de nacimiento', controllers['Fecha de nacimiento']!, theme),
                                     ),
                                   ),
                                   Row(
@@ -338,157 +351,174 @@ class EditarMascotaModal {
   }
 
   static Widget _campoTexto(
-  String label,
-  TextEditingController controller,
-  ThemeData theme, {
-  TextInputType type = TextInputType.text,
-}) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: theme.textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.primary,
+      String label,
+      TextEditingController controller,
+      ThemeData theme, {
+        TextInputType type = TextInputType.text,
+      }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
+            ),
           ),
-        ),
-        const SizedBox(height: 2),
-        ValueBuilder<String?>( // manejo visual de errores
-          initialValue: null,
-          builder: (errorText, updater) {
-            final showError = errorText != null;
+          const SizedBox(height: 2),
+          ValueBuilder<String?>( // manejo visual de errores
+            initialValue: null,
+            builder: (errorText, updater) {
+              final showError = errorText != null;
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFormField(
-                  controller: controller,
-                  keyboardType: type,
-                  style: theme.textTheme.bodyMedium,
-                  decoration: InputDecoration(
-                    hintText: 'Ingrese $label',
-                    hintStyle: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
-                    prefixIcon: Icon(
-                      label == 'Peso (kg)'
-                          ? Icons.monitor_weight
-                          : label == 'Altura (cm)'
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    controller: controller,
+                    keyboardType: type,
+                    style: theme.textTheme.bodyMedium,
+                    inputFormatters: (label == 'Nombre' || label == 'Raza')
+                        ? [LengthLimitingTextInputFormatter(21)]
+                        : (label.contains('Peso') || label.contains('Altura'))
+                        ? [LengthLimitingTextInputFormatter(7)]
+                        : [],
+                    decoration: InputDecoration(
+                      hintText: 'Ingrese $label',
+                      hintStyle: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                      prefixIcon: Icon(
+                        label == 'Peso (kg)'
+                            ? Icons.monitor_weight
+                            : label == 'Altura (cm)'
                             ? Icons.height
                             : label == 'Cumpleaños'
-                              ? Icons.cake
-                                : Icons.pets,
-                      color: theme.colorScheme.primary,
-                    ),
-                    filled: true,
-                    fillColor: theme.cardColor,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: showError
-                            ? Colors.red
-                            : theme.colorScheme.primary.withOpacity(0.5),
-                        width: 1.5,
+                            ? Icons.cake
+                            : Icons.pets,
+                        color: theme.colorScheme.primary,
                       ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: showError
-                            ? Colors.red
-                            : theme.colorScheme.primary.withOpacity(0.5),
-                        width: 1.5,
+                      filled: true,
+                      fillColor: theme.cardColor,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: showError
+                              ? Colors.red
+                              : theme.colorScheme.primary.withOpacity(0.5),
+                          width: 1.5,
+                        ),
                       ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: showError ? Colors.red : theme.colorScheme.primary,
-                        width: 1.5,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: showError
+                              ? Colors.red
+                              : theme.colorScheme.primary.withOpacity(0.5),
+                          width: 1.5,
+                        ),
                       ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: showError ? Colors.red : theme.colorScheme.primary,
+                          width: 1.5,
+                        ),
+                      ),
+                      errorText: showError ? '' : null,
+                      errorStyle: const TextStyle(fontSize: 0, height: 0),
                     ),
-                    errorText: showError ? '' : null,
-                    errorStyle: const TextStyle(fontSize: 0, height: 0),
-                  ),
-                  validator: (value) {
-                    final val = value?.trim() ?? '';
+                    validator: (value) {
+                      final val = value?.trim() ?? '';
 
-                    // Nombre: obligatorio
-                    if (label == 'Nombre') {
-                      if (val.isEmpty) {
-                        updater('Campo requerido');
+                      if (label == 'Nombre') {
+                        if (val.isEmpty) {
+                          updater('Campo requerido');
+                          return '';
+                        }
+                      }
+
+                      if ((label == 'Nombre' || label == 'Raza') && val.length > 20) {
+                        updater('Máximo 20 caracteres');
                         return '';
                       }
-                    }
 
-                    // Raza: solo letras si hay algo escrito
-                    if (label == 'Raza' && val.isNotEmpty) {
-                      if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$').hasMatch(val)) {
-                        updater('Solo se permiten letras');
-                        return '';
+                      if (label == 'Raza' && val.isNotEmpty) {
+                        if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$').hasMatch(val)) {
+                          updater('Solo se permiten letras');
+                          return '';
+                        }
                       }
-                    }
 
-                    // Peso / Altura: número válido si hay algo
-                    if ((label.contains('Peso') || label.contains('Altura')) && val.isNotEmpty) {
-                      if (!RegExp(r'^\d+(\.\d+)?$').hasMatch(val)) {
-                        updater('Ingrese un número válido (ej. 12.5)');
-                        return '';
-                      } else if (double.tryParse(val)! <= 0) {
-                        updater('Debe ser un número mayor a 0');
-                        return '';
+                      if ((label.contains('Peso') || label.contains('Altura')) && val.isNotEmpty) {
+                        if (!RegExp(r'^\d{1,3}(\.\d{1,3})?$').hasMatch(val)) {
+                          updater('Formato: 999.999');
+                          return '';
+                        } else if (double.tryParse(val)! <= 0) {
+                          updater('Debe ser un número mayor a 0');
+                          return '';
+                        }
                       }
-                    }
 
-                    updater(null);
-                    return null;
-                  },
-                  onChanged: (value) {
-                    final val = value.trim();
-
-                    if (label == 'Raza') {
-                      if (val.isNotEmpty && !RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$').hasMatch(val)) {
-                        updater('Solo se permiten letras');
-                      } else {
-                        updater(null);
-                      }
-                    } else if ((label.contains('Peso') || label.contains('Altura')) && val.isNotEmpty) {
-                      if (!RegExp(r'^\d+(\.\d+)?$').hasMatch(val)) {
-                        updater('Ingrese un número válido (ej. 12.5)');
-                      } else if (double.tryParse(val)! <= 0) {
-                        updater('Debe ser un número mayor a 0');
-                      } else {
-                        updater(null);
-                      }
-                    } else if (label == 'Nombre') {
-                      updater(val.isEmpty ? 'Campo requerido' : null);
-                    } else {
                       updater(null);
-                    }
-                  },
-                ),
-                const SizedBox(height: 6),
-                SizedBox(
-                  height: 18,
-                  child: showError
-                      ? Text(
-                          errorText!,
-                          style: const TextStyle(color: Colors.red, fontSize: 12),
-                        )
-                      : const SizedBox.shrink(),
-                ),
-              ],
-            );
-          },
-        ),
-      ],
-    ),
-  );
-}
+                      return null;
+                    },
+                    onChanged: (value) {
+                      String val = value.trim();
 
+                      if ((label == 'Nombre' || label == 'Raza') && val.length > 21) {
+                        controller.text = val.substring(0, 21);
+                        controller.selection = TextSelection.fromPosition(
+                          TextPosition(offset: controller.text.length),
+                        );
+                        val = controller.text;
+                      }
 
+                      if ((label == 'Nombre' || label == 'Raza') && val.length > 20) {
+                        updater('Máximo 20 caracteres');
+                      } else if (label == 'Nombre' && val.isEmpty) {
+                        updater('Campo requerido');
+                      } else if (label == 'Raza') {
+                        if (val.isNotEmpty &&
+                            !RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$').hasMatch(val)) {
+                          updater('Solo se permiten letras');
+                        } else {
+                          updater(null);
+                        }
+                      } else if ((label.contains('Peso') || label.contains('Altura')) &&
+                          val.isNotEmpty) {
+                        if (!RegExp(r'^\d{1,3}(\.\d{1,3})?$').hasMatch(val)) {
+                          updater('Formato: 999.999');
+                        } else if (double.tryParse(val)! <= 0) {
+                          updater('Debe ser un número mayor a 0');
+                        } else {
+                          updater(null);
+                        }
+                      } else {
+                        updater(null);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 6),
+                  SizedBox(
+                    height: 18,
+                    child: showError
+                        ? Text(
+                      errorText!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   static InputDecoration _decoracionCampo(ThemeData theme,
       {required String label}) {
@@ -583,6 +613,7 @@ class EditarMascotaModal {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 DropdownButtonFormField<String>(
+                  isExpanded: true,
                   value: valorActual.isNotEmpty ? valorActual : null,
                   items: opciones.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
                   onChanged: onChanged,

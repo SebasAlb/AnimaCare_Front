@@ -107,6 +107,7 @@ class VistaCalendario extends StatelessWidget {
                   onTapEvento(evento);
                   },
                 child: EventoCard(
+                  tipo: evento.tipo,
                   hora: evento.hora,
                   titulo: evento.titulo,
                   mascota: evento.mascota,

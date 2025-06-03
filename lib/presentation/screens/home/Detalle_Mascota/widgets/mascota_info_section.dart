@@ -85,25 +85,9 @@ class MascotaInfoSection extends StatelessWidget {
                       color: theme.colorScheme.primary, // Color del icono
                     ),
                   ),
-                  Positioned(
-                    bottom: 4,
-                    right: 4,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      child: const Icon(Icons.photo_camera,
-                          size: 16, color: Colors.white,),
-                    ),
-                  ),
                 ],
               ),
               const SizedBox(height: 20),
-
-              
-              const SizedBox(height: 15),
             ],
           ),
         ),

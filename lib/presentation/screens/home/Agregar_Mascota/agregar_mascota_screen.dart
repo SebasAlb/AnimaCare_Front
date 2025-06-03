@@ -4,6 +4,7 @@ import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/presentation/screens/home/Agregar_Mascota/agregar_mascota_controller.dart';
 import 'package:get/get.dart';
 import 'package:animacare_front/services/sound_service.dart';
+import 'package:flutter/services.dart';
 
 class AgregarMascotaScreen extends StatefulWidget {
   const AgregarMascotaScreen({super.key, this.isSecondaryScreen = false});
@@ -97,7 +98,7 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                                     Icons.category,
                                     theme,
                                     controller.especie,
-                                    ['Perro', 'Gato', 'Otro'],
+                                    ['Perro', 'Gato', 'Conejo', 'Hámsteres', 'Cuy', 'Huron', 'Canario', 'Periquito', 'Loro', 'Tortuga', 'Serpiente'],
                                     (val) => setState(() => controller.especie = val!),
                                   ),
                                 ),
@@ -220,13 +221,13 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
   }
 
   Widget _buildTextField(
-    String label,
-    String hint,
-    IconData icon,
-    TextEditingController controller,
-    ThemeData theme, {
-    TextInputType type = TextInputType.text,
-  }) {
+      String label,
+      String hint,
+      IconData icon,
+      TextEditingController controller,
+      ThemeData theme, {
+        TextInputType type = TextInputType.text,
+      }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 5),
       child: Column(
@@ -251,6 +252,11 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                     controller: controller,
                     keyboardType: type,
                     style: theme.textTheme.bodyMedium,
+                    inputFormatters: (label == 'Nombre' || label == 'Raza')
+                        ? [LengthLimitingTextInputFormatter(21)]
+                        : (label.contains('Peso') || label.contains('Altura'))
+                        ? [LengthLimitingTextInputFormatter(7)]
+                        : [],
                     decoration: InputDecoration(
                       hintText: hint,
                       hintStyle: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
@@ -277,45 +283,75 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                           width: 1.5,
                         ),
                       ),
-                      // 🔧 Estos 2 eliminan el espacio interno del error de Flutter
                       errorText: showError ? '' : null,
                       errorStyle: const TextStyle(fontSize: 0, height: 0),
                     ),
                     validator: (value) {
                       final val = value?.trim() ?? '';
 
-                      // Validación específica para peso y altura
+                      if (label == 'Nombre') {
+                        if (val.isEmpty) {
+                          updater('Campo requerido');
+                          return '';
+                        }
+                      }
+
+                      if ((label == 'Nombre' || label == 'Raza') && val.length > 20) {
+                        updater('Máximo 20 caracteres');
+                        return '';
+                      }
+
+                      if (label == 'Raza' && val.isNotEmpty) {
+                        if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$').hasMatch(val)) {
+                          updater('Solo se permiten letras');
+                          return '';
+                        }
+                      }
+
                       if ((label.contains('Peso') || label.contains('Altura')) && val.isNotEmpty) {
-                        if (!RegExp(r'^\d+(\.\d+)?$').hasMatch(val)) {
-                          updater('Ingrese un número válido (ej. 12.5)');
+                        if (!RegExp(r'^\d{1,3}(\.\d{1,3})?$').hasMatch(val)) {
+                          updater('Formato: 999.999');
                           return '';
                         } else if (double.tryParse(val)! <= 0) {
                           updater('Debe ser un número mayor a 0');
                           return '';
                         }
-                      }
-                      // Resto de campos
-                      if (label == 'Nombre' && val.isEmpty) {
-                        updater('Campo requerido');
-                        return '';
                       }
 
                       updater(null);
                       return null;
                     },
                     onChanged: (value) {
-                      final val = value.trim();
+                      String val = value.trim();
 
-                      if ((label.contains('Peso') || label.contains('Altura')) && val.isNotEmpty) {
-                        if (!RegExp(r'^\d+(\.\d+)?$').hasMatch(val)) {
-                          updater('Ingrese un número válido (ej. 12.5)');
+                      if ((label == 'Nombre' || label == 'Raza') && val.length > 21) {
+                        controller.text = val.substring(0, 21);
+                        controller.selection = TextSelection.fromPosition(
+                          TextPosition(offset: controller.text.length),
+                        );
+                        val = controller.text;
+                      }
+
+                      if ((label == 'Nombre' || label == 'Raza') && val.length > 20) {
+                        updater('Máximo 20 caracteres');
+                      } else if (label == 'Nombre' && val.isEmpty) {
+                        updater('Campo requerido');
+                      } else if (label == 'Raza') {
+                        if (val.isNotEmpty &&
+                            !RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$').hasMatch(val)) {
+                          updater('Solo se permiten letras');
+                        } else {
+                          updater(null);
+                        }
+                      } else if ((label.contains('Peso') || label.contains('Altura')) &&
+                          val.isNotEmpty) {
+                        if (!RegExp(r'^\d{1,3}(\.\d{1,3})?$').hasMatch(val)) {
+                          updater('Formato: 999.999');
                         } else if (double.tryParse(val)! <= 0) {
                           updater('Debe ser un número mayor a 0');
                         } else {
                           updater(null);
                         }
-                      } else if (label == 'Nombre') {
-                        updater(val.isEmpty ? 'Campo requerido' : null);
                       } else {
                         updater(null);
                       }
@@ -326,9 +362,9 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                     height: 18,
                     child: showError
                         ? Text(
-                            errorText!,
-                            style: const TextStyle(color: Colors.red, fontSize: 12),
-                          )
+                      errorText!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    )
                         : const SizedBox.shrink(),
                   ),
                 ],
@@ -370,6 +406,7 @@ class _AgregarMascotaScreenState extends State<AgregarMascotaScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   DropdownButtonFormField<String>(
+                    isExpanded: true,
                     value: selectedValue.isNotEmpty ? selectedValue : null,
                     items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
                     onChanged: onChanged,

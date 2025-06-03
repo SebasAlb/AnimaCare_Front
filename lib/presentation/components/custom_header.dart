@@ -1,3 +1,4 @@
+import 'package:animacare_front/routes/app_routes.dart';
 import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/storage/user_storage.dart';
@@ -434,11 +435,19 @@ class _CustomHeaderState extends State<CustomHeader> {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.white24,
-                backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
-                child: avatarUrl.isEmpty ? const Icon(Icons.person, color: Colors.white, size: 24) : null,
+              GestureDetector(
+                onTap: () {
+                  SoundService.playButton();
+                  Get.toNamed(AppRoutes.settingsP);
+                },
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Colors.white24,
+                  backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
+                  child: avatarUrl.isEmpty
+                      ? const Icon(Icons.person, color: Colors.white, size: 24)
+                      : null,
+                ),
               ),
               const SizedBox(width: 10),
               ConstrainedBox(

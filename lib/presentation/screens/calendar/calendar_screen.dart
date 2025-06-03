@@ -133,7 +133,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   if (evento.tipo == 'evento')
                     Text('🏷 Categoría: ${evento.categoria ?? 'Evento general'}'),
                   if (evento.estado != null)
-                    Text('📋 Estado: ${evento.estado}'),
+                    Text(
+                      '📋 Estado: ${evento.estado}',
+                      style: evento.estado == 'Cancelada'
+                          ? theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent,
+                      ) : null,
+                    ),
                   if (evento.descripcion != null && evento.descripcion!.trim().isNotEmpty)
                     Text('📝 Nota: ${evento.descripcion}'),
                   const SizedBox(height: 24),

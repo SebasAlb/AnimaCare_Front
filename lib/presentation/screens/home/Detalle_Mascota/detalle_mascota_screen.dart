@@ -12,6 +12,7 @@ import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/widget
 
 import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/widgets/mascota_eventos_section.dart';
 import 'package:animacare_front/services/sound_service.dart';
+import 'package:get/get.dart';
 
 class DetalleMascotaScreen extends StatelessWidget {
   const DetalleMascotaScreen({super.key, required this.mascota});
@@ -46,14 +47,16 @@ class _DetalleContenido extends StatelessWidget {
       return GestureDetector(
         onTap: isDisabled
             ? () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(' 🔄 Cargando $label...'),
-              duration: const Duration(seconds: 1),
-            ),
+          SoundService.playWarning();
+          Get.snackbar(
+            'Cargando información',
+            'Estamos cargando la información, por favor espera.',
+            backgroundColor: Colors.white30,
+            colorText: Theme.of(context).colorScheme.onBackground,
+            icon: const Icon(Icons.warning, color: Colors.redAccent),
           );
-        }
-            : () {
+        } : () {
+          SoundService.playButton();
           context.read<DetalleMascotaController>().vistaActual = vista;
         },
         child: Opacity(

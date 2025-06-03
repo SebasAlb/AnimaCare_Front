@@ -41,29 +41,35 @@ class AgregarMascotaController {
   }
 
   Future<void> seleccionarFecha(
-    BuildContext context,
-    Function(String) onSelected,
-  ) async {
+      BuildContext context,
+      Function(String) onSelected,
+      ) async {
+    final theme = Theme.of(context);
+
     final DateTime? seleccionada = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2010),
-      lastDate: DateTime.now(), // ✅ evita fechas futuras
-      builder: (context, child) => Theme(
-        data: ThemeData.light().copyWith(
-          colorScheme: ColorScheme.light(
-            primary: primario,
-            onSurface: primario,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        final theme = Theme.of(context); // ⬅️ obtiene el tema activo (light o dark)
+        return Theme(
+          data: theme.copyWith(
+            colorScheme: theme.colorScheme.copyWith(
+              primary: theme.colorScheme.primary,
+              onSurface: theme.colorScheme.onSurface,
+            ),
           ),
-        ),
-        child: child!,
-      ),
+          child: child!,
+        );
+      },
     );
+
     if (seleccionada != null) {
       onSelected(
         '${seleccionada.day.toString().padLeft(2, '0')}/'
-        '${seleccionada.month.toString().padLeft(2, '0')}/'
-        '${seleccionada.year}',
+            '${seleccionada.month.toString().padLeft(2, '0')}/'
+            '${seleccionada.year}',
       );
     }
   }
