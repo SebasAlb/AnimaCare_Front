@@ -14,7 +14,7 @@ class HistorialMedico {
   factory HistorialMedico.fromJson(Map<String, dynamic> json) => HistorialMedico(
     id: json['id'],
     titulo: json['titulo'],
-    categoriaId: json['categoria_id'].toString(),
+    categoriaId: json['categoria']?['id']?.toString() ?? '0', // ← Ajustado aquí
     fecha: DateTime.parse(json['fecha']),
   );
 

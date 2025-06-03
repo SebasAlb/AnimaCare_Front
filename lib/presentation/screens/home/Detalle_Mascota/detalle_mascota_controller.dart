@@ -69,9 +69,12 @@ class DetalleMascotaController extends ChangeNotifier {
       historialMedico.clear();
       for (var item in detalles.historial) {
         final categoria = _mapearCategoriaId(item.categoriaId);
+
         historialMedico.putIfAbsent(categoria, () => []);
         historialMedico[categoria]!.add({
-          'descripcion': item.titulo,
+          'descripcion': item.titulo
+              .replaceAll('_', ' ')
+              .replaceFirstMapped(RegExp(r'^\w'), (m) => m.group(0)!.toUpperCase()),
           'fecha': DateFormat('dd/MM/yyyy').format(item.fecha),
         });
       }
@@ -133,6 +136,8 @@ class DetalleMascotaController extends ChangeNotifier {
         return 'Controles Generales';
       case '4':
         return 'Cirugías';
+      case '5':
+        return 'Cumpleaños';
       default:
         return 'Otros';
     }
