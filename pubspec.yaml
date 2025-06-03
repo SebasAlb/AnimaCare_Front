@@ -43,6 +43,7 @@ flutter:
     - assets/sounds/warning.mp3
     - assets/sounds/button.mp3
     - assets/sounds/loading.mp3
+    - assets/images/animacion_cargando.gif
 
 flutter_icons:
   android: true

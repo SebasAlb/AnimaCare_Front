@@ -10,6 +10,7 @@ class LoginController extends GetxController {
   final TextEditingController passwordController = TextEditingController();
   final AuthService _authService = AuthService();
   var obscurePassword = true.obs;
+  final RxBool isLoading = false.obs;
   final theme = Theme.of(Get.context!);
 
   void login() async {
@@ -39,6 +40,7 @@ class LoginController extends GetxController {
       );
       return;
     }
+    isLoading.value = true;
 
     try {
       final Dueno? user = await _authService.login(correo, password);
@@ -53,6 +55,7 @@ class LoginController extends GetxController {
           icon: const Icon(Icons.check_circle, color: Colors.green),
         );
         resetFields();
+        await Future.delayed(const Duration(milliseconds: 500));
         Get.offAllNamed('/homeowner');
       }
     } catch (e) {
@@ -64,6 +67,8 @@ class LoginController extends GetxController {
         colorText: theme.colorScheme.onBackground,
         icon: const Icon(Icons.warning, color: Colors.redAccent),
       );
+    } finally {
+      isLoading.value = false;
     }
   }
 

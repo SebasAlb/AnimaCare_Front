@@ -16,6 +16,7 @@ class SignupController extends GetxController {
   var obscurePassword = true.obs;
   var obscureConfirmPassword = true.obs;
   final TextEditingController cedulaController = TextEditingController();
+  final RxBool isLoading = false.obs;
 
   void signup() async {
     final String firstName = firstNameController.text.trim();
@@ -124,7 +125,7 @@ class SignupController extends GetxController {
       );
       return;
     }
-    
+    isLoading.value = true;
     try {
       final Dueno? newUser = await _authService.register(
         nombre: firstName,
@@ -145,6 +146,7 @@ class SignupController extends GetxController {
           icon: const Icon(Icons.check_circle, color: Colors.green),
         );
         resetFields();
+        await Future.delayed(const Duration(milliseconds: 500));
         Get.offAllNamed('/homeowner');
       }
     } catch (e) {
@@ -156,6 +158,8 @@ class SignupController extends GetxController {
         colorText: theme.colorScheme.onBackground,
         icon: const Icon(Icons.warning, color: Colors.redAccent),
       );
+    } finally {
+      isLoading.value = false;
     }
   }
 
