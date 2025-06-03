@@ -55,7 +55,9 @@ class VistaCalendario extends StatelessWidget {
               titleTextStyle: theme.textTheme.titleMedium!.copyWith(
                 color: colorScheme.primary,
                 fontWeight: FontWeight.bold,
-              ),
+                fontSize: 16, // 👈 reduce el tamaño de la fuente
+                ),
+                headerPadding: const EdgeInsets.symmetric(vertical: 0),
             ),
             calendarStyle: CalendarStyle(
               todayDecoration: BoxDecoration(
