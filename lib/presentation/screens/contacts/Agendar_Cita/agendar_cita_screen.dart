@@ -298,17 +298,13 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
               ValueListenableBuilder<TextEditingValue>(
                 valueListenable: controller.notasController,
                 builder: (context, value, _) {
-                  final words = value.text.trim().isEmpty
-                      ? <String>[]
-                      : value.text.trim().split(RegExp(r'\s+'));
-
-                  final wordCount = words.length;
-                  final bool enLimite = wordCount == 20;
-                  final bool excedido = wordCount > 20;
+                  final charCount = value.text.characters.length;
+                  final bool enLimite = charCount == 100;
+                  final bool excedido = charCount > 100;
 
                   // ✅ Aplicar el límite solo si lo supera
                   if (excedido) {
-                    final limitado = words.sublist(0, 20).join(' ');
+                    final limitado = value.text.characters.take(100).toString();
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       controller.notasController.text = limitado;
                       controller.notasController.selection =
@@ -343,7 +339,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                           bottom: 8,
                           right: 12,
                           child: Text(
-                            '$wordCount / 20 palabras',
+                            '$charCount / 100 caracteres',
                             style: TextStyle(
                               fontSize: 12,
                               color: enLimite ? Colors.redAccent : theme.colorScheme.primary,
@@ -357,7 +353,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                             bottom: -18,
                             left: 4,
                             child: Text(
-                              'Límite de 20 palabras alcanzado.',
+                              'Límite de 100 caracteres alcanzado.',
                               style: const TextStyle(
                                 color: Colors.redAccent,
                                 fontSize: 12,
