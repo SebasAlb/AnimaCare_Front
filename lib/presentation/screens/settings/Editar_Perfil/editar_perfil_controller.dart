@@ -171,8 +171,8 @@ class EditarPerfilController extends GetxController {
       return false;
     }
 
-    if (!correo.contains('@')) {
-      _mostrarError('El correo debe contener el carácter "@".');
+    if (!RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$').hasMatch(correo)) {
+      _mostrarError('El correo ingresado no es válido.');
       return false;
     }
 

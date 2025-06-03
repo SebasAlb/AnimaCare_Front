@@ -90,11 +90,13 @@ class SignupController extends GetxController {
     }
 
 
-    if (!email.contains('@')) {
+    final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$');
+
+    if (!emailRegex.hasMatch(email)) {
       SoundService.playWarning();
       Get.snackbar(
         'Correo inválido',
-        'El correo debe contener el carácter "@".',
+        'Ingresa un correo electrónico válido.',
         backgroundColor: Colors.white30,
         colorText: theme.colorScheme.onBackground,
         icon: const Icon(Icons.warning, color: Colors.redAccent),
