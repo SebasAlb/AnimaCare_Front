@@ -375,8 +375,10 @@ class EditarMascotaModal {
                       label == 'Peso (kg)'
                           ? Icons.monitor_weight
                           : label == 'Altura (cm)'
-                              ? Icons.height
-                              : Icons.pets,
+                            ? Icons.height
+                            : label == 'Cumpleaños'
+                              ? Icons.cake
+                                : Icons.pets,
                       color: theme.colorScheme.primary,
                     ),
                     filled: true,
@@ -526,16 +528,22 @@ class EditarMascotaModal {
             ),
           ),
           child: CircleAvatar(
+            radius: 45,
+            backgroundColor: theme.cardColor,
             backgroundImage: nuevaFoto != null
                 ? FileImage(nuevaFoto)
                 : (mascota.fotoUrl.isNotEmpty
-                    ? (mascota.fotoUrl.startsWith('/') ||
-                            mascota.fotoUrl.startsWith('file'))
-                        ? FileImage(File(mascota.fotoUrl))
-                        : NetworkImage(mascota.fotoUrl)
-                            as ImageProvider
-                    : const AssetImage('assets/images/perfil_mascota.png')),
-            backgroundColor: theme.cardColor,
+                ? (mascota.fotoUrl.startsWith('/') || mascota.fotoUrl.startsWith('file'))
+                ? FileImage(File(mascota.fotoUrl))
+                : NetworkImage(mascota.fotoUrl) as ImageProvider
+                : null),
+            child: (nuevaFoto == null && mascota.fotoUrl.isEmpty)
+                ? Icon(
+              Icons.pets_sharp,
+              size: 40,
+              color: theme.colorScheme.primary,
+            )
+                : null,
           ),
         ),
         FloatingActionButton.small(

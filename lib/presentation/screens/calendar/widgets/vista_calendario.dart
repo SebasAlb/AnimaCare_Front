@@ -41,7 +41,10 @@ class VistaCalendario extends StatelessWidget {
             firstDay: DateTime.utc(2020),
             lastDay: DateTime.utc(2030, 12, 31),
             selectedDayPredicate: (day) => isSameDay(selectedDay, day),
-            onDaySelected: onDaySelected,
+            onDaySelected: (selected, focused) {
+              SoundService.playButton(); // Sonido al tocar el calendario
+              onDaySelected(selected, focused);
+            },
             eventLoader: (day) {
               final DateTime key = DateTime(day.year, day.month, day.day);
               return eventosMarcados[key] ?? <EventoCalendar>[];
