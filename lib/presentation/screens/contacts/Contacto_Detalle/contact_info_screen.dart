@@ -60,7 +60,8 @@ class ContactInfoScreen extends StatelessWidget {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      'Veterinario - ${veterinario.rol}',
+                      'Veterinario - ${veterinario.rol.replaceAll('_', ' ')}',
+                      textAlign: TextAlign.center,
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.bold,
