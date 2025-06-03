@@ -2,16 +2,18 @@ import 'package:animacare_front/models/mascota.dart';
 import 'package:animacare_front/models/veterinario.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
 import 'package:animacare_front/storage/pet_storage.dart';
-import 'package:animacare_front/storage/veterinarian_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agendar_cita_controller.dart';
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/widgets/calendario_bottom_sheet.dart';
+import 'package:animacare_front/presentation/screens/calendar/widgets/evento_calendar.dart';
 
 
 class AgendarCitaScreen extends StatefulWidget {
-  const AgendarCitaScreen({super.key});
+  final EventoCalendar? evento;
+
+  const AgendarCitaScreen({super.key, this.evento});
 
   @override
   State<AgendarCitaScreen> createState() => _AgendarCitaScreenState();
@@ -36,6 +38,38 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
         controller.mascotas = mascotas;
         _cargandoVeterinarios = false;
 
+        if (widget.evento != null) {
+          final evento = widget.evento!;
+          
+          // Precarga de mascota
+          controller.mascotaSeleccionada = mascotas.firstWhere(
+            (m) => m.nombre == evento.mascota,
+            orElse: () => mascotas.first,
+          );
+
+          // Precarga de razón
+          if (controller.razones.contains(evento.titulo)) {
+            controller.razonSeleccionada = evento.titulo;
+          }
+
+          // Precarga de veterinario
+          controller.veterinarioSeleccionado = veterinarios.firstWhereOrNull(
+            (v) => v.nombreCompleto == evento.veterinario,
+          );
+
+          // Precarga de fecha y hora
+          try {
+            controller.fechaSeleccionada = DateFormat('yyyy-MM-dd').parse(evento.fecha);
+            controller.horaSeleccionada = evento.hora;
+          } catch (_) {
+            debugPrint('Error al parsear fecha/hora del evento.');
+          }
+
+          // Precarga de descripción
+          controller.notasController.text = evento.descripcion ?? '';
+        }
+
+
         if (controller.mascotaSeleccionada != null) {
           final match = mascotas.firstWhere(
                 (m) => m.id == controller.mascotaSeleccionada!.id,
@@ -43,7 +77,9 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
           );
           controller.mascotaSeleccionada = match;
         }
-      });
+      }
+      
+      );
     });
 
     _prevCamposLlenos = controller.camposObligatoriosLlenos;
@@ -103,9 +139,10 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
     return Column(
       children: <Widget>[
         CustomHeader(
-          nameScreen: 'Agendar Cita',
+          nameScreen: widget.evento != null ? 'Reagendar Cita' : 'Agendar Cita',
           isSecondaryScreen: true,
         ),
+
         Expanded(
           child: ListView(
             controller: _scrollController,
@@ -338,7 +375,12 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                       ? null
                       : () async {
                     isLoading.value = true;
-                    await controller.guardarCita(context);
+                    if (widget.evento != null) {
+                      await controller.actualizarCitaExistente(context, widget.evento!.id);
+                    } else {
+                      await controller.guardarCita(context);
+                    }
+
                     isLoading.value = false;
                   },
                   style: ElevatedButton.styleFrom(
