@@ -1,6 +1,7 @@
 import 'package:animacare_front/models/mascota.dart';
 import 'package:animacare_front/models/veterinario.dart';
 import 'package:animacare_front/presentation/components/custom_header.dart';
+import 'package:animacare_front/services/notification_service.dart';
 import 'package:animacare_front/storage/pet_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -377,6 +378,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                     isLoading.value = true;
                     if (widget.evento != null) {
                       await controller.actualizarCitaExistente(context, widget.evento!.id);
+                      await NotificationService.eliminarNotificacion(widget.evento!.id);
                     } else {
                       await controller.guardarCita(context);
                     }
