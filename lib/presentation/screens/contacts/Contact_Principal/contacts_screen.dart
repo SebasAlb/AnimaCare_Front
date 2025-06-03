@@ -82,7 +82,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     await cargarDatos();
                   },
                   child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.only(left: 16, right: 16, bottom: 100),
                     itemCount: controller.contactos.length,
                     itemBuilder: (context, index) {
                       final vet = controller.contactos[index];
