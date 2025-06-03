@@ -66,7 +66,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
           }
 
           // Precarga de descripción
-          controller.notasController.text = evento.descripcion ?? '';
+          controller.notasController.text = (evento.descripcion ?? '').trim() == '' ? '' : evento.descripcion!;
         }
 
 
@@ -401,3 +401,4 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
     );
   }
   }
+
