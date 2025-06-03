@@ -71,6 +71,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       );
       await controller.cargarEventosDesdeBackend();
       setState(() {}); // 🔁 Refresca vista si es necesario
+
       NotificationService.eliminarNotificacion(evento.id);
       SoundService.playSuccess(); // ✅ Sonido de éxito
       Get.snackbar(
@@ -142,12 +143,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       onPressed: () {
                         SoundService.playButton();
                         Navigator.pop(context);
+                        
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const AgendarCitaScreen(),
+                            builder: (_) => AgendarCitaScreen(evento: evento),
                           ),
                         );
+                        
                       },
                       icon: Icon(Icons.edit_calendar, color: colorScheme.primary),
                       label: Text(
