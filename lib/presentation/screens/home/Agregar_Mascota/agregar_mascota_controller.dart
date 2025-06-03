@@ -136,7 +136,7 @@ class AgregarMascotaController {
         titulo: 'Cumpleaños de ${mascotaCreada.nombre}',
         fecha: fechaEvento,
         hora: fechaEvento,
-        descripcion: '¡Festejale a ${mascotaCreada.nombre} sus $edad años de edad!',
+        descripcion: '¡Feliz cumpleaños!',
         categoriaId: 5,
         mascotaId: mascotaCreada.id,
         veterinarioId: 5,
