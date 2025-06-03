@@ -9,6 +9,12 @@ import 'package:animacare_front/presentation/screens/calendar/widgets/vista_even
 import 'package:animacare_front/presentation/screens/calendar/calendar_controller.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/evento_calendar.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/filtro_eventos_modal.dart';
+import 'package:animacare_front/services/appointment_service.dart'; 
+import 'package:animacare_front/models/cita.dart';
+import 'package:dio/dio.dart';
+import 'package:animacare_front/constants/api_config.dart';
+import 'package:get/get.dart';
+
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -20,6 +26,8 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   final CalendarController controller = CalendarController();
   bool _cargandoEventos = true;
+  bool _bloqueoCancelacion = false;
+  
 
   @override
   void initState() {
@@ -47,6 +55,44 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.dispose();
   }
 
+
+  Future<void> cancelarCita(EventoCalendar evento) async {
+    setState(() => _bloqueoCancelacion = true);
+
+    try {
+      final dio = Dio();
+      final String baseUrl = ApiConfig.baseUrl;
+
+      await dio.post(
+        '$baseUrl/v1/appointment/update/${evento.id}',
+        data: {'estado': 'Cancelada'},
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+      await controller.cargarEventosDesdeBackend();
+      setState(() {}); // 🔁 Refresca vista si es necesario
+
+      SoundService.playSuccess(); // ✅ Sonido de éxito
+      Get.snackbar(
+        'Cita cancelada',
+        'La cita fue cancelada correctamente.',
+        backgroundColor: Colors.white30,
+        colorText: Theme.of(context).colorScheme.onBackground,
+        icon: const Icon(Icons.check_circle, color: Colors.green),
+      );
+    } catch (e) {
+      SoundService.playWarning(); // ❌ Sonido de error
+
+      Get.snackbar(
+        'Error',
+        'No se pudo cancelar la cita: $e',
+        backgroundColor: Colors.white30,
+        colorText: Theme.of(context).colorScheme.onBackground,
+        icon: const Icon(Icons.warning, color: Colors.redAccent),
+      );
+    } finally {
+      setState(() => _bloqueoCancelacion = false);
+    }
+  }
 
 
   void mostrarDetallesEvento(EventoCalendar evento) {
@@ -89,7 +135,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   if (evento.descripcion != null && evento.descripcion!.isNotEmpty)
                     Text('📝 Nota: ${evento.descripcion}'),
                   const SizedBox(height: 24),
-                  if (evento.esCita) ...<Widget>[
+                  
+                  if (evento.esCita && evento.estado != 'Cancelada') ...<Widget>[
                     TextButton.icon(
                       onPressed: () {
                         SoundService.playButton();
@@ -111,12 +158,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       onPressed: () {
                         SoundService.playButton();
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Text('Cita cancelada'),
-                            backgroundColor: theme.colorScheme.error,
-                          ),
-                        );
+                        cancelarCita(evento); // <-- aquí se llama a la función que hace el update
                       },
                       icon: const Icon(Icons.delete, color: Colors.redAccent),
                       label: const Text(
@@ -125,6 +167,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       ),
                     ),
                   ],
+            
                 ],
               ),
             ),
@@ -312,8 +355,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
               ),
             ),
+          
+          if (_bloqueoCancelacion)
+            WillPopScope(
+              onWillPop: () async => false,
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            ),
+
         ]
       ),
     );
   }
 }
+
