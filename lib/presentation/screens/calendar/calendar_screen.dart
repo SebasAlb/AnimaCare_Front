@@ -134,7 +134,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     Text('🏷 Categoría: ${evento.categoria ?? 'Evento general'}'),
                   if (evento.estado != null)
                     Text('📋 Estado: ${evento.estado}'),
-                  if (evento.descripcion != null && evento.descripcion!.isNotEmpty)
+                  if (evento.descripcion != null && evento.descripcion!.trim().isNotEmpty)
                     Text('📝 Nota: ${evento.descripcion}'),
                   const SizedBox(height: 24),
                   
@@ -406,5 +406,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 }
+
+
 
 
