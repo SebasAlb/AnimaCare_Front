@@ -1,8 +1,12 @@
 import 'dart:io';
+import 'package:animacare_front/presentation/screens/calendar/widgets/evento_calendar.dart';
+import 'package:animacare_front/routes/app_routes.dart';
+import 'package:animacare_front/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:animacare_front/models/mascota.dart';
 import 'package:animacare_front/presentation/screens/home/Detalle_Mascota/detalle_mascota_controller.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:animacare_front/services/pet_service.dart';
 import 'package:animacare_front/presentation/screens/home/cloudinary_service.dart';
@@ -11,7 +15,6 @@ import 'package:animacare_front/services/sound_service.dart';
 import 'package:get/get.dart';
 import 'package:animacare_front/storage/pet_storage.dart';
 
-import 'package:animacare_front/models/evento.dart';
 import 'package:animacare_front/services/event_service.dart';
 
 class EditarMascotaModal {
@@ -185,8 +188,6 @@ class EditarMascotaModal {
                                       );
 
                                       try {
-                                        SoundService.playButton();
-
                                         mascota.nombre = nombreController.text;
                                         mascota.especie = controllers['Especie']!.text;
                                         mascota.raza = controllers['Raza']!.text;
@@ -243,6 +244,21 @@ class EditarMascotaModal {
                                           nuevaFechaEvento,
                                         );
 
+                                        // 🛎️ Actualizar notificación
+                                        await NotificationService.actualizarNotificacion(
+                                          EventoCalendar(
+                                            id: eventoCumple.id.toString(),
+                                            titulo: eventoCumple.titulo,
+                                            fecha: DateFormat('yyyy-MM-dd').format(nuevaFechaEvento),
+                                            hora: DateFormat('HH:mm').format(nuevaFechaEvento),
+                                            mascota: mascota.nombre,
+                                            veterinario: 'No especificado',
+                                            tipo: 'evento',
+                                            descripcion: eventoCumple.descripcion,
+                                          ),
+                                        );
+
+
                                         // ACTUALIZAR STORAGE LOCAL
                                         final List<Mascota> mascotasGuardadas = MascotasStorage.getMascotas();
                                         final int index = mascotasGuardadas.indexWhere((m) => m.id == mascota.id);
@@ -264,7 +280,8 @@ class EditarMascotaModal {
                                           nuevoNombre: mascota.nombre,
                                         );
 
-                                        Navigator.pop(modalContext); // cerrar modal
+                                        Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+                                        Navigator.of(context).pushReplacementNamed(AppRoutes.homeOwner);
                                       } catch (e) {
                                         SoundService.playWarning();
                                         Get.snackbar(
@@ -274,8 +291,11 @@ class EditarMascotaModal {
                                           colorText: theme.colorScheme.onBackground,
                                           icon: const Icon(Icons.warning, color: Colors.redAccent),
                                         );
+                                        Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+                                        Navigator.of(context).pushReplacementNamed(AppRoutes.homeOwner);
                                       } finally {
-                                        Navigator.of(context, rootNavigator: true).pop(); // cerrar loader
+                                        Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+                                        Navigator.of(context).pushReplacementNamed(AppRoutes.homeOwner);
                                       }
                                     },
                                   ),

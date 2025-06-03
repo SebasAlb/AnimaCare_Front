@@ -127,7 +127,6 @@ class _DetalleContenido extends StatelessWidget {
     }
 
     Widget _buildContenido() {
-      SoundService.playButton();
       switch (controller.vistaActual) {
         case VistaDetalleMascota.historial:
           return MascotaHistorialSection(
