@@ -1,3 +1,4 @@
+import 'package:animacare_front/presentation/screens/contacts/Contacto_Detalle/contact_info_controller.dart';
 import 'package:animacare_front/services/sound_service.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/models/veterinario.dart';
@@ -7,10 +8,11 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
 class ContactInfoScreen extends StatelessWidget {
+  final ContactInfoController controller = ContactInfoController();
   final Veterinario veterinario;
   final List<VeterinarioExcepcion> excepciones;
 
-  const ContactInfoScreen({
+  ContactInfoScreen({
     super.key,
     required this.veterinario,
     required this.excepciones,
@@ -36,13 +38,12 @@ class ContactInfoScreen extends StatelessWidget {
         DateTime.parse(e.horaFin).minute,
       );
       return e.veterinarioId == veterinario.id &&
-            fin.isAfter(DateTime.now()) &&
-            !e.motivo.startsWith('Cita agendada:') && !e.motivo.startsWith('Cita reagendada:'); //e.motivo != 'Cita';
+          fin.isAfter(DateTime.now()) &&
+          !e.motivo.startsWith('Cita agendada:') &&
+          !e.motivo.startsWith('Cita reagendada:'); //e.motivo != 'Cita';
     }).toList();
 
-
     final grupos = agruparExcepcionesPorRango(excepcionesRelevantes);
-
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -83,21 +84,22 @@ class ContactInfoScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(65),
                         child: veterinario.fotoUrl.isNotEmpty
                             ? Image.network(
-                          veterinario.fotoUrl,
-                          width: 130,
-                          height: 130,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Icon(
-                            Icons.person,
-                            size: 60,
-                            color: theme.cardColor,
-                          ),
-                        )
+                                veterinario.fotoUrl,
+                                width: 130,
+                                height: 130,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: theme.cardColor,
+                                ),
+                              )
                             : Icon(
-                          Icons.person,
-                          size: 60,
-                          color: theme.cardColor,
-                        ),
+                                Icons.person,
+                                size: 60,
+                                color: theme.cardColor,
+                              ),
                       ),
                     ),
                     const SizedBox(height: 25),
@@ -151,27 +153,44 @@ class ContactInfoScreen extends StatelessWidget {
                         final TimeOfDay horaMax = grupo['horaMax'];
 
                         final now = DateTime.now();
-                        final DateTime desdeConHora = DateTime(desde.year, desde.month, desde.day, horaMin.hour, horaMin.minute);
-                        final DateTime hastaConHora = DateTime(hasta.year, hasta.month, hasta.day, horaMax.hour, horaMax.minute);
+                        final DateTime desdeConHora = DateTime(
+                            desde.year,
+                            desde.month,
+                            desde.day,
+                            horaMin.hour,
+                            horaMin.minute);
+                        final DateTime hastaConHora = DateTime(
+                            hasta.year,
+                            hasta.month,
+                            hasta.day,
+                            horaMax.hour,
+                            horaMax.minute);
 
-                        final bool esHoy = now.year == desde.year && now.month == desde.month && now.day == desde.day;
+                        final bool esHoy = now.year == desde.year &&
+                            now.month == desde.month &&
+                            now.day == desde.day;
                         final bool yaEmpezo = now.isAfter(desdeConHora);
-                        final bool aunNoEmpieza = esHoy && now.isBefore(desdeConHora);
+                        final bool aunNoEmpieza =
+                            esHoy && now.isBefore(desdeConHora);
 
                         Color fondo;
                         String textoEstado;
 
                         if (yaEmpezo && now.isBefore(hastaConHora)) {
-                          fondo = const Color.fromARGB(255, 218, 71, 71); // rojo - en curso
+                          fondo = const Color.fromARGB(
+                              255, 218, 71, 71); // rojo - en curso
                           textoEstado = 'No disponible por';
                         } else if (aunNoEmpieza) {
-                          fondo = const Color.fromARGB(255, 255, 193, 7); // amarillo - es hoy pero aún no inicia
+                          fondo = const Color.fromARGB(255, 255, 193,
+                              7); // amarillo - es hoy pero aún no inicia
                           textoEstado = 'Estará ausente por';
                         } else {
-                          fondo = const Color.fromARGB(255, 248, 187, 3); // naranja - futuro
+                          fondo = const Color.fromARGB(
+                              255, 248, 187, 3); // naranja - futuro
                           textoEstado = 'No estará disponible por';
-                        }       
-                        final Color icono = const Color.fromARGB(255, 255, 255, 255);
+                        }
+                        final Color icono =
+                            const Color.fromARGB(255, 255, 255, 255);
                         final String horarioInicio = grupo['horaInicio'] != null
                             ? (grupo['horaInicio'] as TimeOfDay).format(context)
                             : horaMin.format(context);
@@ -179,7 +198,6 @@ class ContactInfoScreen extends StatelessWidget {
                         final String horarioFin = grupo['horaFin'] != null
                             ? (grupo['horaFin'] as TimeOfDay).format(context)
                             : horaMax.format(context);
-
 
                         return Container(
                           margin: const EdgeInsets.only(bottom: 12),
@@ -190,72 +208,88 @@ class ContactInfoScreen extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.warning_amber_rounded, color: theme.colorScheme.onPrimary),
+                              Icon(Icons.warning_amber_rounded,
+                                  color: theme.colorScheme.onPrimary),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text.rich(
                                   TextSpan(
-                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: icono,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: icono,
+                                        ),
                                     children: [
                                       TextSpan(
                                         text: '$textoEstado: ',
-                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
                                           color: theme.colorScheme.onPrimary,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       TextSpan(
                                         text: '$motivo\n',
-                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
                                           color: theme.colorScheme.onPrimary,
                                         ),
                                       ),
                                       if (desde == hasta) ...[
                                         TextSpan(
                                           text: 'Fecha: ',
-                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
                                             color: theme.colorScheme.onPrimary,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                         TextSpan(
-                                          text: '${DateFormat('dd/MM/yyyy').format(desde)}\n',
-                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                          text:
+                                              '${DateFormat('dd/MM/yyyy').format(desde)}\n',
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
                                             color: theme.colorScheme.onPrimary,
                                           ),
                                         ),
                                         TextSpan(
                                           text: 'Horario: ',
-                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
                                             color: theme.colorScheme.onPrimary,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                         TextSpan(
                                           text: '$horarioInicio - $horarioFin',
-                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
                                             color: theme.colorScheme.onPrimary,
                                           ),
                                         ),
                                       ] else ...[
                                         TextSpan(
                                           text: 'Fecha:\n',
-                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
                                             color: theme.colorScheme.onPrimary,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                         TextSpan(
-                                          text: 'Desde el ${DateFormat('dd/MM/yyyy').format(desde)} a las $horarioInicio\n',
-                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                          text:
+                                              'Desde el ${DateFormat('dd/MM/yyyy').format(desde)} a las $horarioInicio\n',
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
                                             color: theme.colorScheme.onPrimary,
                                           ),
                                         ),
                                         TextSpan(
-                                          text: 'Hasta el ${DateFormat('dd/MM/yyyy').format(hasta)} a las $horarioFin',
-                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                          text:
+                                              'Hasta el ${DateFormat('dd/MM/yyyy').format(hasta)} a las $horarioFin',
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
                                             color: theme.colorScheme.onPrimary,
                                           ),
                                         ),
@@ -263,7 +297,6 @@ class ContactInfoScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-
                               ),
                             ],
                           ),
@@ -279,42 +312,66 @@ class ContactInfoScreen extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          SoundService.playButton();
+          controller.abrirAgendarCita(
+              context, veterinario); // Pasar el veterinario
+        },
+        backgroundColor: theme.colorScheme.primary,
+        icon: Icon(Icons.event_available, color: theme.colorScheme.onPrimary),
+        label: Text(
+          'Agendar Cita',
+          style: TextStyle(
+            color: theme.colorScheme.onPrimary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 
   Widget _infoLinea(ThemeData theme, IconData icon, String text) => Builder(
-    builder: (BuildContext context) {
-      return InkWell(
-        onTap: () async {
-          SoundService.playButton();
-          await Clipboard.setData(ClipboardData(text: text));
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(icon, color: theme.colorScheme.primary, size: 20),
-            const SizedBox(width: 6),
-            Text(
-              text,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.primary,
-                decoration: TextDecoration.underline,
-              ),
+        builder: (BuildContext context) {
+          return InkWell(
+            onTap: () async {
+              SoundService.playButton();
+              await Clipboard.setData(ClipboardData(text: text));
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(icon, color: theme.colorScheme.primary, size: 20),
+                const SizedBox(width: 6),
+                Text(
+                  text,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.primary,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       );
-    },
-  );
 
   Map<String, String> _generarMapaHorarios(Veterinario vet) {
     final Map<String, String> mapa = {};
     for (var h in vet.horarios) {
       final horaInicio = h.horaInicio.split('T').last.substring(0, 5); // HH:mm
-      final horaFin = h.horaFin.split('T').last.substring(0, 5);       // HH:mm
+      final horaFin = h.horaFin.split('T').last.substring(0, 5); // HH:mm
       mapa[h.diaSemana] = '$horaInicio - $horaFin';
     }
-    const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    const dias = [
+      'Lunes',
+      'Martes',
+      'Miércoles',
+      'Jueves',
+      'Viernes',
+      'Sábado',
+      'Domingo'
+    ];
     for (var dia in dias) {
       mapa.putIfAbsent(dia, () => 'Cerrado');
     }
@@ -333,38 +390,39 @@ class HorarioTable extends StatelessWidget {
       children: horarios.entries
           .map(
             (MapEntry<String, String> entry) => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                entry.key,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onPrimary,
-                ),
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    entry.key,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                  Text(
+                    entry.value,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                entry.value,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      )
+            ),
+          )
           .toList(),
     );
   }
 }
 
-
-List<Map<String, dynamic>> agruparExcepcionesPorRango(List<VeterinarioExcepcion> excepciones) {
+List<Map<String, dynamic>> agruparExcepcionesPorRango(
+    List<VeterinarioExcepcion> excepciones) {
   final List<Map<String, dynamic>> grupos = [];
 
-  final ordenadas = [...excepciones]..sort((a, b) => a.fecha.compareTo(b.fecha));
+  final ordenadas = [...excepciones]
+    ..sort((a, b) => a.fecha.compareTo(b.fecha));
 
   for (int i = 0; i < ordenadas.length; i++) {
     final actual = ordenadas[i];
@@ -405,9 +463,9 @@ List<Map<String, dynamic>> agruparExcepcionesPorRango(List<VeterinarioExcepcion>
         'horaMin': horaMin,
         'horaMax': horaMax,
         'horaInicio': _parseHora(actual.horaInicio), // hora del primer día
-        'horaFin': _parseHora(ordenadas[i].horaFin), // hora del último día (posición actual del for)
+        'horaFin': _parseHora(ordenadas[i]
+            .horaFin), // hora del último día (posición actual del for)
       });
-
     }
   }
 
@@ -422,4 +480,3 @@ TimeOfDay _parseHora(String isoTime) {
 bool _horaEsAntes(TimeOfDay a, TimeOfDay b) {
   return a.hour < b.hour || (a.hour == b.hour && a.minute < b.minute);
 }
-

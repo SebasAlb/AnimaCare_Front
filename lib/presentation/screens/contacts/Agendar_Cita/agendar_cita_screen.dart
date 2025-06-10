@@ -10,11 +10,15 @@ import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/agend
 import 'package:animacare_front/presentation/screens/contacts/Agendar_Cita/widgets/calendario_bottom_sheet.dart';
 import 'package:animacare_front/presentation/screens/calendar/widgets/evento_calendar.dart';
 
-
 class AgendarCitaScreen extends StatefulWidget {
   final EventoCalendar? evento;
+  final Veterinario? veterinarioPreseleccionado;
 
-  const AgendarCitaScreen({super.key, this.evento});
+  const AgendarCitaScreen({
+    super.key,
+    this.evento,
+    this.veterinarioPreseleccionado,
+  });
 
   @override
   State<AgendarCitaScreen> createState() => _AgendarCitaScreenState();
@@ -39,9 +43,19 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
         controller.mascotas = mascotas;
         _cargandoVeterinarios = false;
 
+        // Si viene un veterinario preseleccionado, lo asignamos al controller
+        if (widget.veterinarioPreseleccionado != null) {
+          // Buscar el veterinario en la lista de contactos
+          final vet = veterinarios.firstWhereOrNull(
+              (v) => v.id == widget.veterinarioPreseleccionado!.id);
+          if (vet != null) {
+            controller.veterinarioSeleccionado = vet;
+          }
+        }
+
         if (widget.evento != null) {
           final evento = widget.evento!;
-          
+
           // Precarga de mascota
           controller.mascotaSeleccionada = mascotas.firstWhere(
             (m) => m.nombre == evento.mascota,
@@ -60,68 +74,69 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
 
           // Precarga de fecha y hora
           try {
-            controller.fechaSeleccionada = DateFormat('yyyy-MM-dd').parse(evento.fecha);
+            controller.fechaSeleccionada =
+                DateFormat('yyyy-MM-dd').parse(evento.fecha);
             controller.horaSeleccionada = evento.hora;
           } catch (_) {
             debugPrint('Error al parsear fecha/hora del evento.');
           }
 
           // Precarga de descripción
-          controller.notasController.text = (evento.descripcion ?? '').trim() == '' ? '' : evento.descripcion!;
+          controller.notasController.text =
+              (evento.descripcion ?? '').trim() == ''
+                  ? ''
+                  : evento.descripcion!;
         }
-
 
         if (controller.mascotaSeleccionada != null) {
           final match = mascotas.firstWhere(
-                (m) => m.id == controller.mascotaSeleccionada!.id,
+            (m) => m.id == controller.mascotaSeleccionada!.id,
             orElse: () => mascotas.first,
           );
           controller.mascotaSeleccionada = match;
         }
-      }
-      
-      );
+      });
     });
 
     _prevCamposLlenos = controller.camposObligatoriosLlenos;
   }
 
   Widget _buildFieldLabel(String label, ThemeData theme) => Padding(
-    padding: const EdgeInsets.only(bottom: 6),
-    child: Text(
-      label,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        color: theme.colorScheme.primary,
-      ),
-    ),
-  );
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
     return Obx(() => WillPopScope(
-      onWillPop: () async => !isLoading.value,
-      child: Stack(
-        children: [
-          Scaffold(
-            resizeToAvoidBottomInset: true,
-            backgroundColor: theme.scaffoldBackgroundColor,
-            body: SafeArea(
-              child: _cargandoVeterinarios
-                  ? const Center(child: CircularProgressIndicator())
-                  : _buildForm(context, theme),
-            ),
+          onWillPop: () async => !isLoading.value,
+          child: Stack(
+            children: [
+              Scaffold(
+                resizeToAvoidBottomInset: true,
+                backgroundColor: theme.scaffoldBackgroundColor,
+                body: SafeArea(
+                  child: _cargandoVeterinarios
+                      ? const Center(child: CircularProgressIndicator())
+                      : _buildForm(context, theme),
+                ),
+              ),
+              if (isLoading.value)
+                Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+            ],
           ),
-          if (isLoading.value)
-            Container(
-              color: Colors.black.withOpacity(0.5),
-              child: const Center(child: CircularProgressIndicator()),
-            ),
-        ],
-      ),
-    ));
+        ));
   }
 
   Widget _buildForm(BuildContext context, ThemeData theme) {
@@ -143,7 +158,6 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
           nameScreen: widget.evento != null ? 'Reagendar Cita' : 'Agendar Cita',
           isSecondaryScreen: true,
         ),
-
         Expanded(
           child: ListView(
             controller: _scrollController,
@@ -157,17 +171,19 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                   hintText: 'Seleccione una mascota',
                   filled: true,
                   fillColor: theme.colorScheme.surface,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  prefixIcon: Icon(Icons.pets, color: theme.colorScheme.primary),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  prefixIcon:
+                      Icon(Icons.pets, color: theme.colorScheme.primary),
                 ),
                 dropdownColor: theme.colorScheme.surface,
                 iconEnabledColor: theme.iconTheme.color,
                 style: TextStyle(color: theme.colorScheme.primary),
                 items: controller.mascotas
                     .map((m) => DropdownMenuItem<Mascota>(
-                  value: m,
-                  child: Text(m.nombre),
-                ))
+                          value: m,
+                          child: Text(m.nombre),
+                        ))
                     .toList(),
                 onChanged: (Mascota? value) {
                   setState(() {
@@ -184,37 +200,43 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                   hintText: 'Seleccione una razón',
                   filled: true,
                   fillColor: theme.colorScheme.surface,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  prefixIcon: Icon(Icons.medical_services, color: theme.colorScheme.primary), // ✅ Ícono añadido
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  prefixIcon: Icon(Icons.medical_services,
+                      color: theme.colorScheme.primary), // ✅ Ícono añadido
                 ),
                 dropdownColor: theme.colorScheme.surface,
                 iconEnabledColor: theme.iconTheme.color,
                 style: TextStyle(color: theme.colorScheme.primary),
                 items: controller.razones
-                    .map((String r) => DropdownMenuItem(value: r, child: Text(r)))
+                    .map((String r) =>
+                        DropdownMenuItem(value: r, child: Text(r)))
                     .toList(),
-                onChanged: (String? value) => setState(() => controller.razonSeleccionada = value),
+                onChanged: (String? value) =>
+                    setState(() => controller.razonSeleccionada = value),
               ),
               const SizedBox(height: 14),
-
               _buildFieldLabel('Veterinario', theme),
               DropdownButtonFormField<Veterinario>(
-                value: controller.veterinarioSeleccionado,
+                value: controller
+                    .veterinarioSeleccionado, // Quitar la condición con ??
                 decoration: InputDecoration(
                   hintText: 'Seleccione un veterinario',
                   filled: true,
                   fillColor: theme.colorScheme.surface,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  prefixIcon: Icon(Icons.person_outline, color: theme.colorScheme.primary),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  prefixIcon: Icon(Icons.person_outline,
+                      color: theme.colorScheme.primary),
                 ),
                 dropdownColor: theme.colorScheme.surface,
                 iconEnabledColor: theme.iconTheme.color,
                 style: TextStyle(color: theme.colorScheme.primary),
                 items: controller.contactosExternos
                     .map((v) => DropdownMenuItem<Veterinario>(
-                  value: v,
-                  child: Text(v.nombreCompleto),
-                ))
+                          value: v,
+                          child: Text(v.nombreCompleto),
+                        ))
                     .toList(),
                 onChanged: (Veterinario? value) {
                   setState(() {
@@ -224,7 +246,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                   });
                 },
               ),
-              if (controller.sePuedeMostrarFechaYHora) ...[
+              if (controller.veterinarioSeleccionado != null) ...[
                 const SizedBox(height: 14),
                 _buildFieldLabel('Fecha', theme),
                 Container(
@@ -238,26 +260,32 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                       await showModalBottomSheet(
                         context: context,
                         shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(20)),
                         ),
                         builder: (_) => CalendarioBottomSheet(
                           fechaSeleccionada: controller.fechaSeleccionada,
                           esNoLaboral: controller.diaNoLaboral,
-                          obtenerMotivoExcepcion: controller.obtenerMotivoExcepcion,
+                          obtenerMotivoExcepcion:
+                              controller.obtenerMotivoExcepcion,
                           onFechaSeleccionada: (fecha) {
                             setState(() {
                               controller.fechaSeleccionada = fecha;
-                              controller.horaSeleccionada = null; // ✅ Reinicia la hora
+                              controller.horaSeleccionada =
+                                  null; // ✅ Reinicia la hora
                             });
                           },
                         ),
                       );
                     },
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    leading: Icon(Icons.calendar_today, color: theme.colorScheme.primary), // ✅ Ícono alineado
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    leading: Icon(Icons.calendar_today,
+                        color: theme.colorScheme.primary), // ✅ Ícono alineado
                     title: Text(
                       controller.fechaSeleccionada != null
-                          ? DateFormat('dd/MM/yyyy').format(controller.fechaSeleccionada!)
+                          ? DateFormat('dd/MM/yyyy')
+                              .format(controller.fechaSeleccionada!)
                           : 'Seleccione una fecha',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.primary.withOpacity(0.7),
@@ -266,7 +294,6 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                   ),
                 ),
                 const SizedBox(height: 14),
-
                 _buildFieldLabel('Hora', theme),
                 Container(
                   decoration: BoxDecoration(
@@ -278,11 +305,14 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                     onTap: () async {
                       await controller.mostrarSelectorHora(
                         context,
-                            () => setState(() {}),
+                        () => setState(() {}),
                       );
                     },
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    leading: Icon(Icons.access_time, color: theme.colorScheme.primary), // ✅ Ícono a la izquierda
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    leading: Icon(Icons.access_time,
+                        color: theme
+                            .colorScheme.primary), // ✅ Ícono a la izquierda
                     title: Text(
                       controller.horaSeleccionada ?? 'Seleccione una hora',
                       style: theme.textTheme.bodyMedium?.copyWith(
@@ -313,25 +343,30 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                   }
 
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 40), // deja espacio final para que no tape el teclado
+                    padding: const EdgeInsets.only(
+                        bottom:
+                            40), // deja espacio final para que no tape el teclado
                     child: Stack(
                       children: [
                         TextField(
                           controller: controller.notasController,
                           maxLines: 3,
-                          style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary),
+                          style: theme.textTheme.bodyMedium
+                              ?.copyWith(color: theme.colorScheme.primary),
                           decoration: InputDecoration(
-                            hintText: 'Ingrese detalles adicionales si es necesario',
+                            hintText:
+                                'Ingrese detalles adicionales si es necesario',
                             hintStyle: TextStyle(color: theme.hintColor),
                             filled: true,
                             fillColor: theme.colorScheme.surface,
-                            prefixIcon: Icon(Icons.notes, color: theme.colorScheme.primary),
+                            prefixIcon: Icon(Icons.notes,
+                                color: theme.colorScheme.primary),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
                             ),
-                            contentPadding:
-                            const EdgeInsets.fromLTRB(12, 16, 12, 48), // más espacio abajo
+                            contentPadding: const EdgeInsets.fromLTRB(
+                                12, 16, 12, 48), // más espacio abajo
                           ),
                         ),
                         // ✅ Contador fijo
@@ -342,7 +377,9 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                             '$charCount / 100 caracteres',
                             style: TextStyle(
                               fontSize: 12,
-                              color: enLimite ? Colors.redAccent : theme.colorScheme.primary,
+                              color: enLimite
+                                  ? Colors.redAccent
+                                  : theme.colorScheme.primary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -365,38 +402,39 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                     ),
                   );
                 },
-              ),              // Al final, el botón:
+              ), // Al final, el botón:
               if (controller.camposObligatoriosLlenos)
                 Obx(() => ElevatedButton.icon(
-                  onPressed: isLoading.value
-                      ? null
-                      : () async {
-                    isLoading.value = true;
-                    if (widget.evento != null) {
-                      await controller.actualizarCitaExistente(context, widget.evento!.id);
-                      await NotificationService.eliminarNotificacion(widget.evento!.id);
-                    } else {
-                      await controller.guardarCita(context);
-                    }
+                      onPressed: isLoading.value
+                          ? null
+                          : () async {
+                              isLoading.value = true;
+                              if (widget.evento != null) {
+                                await controller.actualizarCitaExistente(
+                                    context, widget.evento!.id);
+                                await NotificationService.eliminarNotificacion(
+                                    widget.evento!.id);
+                              } else {
+                                await controller.guardarCita(context);
+                              }
 
-                    isLoading.value = false;
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  icon: const Icon(Icons.check),
-                  label: const Text('Confirmar cita'),
-                )),
+                              isLoading.value = false;
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      icon: const Icon(Icons.check),
+                      label: const Text('Confirmar cita'),
+                    )),
             ],
           ),
         ),
       ],
     );
   }
-  }
-
+}

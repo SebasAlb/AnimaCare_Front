@@ -88,7 +88,6 @@ class AppRoutes {
           }),
         );
 
-
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

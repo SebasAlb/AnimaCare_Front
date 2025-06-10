@@ -9,8 +9,6 @@ import 'package:animacare_front/services/appointment_service.dart';
 import 'package:animacare_front/services/sound_service.dart';
 import 'package:animacare_front/services/veterinarian_service.dart';
 
-
-
 class AgendarCitaController {
   final VeterinarianService _service = VeterinarianService();
   final theme = Theme.of(Get.context!);
@@ -61,7 +59,8 @@ class AgendarCitaController {
     final DateTime hoy = DateTime.now();
 
     DateTime fechaInicial = hoy;
-    while (estaDiaBloqueadoPorExcepcion(fechaInicial) || diaNoLaboral(fechaInicial)) {
+    while (estaDiaBloqueadoPorExcepcion(fechaInicial) ||
+        diaNoLaboral(fechaInicial)) {
       fechaInicial = fechaInicial.add(const Duration(days: 1));
     }
 
@@ -71,7 +70,7 @@ class AgendarCitaController {
       firstDate: hoy,
       lastDate: hoy.add(const Duration(days: 90)),
       selectableDayPredicate: (day) =>
-      !estaDiaBloqueadoPorExcepcion(day) && !diaNoLaboral(day),
+          !estaDiaBloqueadoPorExcepcion(day) && !diaNoLaboral(day),
       builder: (context, child) => Theme(
         data: ThemeData.light().copyWith(
           colorScheme: const ColorScheme.light(
@@ -141,7 +140,8 @@ class AgendarCitaController {
       if (!e.disponible && _esMismaFecha(e.fecha, fecha)) {
         final inicio = _combinarFechaHora(e.fecha, e.horaInicio);
         final fin = _combinarFechaHora(e.fecha, e.horaFin);
-        return horaActual.isAfter(inicio.subtract(const Duration(minutes: 1))) &&
+        return horaActual
+                .isAfter(inicio.subtract(const Duration(minutes: 1))) &&
             horaActual.isBefore(fin);
       }
       return false;
@@ -157,9 +157,9 @@ class AgendarCitaController {
   }
 
   Future<void> mostrarSelectorHora(
-      BuildContext context,
-      VoidCallback refreshUI,
-      ) async {
+    BuildContext context,
+    VoidCallback refreshUI,
+  ) async {
     if (veterinarioSeleccionado == null || fechaSeleccionada == null) return;
 
     final ThemeData theme = Theme.of(context);
@@ -209,16 +209,16 @@ class AgendarCitaController {
                 runSpacing: 8,
                 children: horasDisponibles.map((String hora) {
                   final bloqueada =
-                  horaBloqueadaPorExcepcion(fechaSeleccionada!, hora);
+                      horaBloqueadaPorExcepcion(fechaSeleccionada!, hora);
                   return ElevatedButton(
                     onPressed: bloqueada
                         ? null
                         : () {
-                      SoundService.playButton();
-                      horaSeleccionada = hora;
-                      Navigator.pop(context);
-                      refreshUI();
-                    },
+                            SoundService.playButton();
+                            horaSeleccionada = hora;
+                            Navigator.pop(context);
+                            refreshUI();
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: bloqueada
                           ? Colors.red[300]
@@ -274,7 +274,7 @@ class AgendarCitaController {
         colorText: Theme.of(context).colorScheme.onBackground,
         icon: const Icon(Icons.check_circle, color: Colors.green),
       );
-      
+
       Navigator.pop(context); // opcional: volver a la pantalla anterior
     } catch (e) {
       SoundService.playWarning();
@@ -288,7 +288,8 @@ class AgendarCitaController {
     }
   }
 
-  Future<void> actualizarCitaExistente(BuildContext context, String idEvento) async {
+  Future<void> actualizarCitaExistente(
+      BuildContext context, String idEvento) async {
     if (!camposObligatoriosLlenos) {
       SoundService.playWarning();
       Get.snackbar(
@@ -307,7 +308,10 @@ class AgendarCitaController {
       estado: 'Pendiente',
       fecha: fechaSeleccionada!,
       hora: _parseHoraSeleccionada(),
-      descripcion: notasController.text.trim().isEmpty ? " " : notasController.text.trim(), //descripcion: notasController.text.trim(),
+      descripcion: notasController.text.trim().isEmpty
+          ? " "
+          : notasController.text
+              .trim(), //descripcion: notasController.text.trim(),
       mascotaId: mascotaSeleccionada!.id,
       veterinarioId: veterinarioSeleccionado!.id,
     );
@@ -335,7 +339,6 @@ class AgendarCitaController {
     }
   }
 
-
   DateTime _parseHoraSeleccionada() {
     final partes = horaSeleccionada!.split(' - ')[0].split(':');
     return DateTime(
@@ -351,14 +354,20 @@ class AgendarCitaController {
 
   bool get camposObligatoriosLlenos =>
       mascotaSeleccionada != null &&
-          razonSeleccionada != null &&
-          veterinarioSeleccionado != null &&
-          fechaSeleccionada != null &&
-          horaSeleccionada != null;
+      razonSeleccionada != null &&
+      veterinarioSeleccionado != null &&
+      fechaSeleccionada != null &&
+      horaSeleccionada != null;
 
   String _nombreDia(int weekday) {
     const dias = [
-      'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'
+      'Lunes',
+      'Martes',
+      'Miércoles',
+      'Jueves',
+      'Viernes',
+      'Sábado',
+      'Domingo'
     ];
     return dias[weekday - 1];
   }
@@ -369,7 +378,7 @@ class AgendarCitaController {
 
     final String nombreDia = _nombreDia(dia.weekday);
     final detalle =
-    vet.horarios.firstWhereOrNull((h) => h.diaSemana == nombreDia);
+        vet.horarios.firstWhereOrNull((h) => h.diaSemana == nombreDia);
     if (detalle == null) return true;
 
     final horaInicio = DateTime.parse(detalle.horaInicio);
@@ -396,19 +405,38 @@ class AgendarCitaController {
   }
 
   List<String> _obtenerHorasDisponiblesParaFecha(
-      Veterinario vet,
-      DateTime fechaSeleccionada, {
-        required List<String> horasOcupadasSimuladas,
-      }) {
+    Veterinario vet,
+    DateTime fechaSeleccionada, {
+    required List<String> horasOcupadasSimuladas,
+  }) {
     final diaNombre = _nombreDia(fechaSeleccionada.weekday);
-    final horario = vet.horarios.firstWhereOrNull((h) => h.diaSemana == diaNombre);
+    final horario =
+        vet.horarios.firstWhereOrNull((h) => h.diaSemana == diaNombre);
     if (horario == null) return [];
 
     final start = DateTime.parse(horario.horaInicio).hour;
     final end = DateTime.parse(horario.horaFin).hour;
     final bloques = <String>[];
 
-    for (int i = start; i < end; i++) {
+    // Obtener la hora actual
+    final ahora = DateTime.now();
+
+    // Si es el día actual, usar la hora actual como inicio
+    int horaInicio = start;
+    if (_esMismaFecha(fechaSeleccionada, ahora)) {
+      // Si ya han pasado minutos de la hora actual, empezamos desde la siguiente hora
+      horaInicio = ahora.minute > 0 ? ahora.hour + 1 : ahora.hour;
+
+      // Si la hora actual está fuera del horario laboral, retornar lista vacía
+      if (horaInicio >= end) {
+        return [];
+      }
+
+      // Asegurarnos de no empezar antes de la hora de inicio del horario
+      horaInicio = horaInicio < start ? start : horaInicio;
+    }
+
+    for (int i = horaInicio; i < end; i++) {
       final inicio = '${i.toString().padLeft(2, '0')}:00';
       final fin = '${(i + 1).toString().padLeft(2, '0')}:00';
       if (inicio != '12:00') {
@@ -419,5 +447,3 @@ class AgendarCitaController {
     return bloques.where((b) => !horasOcupadasSimuladas.contains(b)).toList();
   }
 }
-
-

@@ -1,5 +1,6 @@
 import 'package:animacare_front/routes/app_routes.dart';
 import 'package:animacare_front/services/sound_service.dart';
+import 'package:animacare_front/storage/notification_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:animacare_front/storage/user_storage.dart';
 import 'package:animacare_front/models/dueno.dart';
@@ -8,7 +9,6 @@ import 'package:animacare_front/services/owner_service.dart';
 import 'package:animacare_front/services/notification_service.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
-
 
 class CustomHeader extends StatefulWidget {
   const CustomHeader({
@@ -52,7 +52,8 @@ class _CustomHeaderState extends State<CustomHeader> {
   Future<void> _cargarNotificacionesHoy() async {
     final duenoId = dueno?.id;
     if (duenoId == null) {
-      setState(() => notificacionesCargando = false); // <- Evita que se quede cargando
+      setState(() =>
+          notificacionesCargando = false); // <- Evita que se quede cargando
       return;
     }
 
@@ -64,10 +65,14 @@ class _CustomHeaderState extends State<CustomHeader> {
       for (final mascota in mascotas) {
         for (final e in mascota.eventos) {
           final DateTime fechaHoraEvento = DateTime(
-            e.fecha.year, e.fecha.month, e.fecha.day,
-            e.hora.hour, e.hora.minute,
+            e.fecha.year,
+            e.fecha.month,
+            e.fecha.day,
+            e.hora.hour,
+            e.hora.minute,
           );
-          print('---------- [DEBUG] Veterinario evento: ${e.veterinario?.nombre} ${e.veterinario?.apellido}');
+          print(
+              '---------- [DEBUG] Veterinario evento: ${e.veterinario?.nombre} ${e.veterinario?.apellido}');
 
           if (fechaHoraEvento.isAfter(ahora)) {
             final evento = EventoCalendar(
@@ -86,7 +91,8 @@ class _CustomHeaderState extends State<CustomHeader> {
             );
             acumulado.add(evento);
 
-            final yaExiste = await NotificationService.existeNotificacion(evento.id);
+            final yaExiste =
+                await NotificationService.existeNotificacion(evento.id);
             if (!yaExiste) {
               await NotificationService.programarNotificacion(evento);
             }
@@ -95,12 +101,17 @@ class _CustomHeaderState extends State<CustomHeader> {
 
         for (final c in mascota.citas) {
           final DateTime fechaHoraCita = DateTime(
-            c.fecha.year, c.fecha.month, c.fecha.day,
-            c.hora.hour, c.hora.minute,
+            c.fecha.year,
+            c.fecha.month,
+            c.fecha.day,
+            c.hora.hour,
+            c.hora.minute,
           );
-          print('*********** [DEBUG] Veterinario cita: ${c.veterinario?.nombre} ${c.veterinario?.apellido}');
+          print(
+              '*********** [DEBUG] Veterinario cita: ${c.veterinario?.nombre} ${c.veterinario?.apellido}');
 
-          if (fechaHoraCita.isAfter(ahora) && c.estado?.toLowerCase() == 'confirmada') {
+          if (fechaHoraCita.isAfter(ahora) &&
+              c.estado.toLowerCase() == 'confirmada') {
             final cita = EventoCalendar(
               id: c.id.toString(),
               titulo: c.razon,
@@ -117,7 +128,8 @@ class _CustomHeaderState extends State<CustomHeader> {
             );
             acumulado.add(cita);
 
-            final yaExiste = await NotificationService.existeNotificacion(cita.id);
+            final yaExiste =
+                await NotificationService.existeNotificacion(cita.id);
             if (!yaExiste) {
               await NotificationService.programarNotificacion(cita);
             }
@@ -130,6 +142,11 @@ class _CustomHeaderState extends State<CustomHeader> {
         final dtB = DateTime.parse('${b.fecha} ${b.hora}');
         return dtA.compareTo(dtB);
       });
+
+      // Guardar cada notificación en el storage
+      for (final evento in acumulado) {
+        NotificationStorage.saveNotification(evento);
+      }
 
       setState(() {
         notificacionesHoy = acumulado;
@@ -161,17 +178,23 @@ class _CustomHeaderState extends State<CustomHeader> {
         'Estamos cargando tus notificaciones, por favor espera.',
         backgroundColor: Colors.white30,
         colorText: Theme.of(context).colorScheme.onBackground,
-        icon: const Icon(Icons.notifications_active, color: Colors.deepOrangeAccent),
+        icon: const Icon(Icons.notifications_active,
+            color: Colors.deepOrangeAccent),
         duration: const Duration(seconds: 2),
       );
       return;
     }
+
+    // Marcar todas las notificaciones como revisadas
+    NotificationStorage.markAllAsReviewed();
+
     setState(() => notificacionesRevisadas = true);
     final ThemeData theme = Theme.of(context);
 
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // This is key for full height but also for full width
+      isScrollControlled:
+          true, // This is key for full height but also for full width
       backgroundColor: theme.scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -184,7 +207,8 @@ class _CustomHeaderState extends State<CustomHeader> {
         builder: (context, scrollController) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding( // Add padding directly to the content if needed
+            Padding(
+              // Add padding directly to the content if needed
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
               child: Text(
                 'Notificaciones',
@@ -198,16 +222,20 @@ class _CustomHeaderState extends State<CustomHeader> {
             if (notificacionesHoy.isEmpty)
               Padding(
                 padding: const EdgeInsets.all(12.0),
-                child: Text('No tienes notificaciones...', style: theme.textTheme.bodyMedium),
+                child: Text('No tienes notificaciones...',
+                    style: theme.textTheme.bodyMedium),
               ),
-            Expanded( // Use Expanded to make the list of notifications take remaining space
+            Expanded(
+              // Use Expanded to make the list of notifications take remaining space
               child: ListView.builder(
                 controller: scrollController,
                 itemCount: notificacionesHoy.length,
                 itemBuilder: (context, index) {
                   final notif = notificacionesHoy[index];
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16), // Apply horizontal padding here
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 6,
+                        horizontal: 16), // Apply horizontal padding here
                     child: _notificacionCard({
                       'titulo': notif.titulo,
                       'mascota': notif.mascota,
@@ -239,63 +267,79 @@ class _CustomHeaderState extends State<CustomHeader> {
     return DateFormat('HH:mm').format(hora); // HH for 24-hour format
   }
 
-  Widget _notificacionCard(Map<String, String> notif, ThemeData theme) => Container(
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: theme.cardColor,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
-    ),
-    child: Row(
-      children: [
-        Icon(Icons.notifications_active, color: theme.colorScheme.secondary),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(notif['titulo']!, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w800)),
-                  const Spacer(), // This pushes the following widget to the right
-                  Text(
-                      _formatoHora24H(DateTime.parse('2000-01-01 ${notif['hora']!}')), // Parse the time string
-                      style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w800)
-                  ),
-                ]
-              ),
-              Column(
+  Widget _notificacionCard(Map<String, String> notif, ThemeData theme) =>
+      Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.notifications_active,
+                color: theme.colorScheme.secondary),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(formatearFechaBonita(notif['fecha']!), style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 4),
-                  if (notif['tipo']!.isNotEmpty)
-                    Text('Tipo: ${notif['tipo']!}', style: theme.textTheme.bodySmall),
-                  const SizedBox(height: 4),
-                  Text('Mascota: 🐾'+notif['mascota']!, style: theme.textTheme.bodySmall),
-                  const SizedBox(height: 4),
-                  Text('Veterinario: 👤'+notif['veterinario']!, style: theme.textTheme.bodySmall),
-                  if (notif['categoria']!.isNotEmpty)
-                    Text('Categoría: 🗂 ${notif['categoria']!}', style: theme.textTheme.bodySmall),
-                  if (notif['estado']!.isNotEmpty)
-                    Text('Estado: ${notif['estado']!}', style: theme.textTheme.bodySmall),
+                  Row(children: [
+                    Text(notif['titulo']!,
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w800)),
+                    const Spacer(), // This pushes the following widget to the right
+                    Text(
+                        _formatoHora24H(DateTime.parse(
+                            '2000-01-01 ${notif['hora']!}')), // Parse the time string
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w800)),
+                  ]),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(formatearFechaBonita(notif['fecha']!),
+                          style: theme.textTheme.bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.w500)),
+                      const SizedBox(height: 4),
+                      if (notif['tipo']!.isNotEmpty)
+                        Text('Tipo: ${notif['tipo']!}',
+                            style: theme.textTheme.bodySmall),
+                      const SizedBox(height: 4),
+                      Text('Mascota: 🐾' + notif['mascota']!,
+                          style: theme.textTheme.bodySmall),
+                      const SizedBox(height: 4),
+                      Text('Veterinario: 👤' + notif['veterinario']!,
+                          style: theme.textTheme.bodySmall),
+                      if (notif['categoria']!.isNotEmpty)
+                        Text('Categoría: 🗂 ${notif['categoria']!}',
+                            style: theme.textTheme.bodySmall),
+                      if (notif['estado']!.isNotEmpty)
+                        Text('Estado: ${notif['estado']!}',
+                            style: theme.textTheme.bodySmall),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  if (notif['descripcion']!.isNotEmpty &&
+                      notif['descripcion'] != ' ')
+                    Text(' ➤ ' + notif['descripcion']!,
+                        style: theme.textTheme.bodySmall),
                 ],
               ),
-              const SizedBox(height: 8),
-              if (notif['descripcion']!.isNotEmpty && notif['descripcion'] != ' ')
-              Text(' ➤ '+notif['descripcion']!, style: theme.textTheme.bodySmall),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     const Color textColor = Colors.white;
     final Color background = theme.primaryColor;
+    // Modificar la condición para mostrar el contador de notificaciones
+    final unreviewedNotifications =
+        NotificationStorage.getUnreviewedNotifications();
+    final hasUnreviewedNotifications = unreviewedNotifications.isNotEmpty;
 
     if (widget.isSecondaryScreen && !widget.mostrarMascota) {
       return Container(
@@ -330,7 +374,10 @@ class _CustomHeaderState extends State<CustomHeader> {
               child: Text(
                 widget.nameScreen,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+                style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: textColor),
               ),
             ),
             const SizedBox(width: 48),
@@ -343,9 +390,8 @@ class _CustomHeaderState extends State<CustomHeader> {
     final String displayName = widget.mostrarMascota
         ? widget.petName
         : '${dueno?.nombre ?? ''} ${dueno?.apellido ?? ''}'.trim().isEmpty
-        ? 'Usuario'
-        : '${dueno!.nombre} ${dueno!.apellido}';
-
+            ? 'Usuario'
+            : '${dueno!.nombre} ${dueno!.apellido}';
 
     if (widget.isSecondaryScreen && widget.mostrarMascota) {
       return Container(
@@ -400,7 +446,7 @@ class _CustomHeaderState extends State<CustomHeader> {
                     _mostrarNotificaciones(context);
                   },
                 ),
-                if (!notificacionesRevisadas && notificacionesHoy.isNotEmpty)
+                if (hasUnreviewedNotifications)
                   Positioned(
                     right: 6,
                     bottom: 6,
@@ -411,7 +457,7 @@ class _CustomHeaderState extends State<CustomHeader> {
                         color: theme.colorScheme.secondary,
                       ),
                       child: Text(
-                        '${notificacionesHoy.length}',
+                        '${unreviewedNotifications.length}',
                         style: const TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -443,7 +489,8 @@ class _CustomHeaderState extends State<CustomHeader> {
                 child: CircleAvatar(
                   radius: 20,
                   backgroundColor: Colors.white24,
-                  backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
+                  backgroundImage:
+                      avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
                   child: avatarUrl.isEmpty
                       ? const Icon(Icons.person, color: Colors.white, size: 24)
                       : null,
@@ -473,9 +520,9 @@ class _CustomHeaderState extends State<CustomHeader> {
                 onPressed: () {
                   SoundService.playButton();
                   _mostrarNotificaciones(context);
-                }
+                },
               ),
-              if (!notificacionesRevisadas && notificacionesHoy.isNotEmpty)
+              if (hasUnreviewedNotifications)
                 Positioned(
                   right: 6,
                   bottom: 6,
@@ -486,7 +533,7 @@ class _CustomHeaderState extends State<CustomHeader> {
                       color: theme.colorScheme.secondary,
                     ),
                     child: Text(
-                      '${notificacionesHoy.length}',
+                      '${unreviewedNotifications.length}',
                       style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,

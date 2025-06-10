@@ -157,13 +157,6 @@ class EditarPerfilScreen extends StatelessWidget {
                               theme,
                             ),
                             _buildTextField(
-                              'Cédula',
-                              'Ingrese su número de cédula',
-                              Icons.credit_card,
-                              controller.cedulaController,
-                              theme,
-                            ),
-                            _buildTextField(
                               'Teléfono',
                               'Ingrese su número',
                               Icons.phone,

@@ -13,7 +13,6 @@ import 'package:dio/dio.dart' as dio;
 class EditarPerfilController extends GetxController {
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController apellidoController = TextEditingController();
-  final TextEditingController cedulaController = TextEditingController();
   final TextEditingController telefonoController = TextEditingController();
   final TextEditingController correoController = TextEditingController();
   final TextEditingController ciudadController = TextEditingController();
@@ -37,7 +36,6 @@ class EditarPerfilController extends GetxController {
     final u = _initial;
     nombreController..text = u.nombre   ..addListener(_markChanged);
     apellidoController..text = u.apellido..addListener(_markChanged);
-    cedulaController..text = u.cedula   ..addListener(_markChanged);
     telefonoController..text = u.telefono ?? '' ..addListener(_markChanged);
     correoController..text = u.correo   ..addListener(_markChanged);
     ciudadController..text = u.ciudad ?? ''     ..addListener(_markChanged);
@@ -131,7 +129,6 @@ class EditarPerfilController extends GetxController {
   bool validarCamposObligatorios() {
     final nombre = nombreController.text.trim();
     final apellido = apellidoController.text.trim();
-    final cedula = cedulaController.text.trim();
     final correo = correoController.text.trim();
     final direccion = direccionController.text.trim();
 
@@ -139,7 +136,6 @@ class EditarPerfilController extends GetxController {
 
     if (nombre.isEmpty) errores.add('Nombre');
     if (apellido.isEmpty) errores.add('Apellido');
-    if (cedula.isEmpty) errores.add('Cédula');
     if (correo.isEmpty) errores.add('Correo');
 
     if (errores.isNotEmpty) {
@@ -163,11 +159,6 @@ class EditarPerfilController extends GetxController {
 
     if (apellido.length > 60) {
       _mostrarError('Apellido no debe superar los 60 caracteres.');
-      return false;
-    }
-
-    if (!RegExp(r'^\d{10}$').hasMatch(cedula)) {
-      _mostrarError('La cédula debe tener exactamente 10 dígitos numéricos.');
       return false;
     }
 
@@ -212,7 +203,6 @@ class EditarPerfilController extends GetxController {
       id: UserStorage.getUser()!.id,
       nombre: nombreController.text.trim(),
       apellido: apellidoController.text.trim(),
-      cedula: cedulaController.text.trim(),
       telefono: telefonoController.text.trim(),
       correo: correoController.text.trim(),
       ciudad: ciudadController.text.trim(),
@@ -437,7 +427,6 @@ class EditarPerfilController extends GetxController {
   void resetearEstado() {
     nombreController.clear();
     apellidoController.clear();
-    cedulaController.clear();
     telefonoController.clear();
     correoController.clear();
     ciudadController.clear();
@@ -451,7 +440,6 @@ class EditarPerfilController extends GetxController {
     resetearEstado();
     nombreController.dispose();
     apellidoController.dispose();
-    cedulaController.dispose();
     telefonoController.dispose();
     correoController.dispose();
     ciudadController.dispose();

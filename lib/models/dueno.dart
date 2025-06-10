@@ -2,7 +2,6 @@ class Dueno {
   int id;
   String nombre;
   String apellido;
-  String cedula;
   String? telefono;
   String correo;
   String? ciudad;
@@ -14,7 +13,6 @@ class Dueno {
     required this.id,
     required this.nombre,
     required this.apellido,
-    required this.cedula,
     this.telefono,
     required this.correo,
     this.ciudad,
@@ -27,7 +25,6 @@ class Dueno {
     id: json['id'],
     nombre: json['nombre'],
     apellido: json['apellido'],
-    cedula: json['cedula'],
     telefono: json['telefono'],
     correo: json['correo'],
     ciudad: json['ciudad'],
@@ -40,7 +37,6 @@ class Dueno {
     'id': id,
     'nombre': nombre,
     'apellido': apellido,
-    'cedula': cedula,
     'telefono': telefono,
     'correo': correo,
     'ciudad': ciudad,
@@ -53,7 +49,6 @@ class Dueno {
     'id': id,
     'nombre': nombre,
     'apellido': apellido,
-    'cedula': cedula,
     'telefono': telefono,
     'correo': correo,
     'ciudad': ciudad,
