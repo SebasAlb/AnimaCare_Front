@@ -15,6 +15,7 @@ import 'package:animacare_front/models/cita.dart';
 import 'package:dio/dio.dart';
 import 'package:animacare_front/constants/api_config.dart';
 import 'package:get/get.dart';
+import 'package:animacare_front/presentation/screens/calendar/agendar_desde_calendario_screen.dart';
 
 
 class CalendarScreen extends StatefulWidget {
@@ -319,9 +320,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
               child: Column(
                 children: <Widget>[
                   const CustomHeader(),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -407,6 +408,52 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 }
               },
             ),
+
+            // Agendar Cita desde el calendario
+            floatingActionButton: (() {
+              final selected = controller.selectedDay;
+
+              if (selected == null) return null;
+
+              // Se eliminan las horas para comparar SOLO la fecha (año, mes, día)
+              final selectedDateOnly = DateTime(selected.year, selected.month, selected.day);
+              final today = DateTime.now();
+              final todayDateOnly = DateTime(today.year, today.month, today.day);
+
+              if (selectedDateOnly.isBefore(todayDateOnly)) return null;
+
+              final colorScheme = Theme.of(context).colorScheme;
+              return FloatingActionButton.extended(
+                onPressed: () {
+                  SoundService.playButton();
+                  
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AgendarDesdeCalendarioScreen(
+                        fechaPreseleccionada: selectedDateOnly,
+                      ),
+                    ),
+                  ).then((_) async {
+                    setState(() => _cargandoEventos = true);
+                    await controller.cargarEventosDesdeBackend();
+                    setState(() => _cargandoEventos = false);
+                  });
+                },
+                icon: Icon(Icons.add, color: colorScheme.primary), // 👈 Texto → color de fondo
+                label: Text(
+                  'Agendar cita',
+                  style: TextStyle(color: colorScheme.primary), // 👈 Texto → color de fondo
+                ),
+                backgroundColor: colorScheme.onPrimary, // 👈 Fondo → color de texto
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: colorScheme.primary, width: 2), // 👈 Borde visible
+                ),
+              );
+
+            })(),
+
           ),
           if (_cargandoEventos || _bloqueoCancelacion)
             WillPopScope(
@@ -451,6 +498,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 }
+
+
+
 
 
 
