@@ -98,8 +98,11 @@ class VistaCalendario extends StatelessWidget {
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            itemCount: eventos.length,
+            itemCount: eventos.length + 1, // 👈 Aumentamos en 1
             itemBuilder: (BuildContext context, int index) {
+              if (index == eventos.length) {
+                return const SizedBox(height: 80); // 👈 Espacio adicional al final
+              }
               final EventoCalendar evento = eventos[index];
               return GestureDetector(
                 onTap: () {
